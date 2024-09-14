@@ -1,0 +1,303 @@
+{% extends 'Admin/base.html' %}
+{% block content %}
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0">Corporate Status</h4>
+        </div>
+        
+    </div>
+</div>
+
+<div class="row mt-3">
+
+    <div class="col-6">        
+        <div>
+            <button type="button" class="btn btn-info"  data-bs-toggle="modal" data-bs-target="#addcorp">
+                Add Corporate
+            </button>
+        </div>
+    </div>
+    <div class="col-6">     
+        <div class="col-sm">
+            <div class="d-flex justify-content-sm-end">
+                <div class="search-box ms-2">
+                    <input type="text" id="search" class="form-control search" placeholder="Search..." oninput="Search(value)">
+                    <i class="ri-search-line search-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row mt-3">
+
+    <div class="col-12">
+        {% if messages %}
+            <ul class="danger-message">
+                {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                        <div class="alert alert-danger shadow alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success shadow alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">               
+                <div class="live-preview">
+                    <div class="table-responsive table-card">
+                        <table class="table align-middle table-nowrap mb-0" id='corptable'>
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col" class="text-center">S.No.</th>
+                                    <th scope="col" class="text-center">Corporate Name</th>
+                                    <th scope="col" class="text-center">Corporate Type</th>
+                                    <th scope="col" class="text-center">Status</th>
+                                    <th scope="col" class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                {% for i in CorporateList %}
+                                <tr>
+                                    <td class="text-center">{{ forloop.counter }}</td>
+                                    <td class="text-center">{{ i.corpo_name }}</td>
+                                    <td class="text-center">
+                                        {% if i.status == '0' %} Not Active {% else %} Active {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                   
+                                        {% if i.corporate_type_id == '1' %}
+                                            Bank
+                                        {% elif i.corporate_type_id == '2' %}
+                                            Hospital/clinic/Lab
+                                        {% elif i.corporate_type_id == '3' %}
+                                            Coaching Center
+                                        {% elif i.corporate_type_id == '4' %}
+                                            School
+                                        {% elif i.corporate_type_id == '5' %}
+                                            University / College
+                                        {% elif i.corporate_type_id == '6' %}
+                                            Private Company
+                                        {% elif i.corporate_type_id == '7' %}
+                                            Government Office
+                                        {% elif i.corporate_type_id == '8' %}
+                                            Political Organization                             
+                                        {% else %}
+                                            Unknown team
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-info"
+                                                data-bs-toggle="modal" data-bs-target="#myModal" data-toggle="tooltip" data-placement="top" title="Change status"
+                                                data-user-id="{{ i.id }}" data-status="{{ i.status }}">
+                                             <i class="ri-checkbox-circle-line"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Change corporate type"
+                                                data-bs-toggle="modal" data-bs-target="#CorpoChange"
+                                                data-u-id="{{ i.id }}" data-team="{{ i.team_id }}">
+                                            <i class=" ri-recycle-line"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-toggle="tooltip" data-placement="top" title="Delete"
+                                            data-bs-target="#DelCorporate" data-user-id="{{ i.id }}">
+                                            <i class="ri-delete-bin-line"></i>
+                                        </button>
+
+
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>                
+            </div><!-- end card-body -->
+        </div><!-- end card -->
+    </div><!-- end col -->
+</div>
+
+<!-- Status Modals -->
+<div id="myModal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <form method='POST' action="{% url 'CorporateEdit' %}">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Change Employee Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="user_id" id="user_id">
+                    <div class="col-md-10">                  
+                        <select class="form-control" name="change_status" id="change_status">
+                            <option value='1'>Active</option>
+                            <option value='0'>Not Active</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update Status</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </form>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Change Team Modals -->
+<div id="CorpoChange" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <form method='POST' action="{% url 'CorporateEdit' %}">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Change Corporate  Type</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="u_id" id="u_id">
+                    <div class="col-md-10">                  
+                        <select class="form-control" name="corp_id" id="corp_id">
+                            <option>Select Corporate Type</option>
+                            {% for i in CorporateTypeList %}
+                                <option value="{{ i.id}}">{{ i.corpo_type}}</option>
+                            {% endfor %}   
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update Status</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </form>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="DelCorporate" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="POST" action="{% url 'CorporateEdit' %}">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Delete Corporate</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="corporate_id" id="corporate_id" value="">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Yes, Delete It!</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Add Employee Modals -->
+<div id="addcorp" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <form method='POST' action="{% url 'CorporateEdit' %}">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addLabel">Add New Corporate</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="corp_value" class="form-label">Corporate Full Name</label>
+                        <input type="text" class="form-control" id="corp_value" name='corp_value' placeholder="Enter Corporate Full Name" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Select Status</label>
+                        <select class="form-select mb-3" aria-label="Default select example" name='status' required>
+                            <option selected value='1'>Active</option>                            
+                            <option value="0">Not Active</option>
+                                                      
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="corporateType_value" class="form-label">Select Corporate Type</label>
+                        <select class="form-select mb-3" aria-label="Default select example" name='corporateType_value' required>
+                            <option>Select User Type</option>
+                           
+                            {% for i in CorporateTypeList %}
+                                <option value="{{ i.id}}">{{ i.corpo_type}}</option>
+                            {% endfor %}                                  
+                        </select>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add Corporate</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </form>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script>
+  
+document.addEventListener('DOMContentLoaded', function() {
+    var modal = document.getElementById('myModal');
+    modal.addEventListener('show.bs.modal', function(event) {
+        var button = event.relatedTarget;
+        var userId = button.getAttribute('data-user-id');
+        var status = button.getAttribute('data-status');
+        var modalUserIdInput = document.getElementById('user_id');
+        var modalStatusSelect = document.getElementById('emp_status');       
+        modalUserIdInput.value = userId; 
+        modalStatusSelect.value = status;  
+    });
+    var corpChangeModal = document.getElementById('CorpoChange');
+    corpChangeModal.addEventListener('show.bs.modal', function(event) {
+        var button = event.relatedTarget;
+        var uId = button.getAttribute('data-u-id');
+        var teamId = button.getAttribute('data-team');
+        var modalUIdInput = document.getElementById('u_id');
+        var modalTeamSelect = document.getElementById('team_id');
+       
+        modalUIdInput.value = uId; 
+        modalTeamSelect.value = teamId;  
+    });
+
+    var delChangeModal = document.getElementById('DelCorporate');
+    delChangeModal.addEventListener('show.bs.modal', function(event) {
+        var button = event.relatedTarget;
+        var userId = button.getAttribute('data-user-id');
+        var inputField = document.getElementById('corporate_id'); 
+        inputField.value = userId;
+    });
+
+});
+    
+setTimeout(function() {
+    var alerts = document.querySelectorAll('.alert');
+    alerts.forEach(function(alert) {
+        var alertInstance = new bootstrap.Alert(alert);
+        alertInstance.close();
+    });
+}, 5000);
+</script>
+{% endblock %}
+
+

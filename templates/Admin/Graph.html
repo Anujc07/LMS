@@ -1,0 +1,285 @@
+{% extends 'Admin/base.html' %}
+{% block content %}
+<style>
+#myDoughnutChart{
+    margin: 0 auto !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    height: 270px !important;
+    width: auto !important;
+}
+
+</style>
+
+
+<div class='container-flex'>
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                <h4 class="mb-sm-0">Graph Analysis of Leads</h4>
+    
+                <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                        
+                        <li class="breadcrumb-item active">Graph Analysis of Leads</li>
+                    </ol>
+                </div>
+    
+            </div>
+        </div>
+    </div>
+    <div class="row" id='navbar' >
+        <div class="col-12">
+            <div class="page-title-box  align-items-center justify-content-between">            
+                <div class='row'>       
+                    <div class='col-2'>
+                        <label for="StartDate" class="form-label">Start Date</label>
+                        <input type="date" onfocus="(this.type='date')" onblur="(this.type='text')" class="form-control" id="StartDate" name='start_date' value="{{ start_date }}" onchange='handleDateChange()'>
+                    </div>
+                    <div class='col-2'>                        
+                        <label for="EndDate" class="form-label">End Date</label>
+                        <input type="date" onfocus="(this.type='date')" onblur="(this.type='text')" class="form-control" id="EndDate" name='end_date' value="{{ end_date }}" onchange="handleDateChange()">
+                    </div>
+                    {% if request.session.teamIDs %}
+                    <div class="col-md-2" hidden>
+                        <label class="form-label">Team</label>
+                        <select class="form-control" name="team_name" id='teamSelect' onchange="handleDateChange()">
+                            <option selected value=''>Select Team</option>
+                            {% for team in teamList %}                                    
+                            <option value="{{ team.id }}">{{ team.T_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% else %}
+
+                    <div class="col-md-2">
+                        <label class="form-label">Team</label>
+                        <select class="form-control" name="team_name" id='teamSelect' onchange="handleDateChange()">
+                            <option selected value=''>Select Team</option>
+                            {% for team in teamList %}                                    
+                            <option value="{{ team.id }}">{{ team.T_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                    <div class="col-md-2">
+                        <label class="form-label">Member</label>
+                        <select class="form-control" name="member_name" id='memberSelect' onchange="handleDateChange()">
+                            <option selected value=''>Select Member</option>
+                            {% comment %} 
+                                {% for member in memberList %}                                    
+                                <option value="{{ member.member_name }}">{{ member.member_name }}</option>
+                                {% endfor %} 
+                            {% endcomment %}
+
+                        </select>
+                    </div>
+                </div>
+                        
+                {% comment %} <div class="page-title-right">
+                    <button class='btn btn-info waves-effect waves-light' onclick="goBack()"> <i class="ri-arrow-left-line"></i></button>
+                </div> {% endcomment %}
+            </div>
+        </div>
+    </div>
+    <div id="loader" style="text-align: center;">
+        <p> loading....</p>
+    </div>
+
+    <div class="row">        
+        <div class="col-xl-4 col-md-6">
+            <!-- card -->
+            <div class="card card-animate">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1 overflow-hidden">
+                            <p class="text-uppercase fw-medium text-muted text-truncate mb-0">New Leads</p>
+                        </div>                    
+                    </div>
+                    <div class="d-flex align-items-end justify-content-between mt-4">
+                        <div>
+                            <h4 class="fs-22 fw-semibold ff-secondary mb-4 value-tab"><span class="counter-value" id='newleads' data-target="" ></span></h4>
+                        </div>         
+                        <div class="avatar-sm flex-shrink-0">
+                            <span class="avatar-title bg-warning rounded-2 fs-2">
+                                <i data-feather="award"></i>
+                            </span>
+                        </div>           
+                    </div>
+                </div><!-- end card body -->
+            </div><!-- end card -->
+        </div><!-- end col -->
+        <div class="col-xl-4 col-md-6">
+            <!-- card -->
+            <div class="card card-animate">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1 overflow-hidden">
+                            <p class="text-uppercase fw-medium text-muted text-truncate mb-0"> Total Leads</p>
+                        </div>                    
+                    </div>
+                    <div class="d-flex align-items-end justify-content-between mt-4">
+                        <div>
+                            <h4 class="fs-22 fw-semibold ff-secondary mb-4 value-tab"><span class="counter-value" id='totalleads' data-target=""></span> </h4>
+                        </div>        
+                        <div class="avatar-sm flex-shrink-0">
+                            <span class="avatar-title bg-danger rounded fs-3">
+                            <i class="mdi mdi-table-arrow-up"></i>
+                            </span>
+                        </div>            
+                    </div>
+                </div><!-- end card body -->
+            </div><!-- end card -->
+        </div><!-- end col -->
+        <div class="col-xl-4 col-md-6">
+            <!-- card -->
+            <div class="card card-animate">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1 overflow-hidden">
+                            <p class="text-uppercase fw-medium text-muted text-truncate mb-0"> Corporate Visits</p>
+                        </div>                    
+                    </div>
+                    <div class="d-flex align-items-end justify-content-between mt-4">
+                        <div>
+                            <h4 class="fs-22 fw-semibold ff-secondary mb-4 value-tab"><span class="counter-value" id='corporatevisit' data-target="" ></span></h4>
+                        </div>    
+                        <div class="avatar-sm flex-shrink-0">
+                            <span class="avatar-title bg-info rounded fs-3">
+                            <i class="mdi mdi-office-building-marker"></i>
+                            </span>
+                        </div>                
+                    </div>
+                </div><!-- end card body -->
+            </div><!-- end card -->
+        </div><!-- end col -->       
+    </div> 
+
+    <div class="row">
+        <div class="col-xl-4 col-md-6">
+            <!-- card -->
+            <div class="card card-animate">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1 overflow-hidden">
+                            <p class="text-uppercase fw-medium text-muted text-truncate mb-0"> Site Visits</p>
+                        </div>                    
+                    </div>
+                    <div class="d-flex align-items-end justify-content-between mt-4">
+                        <div>
+                            <h4 class="fs-22 fw-semibold ff-secondary mb-4 value-tab"><span class="counter-value" id='sitevisit' data-target="" ></span></h4>
+                        </div>     
+                        <div class="avatar-sm flex-shrink-0">
+                            <span class="avatar-title bg-warning rounded fs-3">
+                                <i class="mdi mdi-map-marker-account"></i>
+                            </span>
+                        </div>               
+                    </div>
+                </div><!-- end card body -->
+            </div><!-- end card -->
+        </div><!-- end col -->
+        <div class="col-xl-4 col-md-6">
+            <!-- card -->
+            <div class="card card-animate">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1 overflow-hidden">
+                            <p class="text-uppercase fw-medium text-muted text-truncate mb-0"> Home Visits</p>
+                        </div>                    
+                    </div>
+                    <div class="d-flex align-items-end justify-content-between mt-4">
+                        <div>
+                            <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span class="counter-value" id='homevisit' data-target="" ></span></h4>
+                        </div>                    
+                        <div class="avatar-sm flex-shrink-0">
+                            <span class="avatar-title bg-success rounded fs-3">
+                                <i class="mdi mdi-home"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div><!-- end card body -->
+            </div><!-- end card -->
+        </div><!-- end col -->
+        
+    </div>
+
+
+
+
+    <div class="row">
+        <div class="col-xl-6" >
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">Lead Type wise leads</h4>
+                </div><!-- end card header -->
+                <div class="card-body">
+                    <canvas id="myChart"></canvas>    
+                </div><!-- end card-body -->
+            </div><!-- end card -->
+        </div>
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">Lead Stage</h4>
+                </div><!-- end card header -->
+                <div class="card-body">
+                <canvas id="myDoughnutChart"></canvas>
+                </div><!-- end card-body -->
+            </div><!-- end card -->
+        </div>
+        <!-- end col -->
+        
+    </div>
+    <div class="row">
+        <div class="col-xl-6" >
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">SR Tracker</h4>
+                </div><!-- end card header -->
+                <div class="card-body">
+                    <canvas id="myLeadChart"></canvas>    
+                </div><!-- end card-body -->
+            </div><!-- end card -->
+        </div>    
+        <!-- end col -->
+        <div class="col-xl-6" >
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">Lead State </h4>
+                </div><!-- end card header -->
+                <div class="card-body">
+                    <canvas id="myFollowupChart"></canvas>    
+                </div><!-- end card-body -->
+            </div><!-- end card -->
+        </div>        
+    </div>
+
+
+    <div class="row">
+        <div class="col-xl-12" >
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">Employee wise Performance</h4>
+                </div><!-- end card header -->
+                <div class="card-body">
+                    <canvas id="myPerformanceChart"></canvas>    
+                </div><!-- end card-body -->
+            </div><!-- end card -->
+        </div>                
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12" >
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">Employee wise Achievements</h4>
+                </div>
+                <div class="card-body">
+                    <canvas id="myAchivementsChart"></canvas>    
+                </div>
+            </div>
+        </div>                
+    </div> 
+</div>
+
+{% endblock %}
