@@ -826,51 +826,7 @@ def GetClientData(request):
     else :
         return JsonResponse({'error':'Id not Found'}, status=status.HTTP_400_BAD_REQUEST)
     
-    
-# @permission_classes([AllowAny])
-# @api_view(['GET'])
-# def FormData(request, username, form_id):
-#     print("=================")
-
-#     if request.method == 'GET':
-#         print("=================", username, form_id)
-
-#         if form_id == 'corporate':
-#             todayDate = datetime.now().date
-#             data = CorpFormData.objects.filter().all().values()
-#             return Response({'data':data}, status=status.HTTP_200_OK)
-#         return Response(status=status.HTTP_200_OK)
-    
-
-#     else:
-#         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-# from datetime import date
-# @api_view(['GET'])
-# @permission_classes([AllowAny])
-# def FormData(request, username, form_id):
-#     if request.method == 'GET':
-#         todayDate = date.today()   
-
-#         if form_id == 'corporate':                     
-#             data = CorpFormData.objects.filter(Q(name = username) & Q(visit_date = todayDate)).all().values()
-#         elif form_id == 'home':
-#             data = HomeVisit.objects.filter(Q(name = username) & Q(date = todayDate)).all().values()
-#         elif form_id == 'ip':
-#             username = Members.objects.filter(member_name = username).values('id')
-#             data = IpData.objects.filter(Q(name_id__in = username) & Q(date = todayDate)).all().values()
-#         elif form_id == 'admission':
-#             username = Members.objects.filter(member_name = username).values('id')
-#             data = AdmissionData.objects.filter(Q(name_id__in = username) & Q(date = todayDate)).all().values()
-#         elif form_id == 'sagemitra':
-#             data = Sagemitra.objects.filter(Q(uname = username) & Q(followUp_data = todayDate)).all().values()
-#         elif form_id == 'site':
-#             data = SiteVisit.objects.filter(Q(sales_name = username) & Q(Visit_Date = todayDate)).all().values()
-
-
-#         return Response({'data':data}, status=status.HTTP_200_OK)
-#     else:
-#         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    
+  
 
 
 from datetime import date
@@ -901,49 +857,51 @@ def FormData(request, username, form_id):
 
                     # First QuerySet (co_fellow based)
                     data_cofellow_entry = CorpFormData.objects.filter(Q(visit_date__month=currentMonth) & Q(visit_type='team')).values()
+                    print("=== Full Queryset ===", list(data_cofellow_entry))  # Debugging output
 
                     if data_cofellow_entry.exists():
                         for entry in data_cofellow_entry:
-                            co_fellow = entry['cofel_name']
+                            co_fellow = entry.get('cofel_name')
 
                             if co_fellow == username:
                                 count += 1
                                 data.append({
-                                    'corp_name': entry['corp_name'],
-                                    'corp_type': entry['corp_type'],                               
-                                    'name': entry['name'],
-                                    'presentation':entry['presentaion'],
-                                    'visit_date': entry['visit_date'],
-                                    'visit_type': entry['visit_type'],
-                                    'cofel_name': entry['cofel_name'],
-                                    'Visit_location': entry['Visit_location'],
-                                    'key_person': entry['key_person'],
-                                    'data_collect': entry['data_collect'],
-                                   
+                                    'corp_name': entry.get('corp_name', None),
+                                    'corp_type': entry.get('corp_type', None),
+                                    'name': entry.get('name', None),
+                                    'presentation': entry.get('presentation', None),
+                                    'visit_date': entry.get('visit_date', None),
+                                    'visit_type': entry.get('visit_type', None),
+                                    'cofel_name': entry.get('cofel_name', None),
+                                    'Visit_location': entry.get('Visit_location', None),
+                                    'key_person': entry.get('key_person', None),
+                                    'data_collect': entry.get('data_collect', None),
                                 })
-
 
                     # Second QuerySet (username-based)
                     data_entry = CorpFormData.objects.filter(Q(name=username) & Q(visit_date__month=currentMonth)).values()
+                    print("=== Full Data Entry ===", list(data_entry))  # Debugging output
 
                     if data_entry.exists():
-                        for entry in data_entry:  # Loop through the result
+                        for entry in data_entry:
                             count += 1
                             data.append({
-                                'corp_name': entry['corp_name'],
-                                'corp_type': entry['corp_type'],                               
-                                'name': entry['name'],
-                                'presentation':entry['presentaion'],
-                                'visit_date': entry['visit_date'],
-                                'visit_type': entry['visit_type'],
-                                'cofel_name': entry['cofel_name'],
-                                'Visit_location': entry['Visit_location'],
-                                'key_person': entry['key_person'],
-                                'data_collect': entry['data_collect'],
-                             
+                                'corp_name': entry.get('corp_name', None),
+                                'corp_type': entry.get('corp_type', None),
+                                'name': entry.get('name', None),
+                                'presentation': entry.get('presentation', None),
+                                'visit_date': entry.get('visit_date', None),
+                                'visit_type': entry.get('visit_type', None),
+                                'cofel_name': entry.get('cofel_name', None),
+                                'Visit_location': entry.get('Visit_location', None),
+                                'key_person': entry.get('key_person', None),
+                                'data_collect': entry.get('data_collect', None),
                             })
 
+                    print("===========", data)  # Final output
 
+
+                    print("==============", data ,"==================")
                 elif form_id == 'home':
                     # data = HomeVisit.objects.filter(Q(name = username) & Q(date__month = currentMonth)).all().values()
                     data = []
@@ -1063,6 +1021,7 @@ def FormData(request, username, form_id):
                                 'data_collect': entry['data_collect'],
                              
                             })
+                    print("===========", data)
                 elif form_id == 'home':
                     # data = HomeVisit.objects.filter(Q(name = username) & Q(date = todayDate)).all().values()
                     data = []
