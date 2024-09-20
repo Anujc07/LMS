@@ -27,7 +27,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'django-insecure-p+^c*gfq8^4)q5zxt=%urjaaar@m(x$=juklm=k^^lbu+#rtqo'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 
@@ -215,7 +215,8 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=30),  # Set this to the time you want the token to last
     'REFRESH_TOKEN_LIFETIME': timedelta(days=365),  # Set a long refresh token lifetime
     'ROTATE_REFRESH_TOKENS': False,  # Keep the same refresh token
-    'BLACKLIST_AFTER_ROTATION': False,  
+    'BLACKLIST_AFTER_ROTATION': False,
+
 # SIMPLE_JWT = {
 #     # 'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
 #     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
@@ -223,13 +224,5 @@ SIMPLE_JWT = {
 #     'SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER': timedelta(days=1),
 #     'SLIDING_TOKEN_LIFETIME_LATE_USER': timedelta(days=30),
 }
-
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=365),  # Set this to the time you want the token to last
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=365),  # Set a long refresh token lifetime
-    'ROTATE_REFRESH_TOKENS': False,  # Keep the same refresh token
-    'BLACKLIST_AFTER_ROTATION': False,
-}
-
 
 

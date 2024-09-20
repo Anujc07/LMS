@@ -41,7 +41,6 @@
                 
                 <select class="form-select form-select-lg"  onchange="window.location.href = this.value;">
                     {% if view == 'Home-Visit' %}
-<<<<<<< HEAD
                         <option >Home Visits</option>
                     {% elif view == '1Site-Visits' %}
                         <option >Site Visits</option>
@@ -65,31 +64,6 @@
                         <option >Admission</option>
                     {% else %}
                         <option >{{ view }}</option>
-=======
-                        <option selected>Home Visits</option>
-                    {% elif view == '1Site-Visits' %}
-                        <option selected>Site Visits</option>
-                    {% elif view == '2Site-Visits' %}
-                        <option selected>Re-site Visits</option>
-                    {% elif view == 'SM-Leads' %}
-                        <option selected> SM Leads</option>
-                    {% elif view == 'Hot-Leads' %}
-                        <option selected> Hot Leads</option>
-                    {% elif view == 'Missed-FW' %}
-                        <option selected> Missed F/W</option>
-                    {% elif view == 'SM-FW' %}
-                        <option selected> SM F/W</option>
-                    {% elif view == 'Corp-visits' %}
-                        <option selected> Corporate Visits</option>                    
-                    {% elif view == 'Leads' %}
-                        <option selected> FW Lead</option>
-                    {% elif view == 'IP' %}
-                        <option selected>IP</option>
-                    {% elif view == 'Admission' %}
-                        <option selected>Admission</option>
-                    {% else %}
-                        <option selected>{{ view }}</option>
->>>>>>> V1.1.4
                     {% endif %}
 
 
@@ -154,7 +128,6 @@
     </div>
 </div>
 
-<<<<<<< HEAD
 
 <div class="row mb-4">
    
@@ -170,8 +143,6 @@
     </div>
 </div>
 
-=======
->>>>>>> V1.1.4
 {% if view == 'SM-FW' %}
 
 <div class="row" >
@@ -179,11 +150,7 @@
         <div class="card">          
             <div class="card-body">
                 <div class="live-preview">
-<<<<<<< HEAD
                     <div class="table-responsive" id="table-fixed-header ">
-=======
-                    <div class="table-responsive" id="table-fixed-header">
->>>>>>> V1.1.4
                         <table class="table align-middle table-nowrap mb-0">
                             <thead>
                                 <tr>
@@ -612,13 +579,8 @@
                                 
                                 <tr  data-item-id="{{ item.id }}">
                                 
-<<<<<<< HEAD
                                     <td class='text-center'>{{ forloop.counter }}</td>                               
                                     <td class='text-center'>{{ item.s_name }}</td>
-=======
-                                    <td>{{ forloop.counter }}</td>                               
-                                    <td>{{ item.s_name }}</td>
->>>>>>> V1.1.4
                                                    
                                     <td class='text-center'>{{ item.f_name }}</td>                                                                        
                                     <td class='text-center'>{{ item.vertical }}</td>                                
@@ -627,13 +589,8 @@
                                     {% if request.session.teamIDs %}
                             
                                     {% else %}
-<<<<<<< HEAD
                                         <td class='text-center'>
                                             <div >
-=======
-                                        <td>
-                                            <div class="d-flex gap-2">
->>>>>>> V1.1.4
                                             
                                                 <div class="remove">
                                                     <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal">Remove</button>
@@ -662,11 +619,7 @@
             <div class="card-body">
                 <div class="live-preview">
                     <div class="table-responsive" id="table-fixed-header">
-<<<<<<< HEAD
                         <table class="table align-middle table-nowrap mb-0" id='searchtable'>
-=======
-                        <table class="table align-middle table-nowrap mb-0">
->>>>>>> V1.1.4
                             <thead>
                                 <tr>
                                     <th scope="col">S.No</th>                            
@@ -830,10 +783,5 @@
     
     
 
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> V1.1.4
 </script>
 {% endblock %}
