@@ -14,7 +14,9 @@ from django.utils import timezone
 from django.utils.text import slugify
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
-
+from django.core.files.base import ContentFile
+from PIL import Image
+from io import BytesIO
 logger = logging.getLogger(__name__)
 
 
@@ -1162,9 +1164,9 @@ def FormData(request, username, form_id):
                                     'Email_id': entry.get('Email_id', None),
 
                                 })
-                    print("====", username)
+                                
                     data_entry = SiteVisit.objects.filter(Q(Visit_Date=todayDate) & Q(sales_name = username)).values()
-                    print("=========2========", data_entry)
+                
                     if data_entry.exists():
                         for entry in data_entry:
                             count += 1
@@ -1184,7 +1186,7 @@ def FormData(request, username, form_id):
                                     'Interest': entry.get('Interest', None),
                                     'Email_id': entry.get('Email_id', None),
                             })
-                        print("===========", data)
+
                 elif form_id == 'event':
                     data = EventAcc.objects.filter(Q(name = username) & Q(Q(start_date = todayDate) | Q(end_date = todayDate))).all().values()
                     count = EventAcc.objects.filter(Q(name = username) & Q(Q(start_date = todayDate) | Q(end_date = todayDate))).count()
@@ -1197,9 +1199,7 @@ def FormData(request, username, form_id):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-from django.core.files.base import ContentFile
-from PIL import Image
-from io import BytesIO
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
