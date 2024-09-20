@@ -1,0 +1,846 @@
+<!doctype html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none">
+
+
+<head>
+{% load static %}
+    <meta charset="utf-8" />
+    <title>Sage Realty Feedback Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico' %}">
+
+    <!-- Layout config Js -->
+    <script src="{% static 'assets/js/layout.js' %}"></script>
+    <!-- Bootstrap Css -->
+    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+    <!-- Icons Css -->
+    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="{% static 'assets/css/app.min.css' %}" rel="stylesheet" type="text/css" />
+    <!-- custom Css-->
+    <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css" />
+
+    <style>
+        input#session-date {
+            display: inline-block;
+            position: relative;
+        }
+      
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            background: transparent;
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            height: auto;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
+        }
+    </style>
+
+</head>
+
+<body>
+<<<<<<< HEAD
+    
+    <!-- auth-page wrapper -->
+    <div class="auth-page-wrapper auth-bg-cover py-5 d-flex justify-content-center align-items-center min-vh-100">
+   
+        <div class="bg-overlay"></div>
+        
+=======
+
+    <!-- auth-page wrapper -->
+    <div class="auth-page-wrapper auth-bg-cover py-5 d-flex justify-content-center align-items-center min-vh-100">
+        <div class="bg-overlay"></div>
+>>>>>>> V1.1.4
+        <!-- auth-page content -->
+        <div class="auth-page-content overflow-hidden pt-lg-5">
+            <div class="container">
+                <div class="row">
+<<<<<<< HEAD
+                
+
+
+=======
+>>>>>>> V1.1.4
+                    <div class="col-lg-12">
+                        <div class="card overflow-hidden">
+                            <div class="  g-0">
+                              
+
+                                <div class="">
+                                    <div class="p-lg-5 p-4">
+<<<<<<< HEAD
+                                        <div class='container'>                                        
+                                            <div class='row'>                                            
+                                                <div class='col-md-12 float-left'>
+                                                   <a href='https://sagerealty.in/' target='blank'>   <img src="{% static 'logo full.jpg' %}" style='float:left;' alt="" height="100"></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class='container mt-5'>                                        
+                                            <div class='row'>                                            
+                                                <div class='col-md-12 float-left'>
+                                                    <h3>Please let us know about you</h3>
+                                                </div>
+                                            </div>
+=======
+                                        <div>
+                                            <h5 class="text-primary">SAGE Anandam</h5>
+                                          
+>>>>>>> V1.1.4
+                                        </div>
+                                        <hr>
+                                            <p class="border-secondary text-muted"><span class="badge badge-outline-primary">Fill Your Personal Details</span></p>
+                                        <div class="mt-4  ">
+                                            <form action='{% url 'Client_Site_Visit' %}' method='POST' enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                <div class="mt-4 row ">  
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="Contact" class="form-label">Contact Number <span class="text-danger">*</span></label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class=' ri-phone-line'></i></div>
+                                                            <input type="text" class="form-control" id="Contact" placeholder="Enter of Contact Number" name='customer_contact' required pattern="[6-9]{1}[0-9]{9}" title="Contact number should be 10 digits long and start with 6, 7, 8, or 9">
+                                                        </div>                                                
+                                                    </div>                                                  
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="customername" class="form-label">Name <span class="text-danger">*</span></label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class='ri-user-line'></i></div>
+                                                            <input type="text" class="form-control" id="customername" placeholder="Enter Cusomer Name" name='customer_name' required>
+                                                        </div>                                                
+                                                    </div>
+
+                                                     
+                                                    
+
+                                                    <!-- <div class="mb-3 col-md-3">
+                                                        <label for="VisitDate" class="form-label">Visit Date <span class="text-danger">*</span></label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class='ri-calendar-event-line'></i></div>
+                                                            <input type="date" onfocus="(this.type='date')" onblur="(this.type='text')" class="form-control" id="VisitDate" placeholder="Enter Cusomer Name" name="date" readonly required>
+                                                        </div>                                                
+                                                    </div>  -->
+                                                   
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="Email" class="form-label">Email Id  </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class='ri-mail-line'></i></div>
+                                                            <input type="email" class="form-control" id="Email" placeholder="Enter Your Email Id" name='email'  >
+                                                        </div>                                                
+                                                    </div>
+
+                                                   
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="DOB" class="form-label">Date of Birth </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class=' ri-cake-2-line'></i></div>
+                                                            <input type="date" class="form-control" id="DOB" name='DOB' onfocus="(this.type='date')" onblur="(this.type='text')">
+                                                        </div>                                                
+                                                    </div>
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="Rent" class="form-label">Marital Status </label>
+                                                        <div class="input-group">
+                                                            <div class="form-check form-check-inline">
+                                                                <label for="Rent" class="form-label">Single </label>
+                                                                <input class="form-check-input" type="radio" name="Marital_Status" value="single" onClick="MaritalStatus('single')">
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <label for="Rent" class="form-label">Married </label>
+                                                                <input class="form-check-input" type="radio" name="Marital_Status" value="married" onClick="MaritalStatus('married')">
+                                                            </div>
+                                                        </div>          
+                                                    </div>
+                                                    <div class="mb-3 col-md-3" id="Anniversary" >
+                                                        <label for="Anniversary" class="form-label">Marriage Anniversary </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class=' ri-group-2-line'></i></div>
+                                                            <input type="date" class="form-control"  name='marriage_anniversary' onfocus="(this.type='date')" onblur="(this.type='text')">
+                                                        </div>                                                
+                                                    </div>
+                                                    <div class="mb-4 col-md-4">
+                                                        <label for="Address" class="form-label">Address </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class=' ri-map-pin-2-line'></i></div>
+                                                            <input type="text" class="form-control" id="Address" placeholder="Enter Your Address" name='address' >
+                                                        </div>                                                
+                                                    </div>
+                                                     <!-- <div class="mb-3 col-md-3">
+                                                        <label for="states">Select States</label>
+                                                        <input type="text" class="form-control" id="states-input" placeholder="Enter Your Address" name="address" list="states-list" onChange="CitiesData()">
+                                                        <datalist id="states-list" >
+                                                            {% for state in states %}
+                                                             <option value="{{ state.name }}"></option>
+                                                            {% endfor %}
+                                                        </datalist>
+                                                    </div>  -->
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="states"> State</label>
+                                                        <input type="text" class="form-control" id="states-input" placeholder="Enter Your State" name="state" list="states-list" onchange="CitiesData()">
+                                                        <datalist id="states-list">
+                                                            {% for state in states %}
+                                                            <option data-id="{{ state.id }}" value="{{ state.name }}"></option>
+                                                            {% endfor %}
+                                                        </datalist>
+                                                    </div>
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="cities"> City</label>
+                                                        <input type="text" class="form-control" id="cities-input" placeholder="Enter Your City"  list="cities-list" name='city'>
+                                                        <datalist id="cities-list">
+                                                           
+                                                            <option data-id="" value=""></option>
+                                                        
+                                                        </datalist>
+                                                    </div>
+                                                    
+
+
+
+                                                
+                                                </div>
+                                                <hr>
+                                                 <br>
+                                                <div class='mt-4 row '>
+                                                   
+
+                                                    <p><span class="badge badge-outline-primary">Fill Your Professional Details</span></p>
+                                                    <div class="mb-3 col-md-3">                                                       
+                                                        <label for="occupation">Occupation</label>
+                                                        <select class="form-select"  id="occupation" name='occupation' onchange='Occupation(value)'> 
+                                                            <option selected value=''>Choose...</option>                                                            
+                                                            <option value="Government Sector">Government Sector</option>                                                                
+                                                            <option value="Semi-Government Sector">Semi Government Sector</option>                                                                
+                                                            <option value="Retired">Retired</option>                                                                
+                                                            <option value="Private Sector">Private Sector</option>                                                                
+                                                            <option value="Self Employed">Self Employed</option>                                                                
+                                                            <option value="Business">Business</option>                                                                
+                                                            <option value="House Wife">House Wife</option>                                                                
+                                                            <option value="Farmer">Farmer</option>                                                                
+                                                            <option value="Student">Student</option>                                                                
+                                                           
+                                                        </select>                                                                                        
+                                                    </div>
+                                                    <div class="mb-3 col-md-3"  id="Income">
+                                                        <label for="Income" class="form-label">Gross Annual Income </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class='ri-money-dollar-circle-line'></i></div>
+                                                            <input type="text" class="form-control" placeholder="Enter Your Gross Annual Income" name='annual_income'>
+                                                        </div>                                                
+                                                    </div>
+                                                    <div class="mb-3 col-md-3"  id="BusinessType">
+                                                        <label for="BusinessType" class="form-label">Business Type</label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class=' ri-money-dollar-circle-line'></i></div>
+                                                            <input type="text" class="form-control" placeholder="Enter Your Business Type" name='BusinessType'>
+                                                        </div>                                                
+                                                    </div>
+                                                    <div class="mb-3 col-md-3"  id="Company" >
+                                                        <label for="Company" class="form-label">Company </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class=' ri-briefcase-line'></i></div>
+                                                            <input type="text" class="form-control" placeholder="Enter You Company Name" name='company'>
+                                                        </div>                                                
+                                                    </div>
+                                                    <div class="mb-3 col-md-3" id="Department" >
+                                                        <label for="Department" class="form-label">Department </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class=' ri-user-star-line'></i></div>
+                                                            <input type="text" class="form-control" placeholder="Enter Your Department" name='department'> 
+                                                        </div>                                                
+                                                    </div>
+                                                    <div class="mb-3 col-md-3" id="Designation">
+                                                        <label for="Designation" class="form-label">Designation </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class=' ri-shirt-line'></i></div>
+                                                            <input type="text" class="form-control"  placeholder="Enter Your Designation" name='designation'>
+                                                        </div>                                                
+                                                    </div>
+
+                                                    <div class="mb-3 col-md-3" id="official_email">
+                                                        <label for="official_email" class="form-label">Offical Email Id  </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class='ri-mail-line'></i></div>
+                                                            <input type="official_email" class="form-control"  placeholder="Enter Your Email Id" name='official_email'  >
+                                                        </div>                                                
+                                                    </div>
+
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="Rent" class="form-label">Residential Status </label>
+                                                        <div class="input-group">
+                                                            <div class="form-check form-check-inline">
+                                                                <label for="Rent" class="form-label">Owner </label>
+                                                                <input class="form-check-input" type="radio" name="residential_status" value="owner" onClick="Residential('owner')">
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <label for="Rent" class="form-label">Tenant </label>
+                                                                <input class="form-check-input" type="radio" name="residential_status" value="tenant" onClick="Residential('tenant')">
+                                                            </div>
+                                                        </div>          
+                                                    </div>
+                                                    
+                                                    <div class="mb-3 col-md-3" id="monthly_rent" style='display:None;'>
+                                                      <label for="Rent" class="form-label">Monthly Rent </label>
+                                                      <div class="input-group">
+                                                          <div class="input-group-text"><i class='ri-money-dollar-circle-line'></i></div>
+                                                          <input type="text" class="form-control" id="Rent" placeholder="Enter Monthly Rent" name="monthly_rent">
+                                                      </div>                                                
+                                                    </div>
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                </div>
+                                                <hr>
+
+                                                  <br>
+                                                <div class='mt-4 row'>
+                                                    <p><span class="badge badge-outline-primary">Social Media Details</span></p>
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="Instagram" class="form-label">Instagram Id </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class=' ri-instagram-line'></i></div>
+                                                            <input type="text" class="form-control" id="Instagram" placeholder="Enter Your Instagram Id"  name='instagram'>
+                                                        </div>                                                
+                                                    </div>
+                                                    
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="Facebook" class="form-label">Facebook Id </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class=' ri-facebook-circle-line'></i></div>
+                                                            <input type="text" class="form-control" id="Facebook" placeholder="Enter Your Facebook Id" name='facebook'>
+                                                        </div>                                                
+                                                    </div>
+                                                 
+                                                   
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="Whatspp" class="form-label">Is Your Whatspp Number Same as Contact Number ?</label>
+                                                        <div class="input-group">
+                                                            <div class="col">
+                                                                <input class="form-check-input" type="checkbox" name="whatsapp" id="whatsapp_Check" onClick="WhatsappCheck()">
+                                                                <label class="form-check-label" for="whatsapp">
+                                                                   Yes 
+                                                                </label>
+                                                            </div>
+                                                            
+                                                        </div>                                                
+                                                    </div>
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="Whatspp" class="form-label">Whatspp Number of Customer </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class=' ri-smartphone-line'></i></div>
+                                                            <input type="text" class="form-control" id="WhatsppNum" placeholder="Enter Your Whatspp Number"  name='customer_whatsapp' pattern="[6-9]{1}[0-9]{9}" title="Contact number should be 10 digits long and start with 6, 7, 8, or 9">
+                                                        </div>                                                
+                                                    </div>
+                                                    
+                                                </div>
+                                                <hr>
+                                                <br>
+                                                <div class='mt-4 row'>
+                                                    <p><span class="badge badge-outline-primary">Offical Details</span></p>
+                                                    <div class="mb-3 col-md-3">                                                       
+                                                        <label for="expected_possession">Expected Possession</label>
+                                                        <select class="form-select"  id="expected_possession" name='expected_possession'> 
+                                                            <option selected value=''>Choose...</option>                                                            
+                                                            <option value="ready to move">Ready to move</option>                                                                
+                                                            <option value="6 months">with in 6 months</option>
+                                                            <option value="not in hurry">Can wait </option>
+                                                        </select>                                                                                        
+                                                    </div>
+                                                   <!-- <div class="mb-3 col-md-3">                                                       
+                                                        <label for="expected_possession">Interested Locations</label>
+                                                        <select class="form-select"  id="expected_possession" name='expected_possession' > 
+                                                            <option selected value=''>Choose...</option>
+                                                            
+                                                            <option value="ready to move">Hoshangabad Road</option>                                                                
+                                                            <option value="6 months">Kolar Road</option>
+                                                            <option value="can wait">Ayodha</option>
+
+                                                        </select>
+                                                                                        
+                                                    </div>  -->
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="interested_locations">Interested Locations</label>
+                                                        <input class="form-control" list="locationsList" id="interestedLocationsInput" placeholder="Choose locations..." >
+                                                        <datalist id="locationsList">
+                                                           {% for location in intersetLocation %}
+                                                                <option value="{{ location.localities}}">
+                                                            {% endfor %}
+                                                        </datalist>
+                                                        
+                                                        <div id="selectedLocationsContainer" class="mt-2">
+                                                            
+                                                        </div>
+                                                        
+                                                        <input type="hidden" name="interest" id="selectedLocationsHidden">
+                                                    </div>
+
+                                                    <!-- <div class="mb-3 col-md-3">
+                                                        <label for="states"> State</label>
+                                                        <input type="text" class="form-control" id="states-input" placeholder="Enter Your State" name="state" list="states-list" onchange="CitiesData()">
+                                                        <datalist id="states-list">
+                                                            {% for state in states %}
+                                                            <option data-id="{{ state.id }}" value="{{ state.name }}"></option>
+                                                            {% endfor %}
+                                                        </datalist>
+                                                    </div> -->
+
+
+                                                    <div class="mb-3 col-md-3">
+                                                    
+                                                            <label for="accommodation">Accommodation</label>
+                                                            
+                                                            <select class="form-select"  id="accommodation" name='accommodation' onChange='faccommodation()' > 
+
+                                                                <option value=''>Choose...</option>                                                                
+                                                                <option value="apartment">Apartment</option>                                                                
+                                                                <option value="bungalow">Bungalow</option>
+                                                                <option value="commercial">Commercial</option>
+                                                                <option value="flat">Flat</option>
+                                                                <option value="plot">Plot</option>
+                                                            </select>
+                                                                                            
+                                                    </div>
+
+                                                    <div class="mb-3 col-md-3" id="__purpose" style='display:none;'>
+                                                        <label for="purpose" class="form-label">Purpose </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class=' ri-focus-3-line'></i></div>
+                                                            <input type="text" class="form-control" placeholder="Enter Purpose"  name='purpose' >
+                                                        </div>                                                
+                                                    </div>
+
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="Budget" class="form-label">Budget <span class="text-danger">*</span></label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class=' ri-coins-line'></i></div>
+                                                            <input type="text" class="form-control" id="Budget" placeholder="Enter Your Budget" name='Budget' required>
+                                                        </div>                                                
+                                                    </div>
+                                                    
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="sourceType">Source Type</label>
+                                                        <select class="form-select" id="sourceType" name='sourceType'>
+                                                            <option selected value=''>Choose...</option>
+                                                            <option data-id="1" value="News Paper">News Paper</option>
+                                                            <option data-id="2" value="Social Media">Social Media</option>
+                                                            <option data-id="0" value="Walk In">Walk In</option>
+                                                            <option data-id="0" value="Hoardings">Hoardings</option>
+                                                            <option data-id="3" value="Property Portals">Property Portals</option>
+                                                            <option data-id="0" value="Google">Google</option>
+                                                        </select>
+                                                    </div> 
+
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="source">Source</label>
+                                                        <select class="form-select" id="source" name='source'>
+                                                           
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3 col-md-3">
+                                                        <label for="siteLocation">Site Location</label> <span class="text-danger">*</span>
+                                                        <select class="form-select" id="siteLocation" name='siteLocation' required>
+                                                            <option value="">Choose...</option>
+                                                            <option value="SGS">SAGE Golden Spring</option>
+                                                            <option value="SGP">SAGE Golden Plaza</option>
+                                                            <option value="SSV">SAGE Sun villas</option>
+                                                            <option value="SAGE Bunglow">SAGE Bunglow</option>
+                                                            <option value="SN">SAGE Nirvana</option>
+                                                            <option value="SM">SAGE Milestone</option>
+                                                            <option value="SAGE Skyline">SAGE Skyline </option>
+                                                            <option value="SAGE Prestige">SAGE Prestige</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="mb-3 col-md-6">
+                                                        <label for="Expected" class="form-label">Remark </label>
+                                                        <div class="input-group">
+                                                            <div class="input-group-text"><i class='ri-user-line'></i></div>
+                                                            <textarea type="text" class="form-control" id="remark" name='Remark'> </textarea>
+                                                        </div>                                                
+                                                    </div>
+                                                </div>
+                                                    
+                                                    
+                                                    
+                                                <div class="mt-4 text-center">
+                                                    <div class="col-12">
+                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                    </div>
+                                                </div>
+                                               
+                                            </form>
+                                        </div>
+
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                      
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+
+                </div>
+                <!-- end row -->
+            </div>
+            <!-- end container -->
+        </div>
+        <!-- end auth page content -->
+
+        <!-- footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="text-center">
+                            <p class="mb-0">&copy;
+<<<<<<< HEAD
+                                <script>document.write(new Date().getFullYear())</script> The <a style='color:white;' href='https://sagerealty.in/' target='blank'>SAGE Group</a> Crafted with <i class="mdi mdi-heart text-danger"></i> by The SAGE Web Development Team
+=======
+                                <script>document.write(new Date().getFullYear())</script> The SAGE Crafted with <i class="mdi mdi-heart text-danger"></i> by Anuj Choubey
+>>>>>>> V1.1.4
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- end Footer -->
+    </div>
+    <!-- end auth-page-wrapper -->
+
+    <!-- JAVASCRIPT -->
+    <script src="{% static 'assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
+    <script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
+    <script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
+    <script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
+    <script src="{% static 'assets/js/plugins.js' %}"></script>
+
+    <!-- particles js -->
+    <script src="{% static 'assets/libs/particles.js/particles.js' %}"></script>
+    <!-- particles app js -->
+    <script src="{% static 'assets/js/pages/particles.app.js' %}"></script>
+</body>
+<script>
+
+
+const Occupation = (value) => {
+    const incomeField = document.getElementById('Income'); 
+    const businesstypeField = document.getElementById('BusinessType'); 
+    const companyField = document.getElementById('Company'); 
+    const departmentField = document.getElementById('Department'); 
+    const designationField = document.getElementById('Designation'); 
+    const officalmailField = document.getElementById('official_email'); 
+    const labelbusinesstype = document.querySelector('label[for="BusinessType"]')
+    const bussinessname = document.querySelector('input[name="BusinessType"]')
+    const labelcompnay = document.querySelector('label[for="Company"]')
+    const companyname = document.querySelector('input[name="company"]')
+
+
+    if (value === "Government Sector" || value === "Semi-Government Sector" || value === "Retired" || value === "Private Sector") {        
+        businesstypeField.style.display = 'none'; 
+        companyField.style.display = 'block';
+        departmentField.style.display = 'block';
+        designationField.style.display = 'block';
+        officalmailField.style.display = 'block';
+        labelcompnay.innerHTML = 'Company';
+        companyname.placeholder = 'Enter your Company';
+    }
+
+    if (value === "Self Employed"){
+        businesstypeField.style.display = 'block';
+        companyField.style.display = 'none';
+        departmentField.style.display = 'none';
+        designationField.style.display = 'none';
+        officalmailField.style.display = 'none';
+        labelbusinesstype.innerHTML = 'Area Of Work';
+        bussinessname.placeholder = 'Enter Area Of Work';
+        incomeField.style.display = 'block';
+    }
+
+    if (value === "Business"){        
+        businesstypeField.style.display = 'block';
+        labelbusinesstype.innerHTML = 'Business Type';
+        bussinessname.placeholder = 'Enter your Business Type';
+        companyField.style.display = 'block';
+        labelcompnay.innerHTML = 'Firm Name (if any)';
+        companyname.placeholder = 'Enter your Firm Name';
+        departmentField.style.display = 'none';
+        designationField.style.display = 'block';
+        officalmailField.style.display = 'none';
+    }
+
+    if (value === "House Wife"){
+        businesstypeField.style.display = 'none'; 
+        companyField.style.display = 'none';
+        departmentField.style.display = 'none';
+        designationField.style.display = 'none';
+        officalmailField.style.display = 'none';
+        incomeField.style.display = 'none';
+    }
+
+    
+    if (value === 'Farmer'){
+        businesstypeField.style.display = 'none'; 
+        companyField.style.display = 'none';
+        departmentField.style.display = 'none';
+        designationField.style.display = 'none';
+        officalmailField.style.display = 'none';
+        incomeField.style.display = 'block';
+    }
+
+    if (value === 'Student'){
+        businesstypeField.style.display = 'none'; 
+        companyField.style.display = 'none';
+        departmentField.style.display = 'none';
+        designationField.style.display = 'none';
+        officalmailField.style.display = 'none';
+        incomeField.style.display = 'none';
+    }
+}
+
+
+document.getElementById('Contact').addEventListener('change', function () {
+    
+    var contact_num = document.getElementById('Contact').value;
+    
+    if (contact_num) {
+        var queryset = '?contact=' + encodeURIComponent(contact_num);
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "{% url 'Get_Home_Data' %}" + queryset, true);  
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var responseData = JSON.parse(xhr.responseText);
+                
+                formData(responseData.data);
+            }
+        };
+        xhr.send();
+    }
+});
+
+const MaritalStatus = (value) => {
+    const anni = document.getElementById("Anniversary");
+    if (value === "married"){
+        anni.style.display = 'block';
+    }else{
+        anni.style.display = 'none';
+    }
+   
+}
+
+function formData(data){
+    var cont_name = document.getElementById('customername');
+    var addr = document.getElementById('Address');
+    cont_name.value = data.C_name;
+    addr.value = data.Visit_location;
+}
+
+function formatInputWithCommas(id) {
+    document.getElementById(id).addEventListener('input', function(e) {
+        var value = e.target.value;
+
+        // Remove all non-numeric characters (except for commas)
+        value = value.replace(/[^0-9]/g, '');
+
+        // Convert the input into an integer
+        value = parseInt(value, 10);
+
+        // If it's a valid number, format it with commas
+        if (!isNaN(value)) {
+            e.target.value = value.toLocaleString();
+        } else {
+            e.target.value = '';
+        }
+    });
+}
+
+
+formatInputWithCommas('Income');
+formatInputWithCommas('Rent');
+formatInputWithCommas('Budget');
+
+
+function WhatsappCheck(){
+    var checkBox = document.getElementById('whatsapp_Check');
+    var ph_number = document.getElementById('Contact').value;
+    var WhatsppNum = document.getElementById('WhatsppNum');
+
+    if (checkBox.checked == true){
+        WhatsppNum.value = ph_number;
+    }else{
+        WhatsppNum.value = '';
+    }
+}
+
+function Residential(status){
+    var rent = document.getElementById('monthly_rent');
+
+    if (status == 'owner'){
+        rent.style.display = 'none';
+    }
+     else if ( status == 'tenant'){
+        rent.style.display = 'block';
+    }
+}
+
+function faccommodation(){
+    var commer = document.getElementById('accommodation');
+    var com_value = commer.value;
+    var purposeV = document.getElementById("__purpose");
+    if (com_value == 'commercial'){
+        purposeV.style.display = 'block';
+    }else{
+        purposeV.style.display = 'none';
+    }
+    
+}
+
+function CitiesData() {
+    var stateInput = document.getElementById('states-input');
+    var stateOptions = document.getElementById('states-list').options;
+    var selectedStateId = null;
+
+    // Find the selected state ID based on the value entered
+    for (var i = 0; i < stateOptions.length; i++) {
+        if (stateOptions[i].value === stateInput.value) {
+            selectedStateId = stateOptions[i].getAttribute('data-id');
+            break;
+        }
+    }
+
+    if (selectedStateId) {
+        var queryset = '?stateId=' + encodeURIComponent(selectedStateId);
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "{% url 'Cities' %}" + queryset, true);
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var responseData = JSON.parse(xhr.responseText);
+                displayCities(responseData.cities); 
+            }
+        };
+        xhr.send();
+    }
+}
+
+function displayCities(cities) {
+    var cityDatalist = document.getElementById('cities-list');
+    cityDatalist.innerHTML = ''; 
+
+    if (cities.length > 0) {
+        cities.forEach(function (city) {
+            var option = document.createElement('option');
+            option.value = city.name;
+            option.setAttribute('data-id', city.id);
+            cityDatalist.appendChild(option);
+        });
+    } else {
+        var option = document.createElement('option');
+        option.value = 'No cities found.';
+        cityDatalist.appendChild(option);
+    }
+}
+
+
+
+document.getElementById('sourceType').addEventListener('change', function () {
+    var selectedOption = this.options[this.selectedIndex];
+    var selectedValue = selectedOption.getAttribute('data-id');
+
+    if (selectedValue) {
+        var queryset = '?sourceId=' + encodeURIComponent(selectedValue);
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "{% url 'SourceData' %}" + queryset, true);  
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var responseData = JSON.parse(xhr.responseText);
+                
+                updateSourceDropdown(responseData.cities); 
+            }
+        };
+        xhr.send();
+    }
+});
+
+function updateSourceDropdown(sources) {
+    var sourceDropdown = document.getElementById('source');
+    sourceDropdown.innerHTML = ''; 
+
+    if (sources.length > 0) {
+        sources.forEach(function (source) {
+            var option = document.createElement('option');
+            option.value = source.name;
+            option.textContent = source.name;
+            sourceDropdown.appendChild(option);
+        });
+    } else {
+        var option = document.createElement('option');
+        option.textContent = ' ';
+        sourceDropdown.appendChild(option);
+    }
+}
+
+
+document.getElementById('interestedLocationsInput').addEventListener('input', function() {
+    var input = this.value;
+    var datalist = document.getElementById('locationsList');
+    var options = Array.from(datalist.options).map(option => option.value);
+
+    if (options.includes(input)) {
+        addSelectedLocation(input);
+        this.value = ''; 
+    }
+});
+
+function addSelectedLocation(location) {
+    var container = document.getElementById('selectedLocationsContainer');
+    var hiddenInput = document.getElementById('selectedLocationsHidden');
+
+
+    if (!hiddenInput.value.includes(location)) {
+
+        var span = document.createElement('span');
+        span.classList.add('badge', 'bg-primary', 'me-1', 'selected-location');
+        span.textContent = location;
+        
+
+        var closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.classList.add('btn-close', 'ms-2', 'btn-close-white');
+        closeBtn.setAttribute('aria-label', 'Remove');
+        closeBtn.addEventListener('click', function() {
+            span.remove();
+            removeLocationFromHiddenInput(location);
+        });
+        
+        span.appendChild(closeBtn);
+        container.appendChild(span);
+
+        hiddenInput.value = hiddenInput.value ? hiddenInput.value + ',' + location : location;
+    }
+}
+
+function removeLocationFromHiddenInput(location) {
+    var hiddenInput = document.getElementById('selectedLocationsHidden');
+    var locations = hiddenInput.value.split(',').filter(l => l !== location);
+    hiddenInput.value = locations.join(',');
+}
+
+
+
+</script>
+
+</html>
