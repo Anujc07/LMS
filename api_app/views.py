@@ -910,7 +910,7 @@ def FormData(request, username, form_id):
                     count = 0
                     
                     data_cofellow_entry = HomeVisit.objects.filter(Q(date__month = currentMonth) & Q(visit_type='team')).values()
-                    print("==================11")
+                
                     if data_cofellow_entry.exists():
                         for entry in data_cofellow_entry:
                             co_fellow = entry.get('co_fellow', '')
@@ -931,11 +931,11 @@ def FormData(request, username, form_id):
                                             'Visit_location': entry.get('Visit_location', '')
                                         }]
                                     })
-                    print("==============22")
+                 
 
                     data_entry = (HomeVisit.objects.filter(Q(name=username) & Q(date__month = currentMonth))  
                             .values('C_name', 'C_ph').annotate(No_Visits=Count('C_ph')).order_by('-date')) 
-                    print("========",data_entry)
+                  
                     if data_entry.exists():                       
                        
                         for entry in data_entry:
@@ -1038,7 +1038,7 @@ def FormData(request, username, form_id):
                     if data_cofellow_entry.exists():
                         for entry in data_cofellow_entry:
                             co_fellow = entry.get('cofel_name')
-                            print("=======", co_fellow)
+                           
                             if co_fellow:
                                 co_fellow_list = [name.strip() for name in co_fellow.split(',')]
                                 if username in co_fellow_list:
@@ -1089,7 +1089,7 @@ def FormData(request, username, form_id):
 
 
                     data_cofellow_entry = HomeVisit.objects.filter(Q(date=todayDate) & Q(visit_type='team')).values()
-                    print("==================11")
+               
                     if data_cofellow_entry.exists():
                         for entry in data_cofellow_entry:
                             co_fellow = entry.get('co_fellow', '')
@@ -1111,7 +1111,7 @@ def FormData(request, username, form_id):
                                         }]
                                     })
  
-                    print("=========================22")
+           
                     if data_entry.exists():
                         
                        
