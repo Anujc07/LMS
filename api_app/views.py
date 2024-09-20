@@ -989,20 +989,25 @@ def FormData(request, username, form_id):
                     
 
                     # print("=============", data)
+             
                 elif form_id == 'ip':
                     username = Members.objects.filter(member_name = username).values('id')
                     data = IpData.objects.filter(Q(name_id__in = username) & Q(date__month = currentMonth)).all().values()
                     count = IpData.objects.filter(Q(name_id__in = username) & Q(date__month = currentMonth)).count()
+             
                 elif form_id == 'admission':
                     username = Members.objects.filter(member_name = username).values('id')
                     data = AdmissionData.objects.filter(Q(name_id__in = username) & Q(date__month = currentMonth)).all().values()
                     count = AdmissionData.objects.filter(Q(name_id__in = username) & Q(date__month = currentMonth)).count()
+  
                 elif form_id == 'sagemitra':
                     data = Sagemitra.objects.filter(Q(uname = username) & Q(followUp_date__month = currentMonth)).all().values()
                     count = Sagemitra.objects.filter(Q(uname = username) & Q(followUp_date__month = currentMonth)).count()
+            
                 elif form_id == 'site':
                     data = SiteVisit.objects.filter(Q(sales_name = username) & Q(Visit_Date__month = currentMonth)).all().values()
                     count = SiteVisit.objects.filter(Q(sales_name = username) & Q(Visit_Date__month = currentMonth)).count()
+            
                 elif form_id == 'event':
                     data = EventAcc.objects.filter(Q(name = username) & Q(Q(start_date__month = currentMonth) | Q(end_date__month = currentMonth))).all().values()
                     count = EventAcc.objects.filter(Q(name = username) & Q(Q(start_date__month = currentMonth) | Q(end_date__month = currentMonth))).count()
@@ -1010,8 +1015,54 @@ def FormData(request, username, form_id):
             elif todayDate is not None:
               
                 if form_id == 'corporate':                     
-                    data = CorpFormData.objects.filter(Q(name = username) & Q(visit_date = todayDate)).all().values()
-                    count = CorpFormData.objects.filter(Q(name = username) & Q(visit_date = todayDate)).count()
+                    # data = CorpFormData.objects.filter(Q(name = username) & Q(visit_date = todayDate)).all().values()
+                    # count = CorpFormData.objects.filter(Q(name = username) & Q(visit_date = todayDate)).count()
+                    data = []
+                    count = 0
+
+                    # First QuerySet (co_fellow based)
+                    data_cofellow_entry = CorpFormData.objects.filter(Q(visit_date = todayDate) & Q(visit_type='team')).values()
+
+                    if data_cofellow_entry.exists():
+                        for entry in data_cofellow_entry:
+                            co_fellow = entry['cofel_name']
+
+                            if co_fellow == username:
+                                count += 1
+                                data.append({
+                                    'corp_name': entry['corp_name'],
+                                    'corp_type': entry['corp_type'],                               
+                                    'name': entry['name'],
+                                    'presentation':entry['presentaion'],
+                                    'visit_date': entry['visit_date'],
+                                    'visit_type': entry['visit_type'],
+                                    'cofel_name': entry['cofel_name'],
+                                    'Visit_location': entry['Visit_location'],
+                                    'key_person': entry['key_person'],
+                                    'data_collect': entry['data_collect'],
+                                   
+                                })
+
+
+                    # Second QuerySet (username-based)
+                    data_entry = CorpFormData.objects.filter(Q(name=username) & Q(visit_date = todayDate)).values()
+
+                    if data_entry.exists():
+                        for entry in data_entry:  # Loop through the result
+                            count += 1
+                            data.append({
+                                'corp_name': entry['corp_name'],
+                                'corp_type': entry['corp_type'],                               
+                                'name': entry['name'],
+                                'presentation':entry['presentaion'],
+                                'visit_date': entry['visit_date'],
+                                'visit_type': entry['visit_type'],
+                                'cofel_name': entry['cofel_name'],
+                                'Visit_location': entry['Visit_location'],
+                                'key_person': entry['key_person'],
+                                'data_collect': entry['data_collect'],
+                             
+                            })
                 elif form_id == 'home':
                     # data = HomeVisit.objects.filter(Q(name = username) & Q(date = todayDate)).all().values()
                     data = []
