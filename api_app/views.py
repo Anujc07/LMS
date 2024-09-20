@@ -910,28 +910,32 @@ def FormData(request, username, form_id):
                     count = 0
                     
                     data_cofellow_entry = HomeVisit.objects.filter(Q(date__month = currentMonth) & Q(visit_type='team')).values()
+                    print("==================11")
                     if data_cofellow_entry.exists():
                         for entry in data_cofellow_entry:
-                            co_fellow = entry['co_fellow']
+                            co_fellow = entry.get('co_fellow', '')
                             
-                            if co_fellow == username:
-                                count += 1
-                                data.append({
-                                    'C_name': entry['C_name'],
-                                    'C_ph': entry['C_ph'],
-                                    'record':[ {
-                                        'name' : entry['name'],
-                                        'detail': entry['detail'] | None,
-                                        'date': entry['date'] | None,
-                                        'visit_type': entry['visit_type'] | None,
-                                        'co_fellow': entry['co_fellow'] | None,
-                                        'Visit_location': entry['Visit_location'] | None
-                                    }]
-                                }) 
+                            if co_fellow:
+                                co_fellow_list = [name.strip() for name in co_fellow.split(',') if name]
 
+                                if username in co_fellow_list:
+                                    data.append({
+                                        'C_name': entry.get('C_name', ''),
+                                        'C_ph': entry.get('C_ph', ''),
+                                        'record': [{
+                                            'name': entry.get('name', ''),
+                                            'detail': entry.get('detail', ''),
+                                            'date': entry.get('date', ''),
+                                            'visit_type': entry.get('visit_type', ''),
+                                            'co_fellow': entry.get('co_fellow', ''),
+                                            'Visit_location': entry.get('Visit_location', '')
+                                        }]
+                                    })
+                    print("==============22")
 
                     data_entry = (HomeVisit.objects.filter(Q(name=username) & Q(date__month = currentMonth))  
                             .values('C_name', 'C_ph').annotate(No_Visits=Count('C_ph')).order_by('-date')) 
+                    print("========",data_entry)
                     if data_entry.exists():                       
                        
                         for entry in data_entry:
@@ -1035,22 +1039,24 @@ def FormData(request, username, form_id):
                         for entry in data_cofellow_entry:
                             co_fellow = entry.get('cofel_name')
                             print("=======", co_fellow)
-                            if co_fellow == username:
-                                count += 1
-                                data.append({
-                                    'id': entry.get('id', None),
-                                    'corp_name': entry.get('corp_name', None),
-                                    'corp_type': entry.get('corp_type', None),
-                                    'key_person_contact': entry.get('key_person_contact', None),
-                                    'name': entry.get('name', None),
-                                    'presentation': entry.get('presentation', None),
-                                    'visit_date': entry.get('visit_date', None),
-                                    'visit_type': entry.get('visit_type', None),
-                                    'cofel_name': entry.get('cofel_name', None),
-                                    'Visit_location': entry.get('Visit_location', None),
-                                    'key_person': entry.get('key_person', None),
-                                    'data_collect': entry.get('data_collect', None),
-                                })
+                            if co_fellow:
+                                co_fellow_list = [name.strip() for name in co_fellow.split(',')]
+                                if username in co_fellow_list:
+                                    count += 1
+                                    data.append({
+                                        'id': entry.get('id', None),
+                                        'corp_name': entry.get('corp_name', None),
+                                        'corp_type': entry.get('corp_type', None),
+                                        'key_person_contact': entry.get('key_person_contact', None),
+                                        'name': entry.get('name', None),
+                                        'presentation': entry.get('presentation', None),
+                                        'visit_date': entry.get('visit_date', None),
+                                        'visit_type': entry.get('visit_type', None),
+                                        'cofel_name': entry.get('cofel_name', None),
+                                        'Visit_location': entry.get('Visit_location', None),
+                                        'key_person': entry.get('key_person', None),
+                                        'data_collect': entry.get('data_collect', None),
+                                    })
 
                     # Second QuerySet (username-based)
                     data_entry = CorpFormData.objects.filter(Q(name=username) & Q(visit_date=todayDate)).values()
@@ -1082,26 +1088,30 @@ def FormData(request, username, form_id):
                     
 
 
-                    data_cofellow_entry = HomeVisit.objects.filter(Q(date = todayDate) & Q(visit_type='team')).values()
+                    data_cofellow_entry = HomeVisit.objects.filter(Q(date=todayDate) & Q(visit_type='team')).values()
+                    print("==================11")
                     if data_cofellow_entry.exists():
                         for entry in data_cofellow_entry:
-                            co_fellow = entry['co_fellow']
+                            co_fellow = entry.get('co_fellow', '')
                             
-                            if co_fellow == username:
-                                
-                                data.append({
-                                    'C_name': entry['C_name'],
-                                    'C_ph': entry['C_ph'],
-                                    'record': [{
-                                        'name' : entry['name'],
-                                        'detail': entry['detail'],
-                                        'date': entry['date'],
-                                        'visit_type': entry['visit_type'],
-                                        'co_fellow': entry['co_fellow'],
-                                        'Visit_location': entry['Visit_location']
-                                    }]
-                                }) 
-                    
+                            if co_fellow:
+                                co_fellow_list = [name.strip() for name in co_fellow.split(',') if name]
+
+                                if username in co_fellow_list:
+                                    data.append({
+                                        'C_name': entry.get('C_name', ''),
+                                        'C_ph': entry.get('C_ph', ''),
+                                        'record': [{
+                                            'name': entry.get('name', ''),
+                                            'detail': entry.get('detail', ''),
+                                            'date': entry.get('date', ''),
+                                            'visit_type': entry.get('visit_type', ''),
+                                            'co_fellow': entry.get('co_fellow', ''),
+                                            'Visit_location': entry.get('Visit_location', '')
+                                        }]
+                                    })
+ 
+                    print("=========================22")
                     if data_entry.exists():
                         
                        
