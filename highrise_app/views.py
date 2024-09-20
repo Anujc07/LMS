@@ -917,7 +917,7 @@ def Client_Site_Visit(request):
         facebook = request.POST.get('facebook')
 
         expected_possession  = request.POST.get('expected_possession')
-        interest = request.POST.get('interest')
+        interestlist = request.POST.get('interest')
         accommodation = request.POST.get('accommodation')
         purpose = request.POST.get('purpose')
         Budget = request.POST.get('Budget')
@@ -928,7 +928,7 @@ def Client_Site_Visit(request):
 
         unique_number = random.randint(1, 999999)
         # print("==source===", source)
-
+        interest = interestlist.split(',')
         try: 
            
             visit_date = datetime.now()

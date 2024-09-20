@@ -857,7 +857,6 @@ def FormData(request, username, form_id):
 
                     # First QuerySet (co_fellow based)
                     data_cofellow_entry = CorpFormData.objects.filter(Q(visit_date__month=currentMonth) & Q(visit_type='team')).values()
-                    print("=== Full Queryset ===", list(data_cofellow_entry))  # Debugging output
 
                     if data_cofellow_entry.exists():
                         for entry in data_cofellow_entry:
@@ -866,8 +865,10 @@ def FormData(request, username, form_id):
                             if co_fellow == username:
                                 count += 1
                                 data.append({
+                                    'id': entry.get('id', None),
                                     'corp_name': entry.get('corp_name', None),
                                     'corp_type': entry.get('corp_type', None),
+                                    'key_person_contact': entry.get('key_person_contact', None),
                                     'name': entry.get('name', None),
                                     'presentation': entry.get('presentation', None),
                                     'visit_date': entry.get('visit_date', None),
@@ -880,14 +881,15 @@ def FormData(request, username, form_id):
 
                     # Second QuerySet (username-based)
                     data_entry = CorpFormData.objects.filter(Q(name=username) & Q(visit_date__month=currentMonth)).values()
-                    print("=== Full Data Entry ===", list(data_entry))  # Debugging output
 
                     if data_entry.exists():
                         for entry in data_entry:
                             count += 1
                             data.append({
+                                'id': entry.get('id', None),
                                 'corp_name': entry.get('corp_name', None),
                                 'corp_type': entry.get('corp_type', None),
+                                'key_person_contact': entry.get('key_person_contact', None),
                                 'name': entry.get('name', None),
                                 'presentation': entry.get('presentation', None),
                                 'visit_date': entry.get('visit_date', None),
@@ -898,10 +900,7 @@ def FormData(request, username, form_id):
                                 'data_collect': entry.get('data_collect', None),
                             })
 
-                    print("===========", data)  # Final output
-
-
-                    print("==============", data ,"==================")
+               
                 elif form_id == 'home':
                     # data = HomeVisit.objects.filter(Q(name = username) & Q(date__month = currentMonth)).all().values()
                     data = []
@@ -963,8 +962,56 @@ def FormData(request, username, form_id):
                     count = Sagemitra.objects.filter(Q(uname = username) & Q(followUp_date__month = currentMonth)).count()
             
                 elif form_id == 'site':
-                    data = SiteVisit.objects.filter(Q(sales_name = username) & Q(Visit_Date__month = currentMonth)).all().values()
-                    count = SiteVisit.objects.filter(Q(sales_name = username) & Q(Visit_Date__month = currentMonth)).count()
+
+                    data = []
+                    count = 0
+                    
+                    data_cofellow_entry = SiteVisit.objects.filter(Q(Visit_Date__month=currentMonth) & Q(reference= username)).values()
+
+                    if data_cofellow_entry.exists():
+                        for entry in data_cofellow_entry:
+                            co_fellow = entry.get('cofel_name')
+
+                            if co_fellow == username:
+                                count += 1
+                                data.append({
+                                    'id': entry.get('id', None),
+                                    'Customer_name': entry.get('Customer_name', None),
+                                    'Customer_Contact_number': entry.get('Customer_Contact_number', None),
+                                    'Address': entry.get('Address', None),
+                                    'Remark': entry.get('Remark', None),
+                                    'sales_name': entry.get('sales_name', None),
+                                    'reference': entry.get('reference', None),
+                                    'visit_type': entry.get('visit_type', None),
+                                    'source_type': entry.get('source_type', None),
+                                    'Budget': entry.get('Budget', None),
+                                    'Expected_possession': entry.get('Expected_possession', None),
+                                    'accommodation': entry.get('accommodation', None),
+                                    'Interest': entry.get('Interest', None),
+                                    'Email_id': entry.get('Email_id', None),
+
+                                })
+
+                    data_entry = SiteVisit.objects.filter(Q(Visit_Date__month=currentMonth) & Q(sales_name = username)).values()
+                    if data_entry.exists():
+                        for entry in data_entry:
+                            count += 1
+                            data.append({
+                                    'id': entry.get('id', None),
+                                    'Customer_name': entry.get('Customer_name', None),
+                                    'Customer_Contact_number': entry.get('Customer_Contact_number', None),
+                                    'Address': entry.get('Address', None),
+                                    'Remark': entry.get('Remark', None),
+                                    'sales_name': entry.get('sales_name', None),
+                                    'reference': entry.get('reference', None),
+                                    'visit_type': entry.get('visit_type', None),
+                                    'source_type': entry.get('source_type', None),
+                                    'Budget': entry.get('Budget', None),
+                                    'Expected_possession': entry.get('Expected_possession', None),
+                                    'accommodation': entry.get('accommodation', None),
+                                    'Interest': entry.get('Interest', None),
+                                    'Email_id': entry.get('Email_id', None),
+                            })
             
                 elif form_id == 'event':
                     data = EventAcc.objects.filter(Q(name = username) & Q(Q(start_date__month = currentMonth) | Q(end_date__month = currentMonth))).all().values()
@@ -979,49 +1026,50 @@ def FormData(request, username, form_id):
                     count = 0
 
                     # First QuerySet (co_fellow based)
-                    data_cofellow_entry = CorpFormData.objects.filter(Q(visit_date = todayDate) & Q(visit_type='team')).values()
+                    data_cofellow_entry = CorpFormData.objects.filter(Q(visit_date=todayDate) & Q(visit_type='team')).values()
 
                     if data_cofellow_entry.exists():
                         for entry in data_cofellow_entry:
-                            co_fellow = entry['cofel_name']
+                            co_fellow = entry.get('cofel_name')
 
                             if co_fellow == username:
                                 count += 1
                                 data.append({
-                                    'corp_name': entry['corp_name'],
-                                    'corp_type': entry['corp_type'],                               
-                                    'name': entry['name'],
-                                    'presentation':entry['presentaion'],
-                                    'visit_date': entry['visit_date'],
-                                    'visit_type': entry['visit_type'],
-                                    'cofel_name': entry['cofel_name'],
-                                    'Visit_location': entry['Visit_location'],
-                                    'key_person': entry['key_person'],
-                                    'data_collect': entry['data_collect'],
-                                   
+                                    'id': entry.get('id', None),
+                                    'corp_name': entry.get('corp_name', None),
+                                    'corp_type': entry.get('corp_type', None),
+                                    'key_person_contact': entry.get('key_person_contact', None),
+                                    'name': entry.get('name', None),
+                                    'presentation': entry.get('presentation', None),
+                                    'visit_date': entry.get('visit_date', None),
+                                    'visit_type': entry.get('visit_type', None),
+                                    'cofel_name': entry.get('cofel_name', None),
+                                    'Visit_location': entry.get('Visit_location', None),
+                                    'key_person': entry.get('key_person', None),
+                                    'data_collect': entry.get('data_collect', None),
                                 })
 
-
                     # Second QuerySet (username-based)
-                    data_entry = CorpFormData.objects.filter(Q(name=username) & Q(visit_date = todayDate)).values()
+                    data_entry = CorpFormData.objects.filter(Q(name=username) & Q(visit_date=todayDate)).values()
 
                     if data_entry.exists():
-                        for entry in data_entry:  # Loop through the result
+                        for entry in data_entry:
                             count += 1
                             data.append({
-                                'corp_name': entry['corp_name'],
-                                'corp_type': entry['corp_type'],                               
-                                'name': entry['name'],
-                                'presentation':entry['presentaion'],
-                                'visit_date': entry['visit_date'],
-                                'visit_type': entry['visit_type'],
-                                'cofel_name': entry['cofel_name'],
-                                'Visit_location': entry['Visit_location'],
-                                'key_person': entry['key_person'],
-                                'data_collect': entry['data_collect'],
-                             
+                                'id': entry.get('id', None),
+                                'corp_name': entry.get('corp_name', None),
+                                'corp_type': entry.get('corp_type', None),
+                                'key_person_contact': entry.get('key_person_contact', None),
+                                'name': entry.get('name', None),
+                                'presentation': entry.get('presentation', None),
+                                'visit_date': entry.get('visit_date', None),
+                                'visit_type': entry.get('visit_type', None),
+                                'cofel_name': entry.get('cofel_name', None),
+                                'Visit_location': entry.get('Visit_location', None),
+                                'key_person': entry.get('key_person', None),
+                                'data_collect': entry.get('data_collect', None),
                             })
-                    print("===========", data)
+
                 elif form_id == 'home':
                     # data = HomeVisit.objects.filter(Q(name = username) & Q(date = todayDate)).all().values()
                     data = []
@@ -1084,9 +1132,59 @@ def FormData(request, username, form_id):
                     count = Sagemitra.objects.filter(Q(uname = username) & Q(followUp_date = todayDate)).count()
 
                 elif form_id == 'site':
-                    data = SiteVisit.objects.filter(Q(sales_name = username) & Q(Visit_Date = todayDate)).all().values()
-                    count = SiteVisit.objects.filter(Q(sales_name = username) & Q(Visit_Date = todayDate)).count()
+                    # data = SiteVisit.objects.filter(Q(sales_name = username) & Q(Visit_Date = todayDate)).all().values()
+                    # count = SiteVisit.objects.filter(Q(sales_name = username) & Q(Visit_Date = todayDate)).count()
+                    data = []
+                    count = 0
+                    print("==================")
+                    data_cofellow_entry = SiteVisit.objects.filter(Q(Visit_Date=todayDate) & Q(reference = username)).values()
+                    print("=====1========", data_cofellow_entry)
+                    if data_cofellow_entry.exists():
+                        for entry in data_cofellow_entry:
+                            co_fellow = entry.get('cofel_name')
 
+                            if co_fellow == username:
+                                count += 1
+                                data.append({
+                                    'id': entry.get('id', None),
+                                    'Customer_name': entry.get('Customer_name', None),
+                                    'Customer_Contact_number': entry.get('Customer_Contact_number', None),
+                                    'Address': entry.get('Address', None),
+                                    'Remark': entry.get('Remark', None),
+                                    'sales_name': entry.get('sales_name', None),
+                                    'reference': entry.get('reference', None),
+                                    'visit_type': entry.get('visit_type', None),
+                                    'source_type': entry.get('source_type', None),
+                                    'Budget': entry.get('Budget', None),
+                                    'Expected_possession': entry.get('Expected_possession', None),
+                                    'accommodation': entry.get('accommodation', None),
+                                    'Interest': entry.get('Interest', None),
+                                    'Email_id': entry.get('Email_id', None),
+
+                                })
+                    print("====", username)
+                    data_entry = SiteVisit.objects.filter(Q(Visit_Date=todayDate) & Q(sales_name = username)).values()
+                    print("=========2========", data_entry)
+                    if data_entry.exists():
+                        for entry in data_entry:
+                            count += 1
+                            data.append({
+                                    'id': entry.get('id', None),
+                                    'Customer_name': entry.get('Customer_name', None),
+                                    'Customer_Contact_number': entry.get('Customer_Contact_number', None),
+                                    'Address': entry.get('Address', None),
+                                    'Remark': entry.get('Remark', None),
+                                    'sales_name': entry.get('sales_name', None),
+                                    'reference': entry.get('reference', None),
+                                    'visit_type': entry.get('visit_type', None),
+                                    'source_type': entry.get('source_type', None),
+                                    'Budget': entry.get('Budget', None),
+                                    'Expected_possession': entry.get('Expected_possession', None),
+                                    'accommodation': entry.get('accommodation', None),
+                                    'Interest': entry.get('Interest', None),
+                                    'Email_id': entry.get('Email_id', None),
+                            })
+                        print("===========", data)
                 elif form_id == 'event':
                     data = EventAcc.objects.filter(Q(name = username) & Q(Q(start_date = todayDate) | Q(end_date = todayDate))).all().values()
                     count = EventAcc.objects.filter(Q(name = username) & Q(Q(start_date = todayDate) | Q(end_date = todayDate))).count()
