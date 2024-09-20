@@ -863,23 +863,24 @@ def FormData(request, username, form_id):
                     if data_cofellow_entry.exists():
                         for entry in data_cofellow_entry:
                             co_fellow = entry.get('cofel_name')
-
-                            if co_fellow == username:
-                                count += 1
-                                data.append({
-                                    'id': entry.get('id', None),
-                                    'corp_name': entry.get('corp_name', None),
-                                    'corp_type': entry.get('corp_type', None),
-                                    'key_person_contact': entry.get('key_person_contact', None),
-                                    'name': entry.get('name', None),
-                                    'presentation': entry.get('presentation', None),
-                                    'visit_date': entry.get('visit_date', None),
-                                    'visit_type': entry.get('visit_type', None),
-                                    'cofel_name': entry.get('cofel_name', None),
-                                    'Visit_location': entry.get('Visit_location', None),
-                                    'key_person': entry.get('key_person', None),
-                                    'data_collect': entry.get('data_collect', None),
-                                })
+                            if co_fellow:
+                                co_fellow_list = [name.strip() for name in co_fellow.split(',')]
+                                if username in co_fellow_list:
+                                    count += 1
+                                    data.append({
+                                        'id': entry.get('id', None),
+                                        'corp_name': entry.get('corp_name', None),
+                                        'corp_type': entry.get('corp_type', None),
+                                        'key_person_contact': entry.get('key_person_contact', None),
+                                        'name': entry.get('name', None),
+                                        'presentation': entry.get('presentation', None),
+                                        'visit_date': entry.get('visit_date', None),
+                                        'visit_type': entry.get('visit_type', None),
+                                        'cofel_name': entry.get('cofel_name', None),
+                                        'Visit_location': entry.get('Visit_location', None),
+                                        'key_person': entry.get('key_person', None),
+                                        'data_collect': entry.get('data_collect', None),
+                                    })
 
                     # Second QuerySet (username-based)
                     data_entry = CorpFormData.objects.filter(Q(name=username) & Q(visit_date__month=currentMonth)).values()
@@ -1033,7 +1034,7 @@ def FormData(request, username, form_id):
                     if data_cofellow_entry.exists():
                         for entry in data_cofellow_entry:
                             co_fellow = entry.get('cofel_name')
-
+                            print("=======", co_fellow)
                             if co_fellow == username:
                                 count += 1
                                 data.append({
@@ -1138,9 +1139,8 @@ def FormData(request, username, form_id):
                     # count = SiteVisit.objects.filter(Q(sales_name = username) & Q(Visit_Date = todayDate)).count()
                     data = []
                     count = 0
-                    print("==================")
                     data_cofellow_entry = SiteVisit.objects.filter(Q(Visit_Date=todayDate) & Q(reference = username)).values()
-                    print("=====1========", data_cofellow_entry)
+                    
                     if data_cofellow_entry.exists():
                         for entry in data_cofellow_entry:
                             co_fellow = entry.get('cofel_name')
