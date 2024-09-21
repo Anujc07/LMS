@@ -242,11 +242,11 @@ def Set_Target(request, username):
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def Data(request):
-    corporate_list = CorporatesList.objects.values_list('corpo_name', 'corporate_type_id').order_by('corpo_name')
+    corporate_list = CorporatesList.objects.values_list('id', 'corpo_name', 'corporate_type_id').order_by('corpo_name')
     corporate_type = CorporateType.objects.values_list('corpo_type', 'id').order_by('corpo_type')
-    members = Members.objects.filter(status=1).values_list('member_name', flat=True).order_by('member_name')
-    sage_mitra_list = SageMitraList.objects.values_list('sm_name', 'sm_ph').order_by('sm_name')
-    event_type_list = EventType.objects.values_list('event_type', flat=True).order_by('event_type')
+    members = Members.objects.filter(status=1).values_list('id', 'member_name', flat=True).order_by('member_name')
+    sage_mitra_list = SageMitraList.objects.values_list('id','sm_name', 'sm_ph').order_by('sm_name')
+    event_type_list = EventType.objects.values_list('id','event_type', flat=True).order_by('event_type')
     interested_localities = Interested_localities.objects.values_list('localities', flat=True).order_by('localities')
     source =  Source.objects.values_list('name', 'id', 'source_id').order_by('name')
     state_location = States.objects.filter(country_id = 101).values_list('name', 'id').order_by('name')
@@ -923,6 +923,7 @@ def FormData(request, username, form_id):
                                         'C_name': entry.get('C_name', ''),
                                         'C_ph': entry.get('C_ph', ''),
                                         'record': [{
+                                            'id': entry.get('id', ''),
                                             'name': entry.get('name', ''),
                                             'detail': entry.get('detail', ''),
                                             'date': entry.get('date', ''),
@@ -942,7 +943,7 @@ def FormData(request, username, form_id):
                             C_ph = entry['C_ph']
                             
                             detailed_data = HomeVisit.objects.filter(
-                                Q(name=username) & Q(date__month=currentMonth) & Q(C_ph=C_ph)).values('name','detail', 'date', 'visit_type', 'co_fellow', 'Visit_location').order_by('-date')
+                                Q(name=username) & Q(date__month=currentMonth) & Q(C_ph=C_ph)).values('id', 'name','detail', 'date', 'visit_type', 'co_fellow', 'Visit_location').order_by('-date')
                             count += 1
                             data.append({
                                 # 'id' : entry['id'],
@@ -1102,6 +1103,7 @@ def FormData(request, username, form_id):
                                         'C_name': entry.get('C_name', ''),
                                         'C_ph': entry.get('C_ph', ''),
                                         'record': [{
+                                             'id': entry.get('id', ''),
                                             'name': entry.get('name', ''),
                                             'detail': entry.get('detail', ''),
                                             'date': entry.get('date', ''),
@@ -1120,7 +1122,7 @@ def FormData(request, username, form_id):
                             
                             detailed_data = HomeVisit.objects.filter(
                                 Q(name=username) & Q(date = todayDate) & Q(C_ph=C_ph)
-                            ).values('detail', 'date', 'visit_type', 'co_fellow', 'Visit_location', 'name').order_by('-date')
+                            ).values('id', 'detail', 'date', 'visit_type', 'co_fellow', 'Visit_location', 'name').order_by('-date')
 
                             data.append({
                                 # 'id' : entry['id'],
