@@ -405,12 +405,16 @@ def SageMitraForm(request):
         sub_date = timezone.now()
         
         if new_sm_name != '' and new_sm_contact != '':
+            data = SageMitraList.objects.get(sm_ph = new_sm_contact)
+            if data:
+                pass
             
-            new_sm = SageMitraList.objects.create(
-                sm_name = new_sm_name,
-                sm_ph=new_sm_contact
-            )
-            new_sm.save()
+            else:
+                new_sm = SageMitraList.objects.create(
+                    sm_name = new_sm_name,
+                    sm_ph=new_sm_contact
+                )
+                new_sm.save()
           
             try:
                 sage_mitra = Sagemitra.objects.create(
