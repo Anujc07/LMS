@@ -405,28 +405,39 @@ def SageMitraForm(request):
         sub_date = timezone.now()
         
         if new_sm_name != '' and new_sm_contact != '':
-            data = SageMitraList.objects.get(sm_ph = new_sm_contact)
-            if data:
-                pass
-            
-            else:
-                new_sm = SageMitraList.objects.create(
-                    sm_name = new_sm_name,
-                    sm_ph=new_sm_contact
-                )
-                new_sm.save()
-          
             try:
-                sage_mitra = Sagemitra.objects.create(
-                    new_sm_contact=new_sm_contact,
-                    uname=uname,
-                    SM_name=new_sm_name,
-                    followUp_date=today_date,
-                    No_leads=no_leads,
-                    lead_detail=lead_detail,
-                    new_sm_name=new_sm_name,
-                    submission_date = sub_date,
-                )
+                data = SageMitraList.objects.get(sm_ph = new_sm_contact)
+                if data:
+                    sage_mitra = Sagemitra.objects.create(
+                        new_sm_contact=new_sm_contact,
+                        uname=uname,
+                        SM_name=new_sm_name,
+                        followUp_date=today_date,
+                        No_leads=no_leads,
+                        lead_detail=lead_detail,
+                        new_sm_name=new_sm_name,
+                        submission_date = sub_date,
+                    )
+                    
+                
+                else:
+                    new_sm = SageMitraList.objects.create(
+                        sm_name = new_sm_name,
+                        sm_ph=new_sm_contact
+                    )
+                    new_sm.save()
+            
+                
+                    sage_mitra = Sagemitra.objects.create(
+                        new_sm_contact=new_sm_contact,
+                        uname=uname,
+                        SM_name=new_sm_name,
+                        followUp_date=today_date,
+                        No_leads=no_leads,
+                        lead_detail=lead_detail,
+                        new_sm_name=new_sm_name,
+                        submission_date = sub_date,
+                    )
                 sage_mitra.save()
                 success_message = 'SageMitra Detail Added'
                 return Response({'success':success_message}, status= status.HTTP_200_OK)
