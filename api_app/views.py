@@ -498,29 +498,21 @@ def CorporateForm(request):
 @permission_classes([IsAuthenticated])
 def SageMitraForm(request):
     if request.method == 'POST':
-        try:
-
-            
-            uname = request.data.get('username')
-            sm_name = request.data.get('sm_name')
-            today_date = datetime.now()  
-            no_leads = request.data.get('no_leads')
-            lead_detail = request.data.get('lead_Detail')
-            sm_contact = request.data.get('sm_contact')
-            new_sm_name = request.data.get('new_sm_name')
-            new_sm_contact = request.data.get('new_sm_contact')
-            # followup_date = datetime.strptime(date, '%Y-%m-%d').date()
-            sub_date = timezone.now()
-            
-            if new_sm_name != '' and new_sm_contact != '':
-                
-                new_sm = SageMitraList.objects.create(
-                    sm_name = new_sm_name,
-                    sm_ph=new_sm_contact
-                )
-                new_sm.save()
-            
-                try:
+        uname = request.data.get('username')
+        sm_name = request.data.get('sm_name')
+        today_date = datetime.now()  
+        no_leads = request.data.get('no_leads')
+        lead_detail = request.data.get('lead_Detail')
+        sm_contact = request.data.get('sm_contact')
+        new_sm_name = request.data.get('new_sm_name')
+        new_sm_contact = request.data.get('new_sm_contact')
+        # followup_date = datetime.strptime(date, '%Y-%m-%d').date()
+        sub_date = timezone.now()
+        
+        if new_sm_name != '' and new_sm_contact != '':
+            try:
+                data = SageMitraList.objects.get(sm_ph = new_sm_contact)
+                if data:
                     sage_mitra = Sagemitra.objects.create(
                         new_sm_contact=new_sm_contact,
                         uname=uname,
@@ -531,33 +523,50 @@ def SageMitraForm(request):
                         new_sm_name=new_sm_name,
                         submission_date = sub_date,
                     )
-                    sage_mitra.save()
-                    success_message = 'SageMitra Detail Added'
-                    return Response({'success':success_message}, status= status.HTTP_200_OK)
-                except Exception as e:
-                    error_message = 'Invalid input'
-                    return Response({'error': error_message}, status=status.HTTP_200_OK)
-            else:
-                try:                
+                    
+                
+                else:
+                    new_sm = SageMitraList.objects.create(
+                        sm_name = new_sm_name,
+                        sm_ph=new_sm_contact
+                    )
+                    new_sm.save()
+            
+                
                     sage_mitra = Sagemitra.objects.create(
-                        sm_contact=sm_contact,
+                        new_sm_contact=new_sm_contact,
                         uname=uname,
-                        SM_name=sm_name,
+                        SM_name=new_sm_name,
                         followUp_date=today_date,
                         No_leads=no_leads,
                         lead_detail=lead_detail,
+                        new_sm_name=new_sm_name,
                         submission_date = sub_date,
                     )
-                    sage_mitra.save()
-                    success_message = 'SageMitra Detail Added'
-                    return Response({'success': success_message}, status=status.HTTP_200_OK)
-                except Exception as e:
+                sage_mitra.save()
+                success_message = 'SageMitra Detail Added'
+                return Response({'success':success_message}, status= status.HTTP_200_OK)
+            except Exception as e:
+                error_message = 'Invalid input'
+                return Response({'error': error_message}, status=status.HTTP_200_OK)
+        else:
+            try:                
+                sage_mitra = Sagemitra.objects.create(
+                    sm_contact=sm_contact,
+                    uname=uname,
+                    SM_name=sm_name,
+                    followUp_date=today_date,
+                    No_leads=no_leads,
+                    lead_detail=lead_detail,
+                    submission_date = sub_date,
+                )
+                sage_mitra.save()
+                success_message = 'SageMitra Detail Added'
+                return Response({'success': success_message}, status=status.HTTP_200_OK)
+            except Exception as e:
 
-                    error_message = 'Invalid input'
-                    return Response({'error': error_message}, status=status.HTTP_200_OK)
-        except Exception as e:
-            print("========", e)
-            return Response({'error': e})
+                error_message = 'Invalid input'
+                return Response({'error': error_message}, status=status.HTTP_200_OK)
     else:
         return Response({'error': 'Invalid Method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
