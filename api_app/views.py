@@ -112,24 +112,26 @@ def Login(request):
         username = request.data.get('username')
         password = request.data.get('password')
         
-
-        user = authenticate(username=username, password=password)
-        
-
-        if user is not None:
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-                'user': {
-                    'username': user.username,
-                    'first_name': user.first_name,
-                    'email': user.email,
-                }
-            }, status=status.HTTP_200_OK)
-        else:
-         
-            return Response({'error': 'Invalid credentials'}, status=status.HTTP_200_OK)
+        try:
+            user = authenticate(username=username, password=password)
+            
+            if user is not None:
+                refresh = RefreshToken.for_user(user)
+                return Response({
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                    'user': {
+                        'username': user.username,
+                        'first_name': user.first_name,
+                        'email': user.email,
+                    }
+                }, status=status.HTTP_200_OK)
+            else:
+            
+                return Response({'error': 'Invalid credentials'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': e})
+    
     else:
       
         return Response({'error': 'Method not allowed'}, status=status.HTTP_200_OK)
@@ -244,9 +246,9 @@ def Set_Target(request, username):
 def Data(request):
     corporate_list = CorporatesList.objects.values_list('id', 'corpo_name', 'corporate_type_id').order_by('corpo_name')
     corporate_type = CorporateType.objects.values_list('corpo_type', 'id').order_by('corpo_type')
-    members = Members.objects.filter(status=1).values_list('id', 'member_name', flat=True).order_by('member_name')
-    sage_mitra_list = SageMitraList.objects.values_list('id','sm_name', 'sm_ph').order_by('sm_name')
-    event_type_list = EventType.objects.values_list('id','event_type', flat=True).order_by('event_type')
+    members = Members.objects.filter(status=1).values_list('id', 'member_name').order_by('member_name')
+    sage_mitra_list = SageMitraList.objects.filter(status=1).values_list('id','sm_name', 'sm_ph').order_by('sm_name')
+    event_type_list = EventType.objects.values_list('id','event_type').order_by('event_type')
     interested_localities = Interested_localities.objects.values_list('localities', flat=True).order_by('localities')
     source =  Source.objects.values_list('name', 'id', 'source_id').order_by('name')
     state_location = States.objects.filter(country_id = 101).values_list('name', 'id').order_by('name')
@@ -390,7 +392,7 @@ def CityData(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def SageMitraForm(request):
     if request.method == 'POST':
         uname = request.data.get('username')
@@ -404,35 +406,53 @@ def SageMitraForm(request):
         # followup_date = datetime.strptime(date, '%Y-%m-%d').date()
         sub_date = timezone.now()
         
-        if new_sm_name != '' and new_sm_contact != '':
-            data = SageMitraList.objects.get(sm_ph = new_sm_contact)
-            if data:
-                pass
-            
-            else:
-                new_sm = SageMitraList.objects.create(
-                    sm_name = new_sm_name,
-                    sm_ph=new_sm_contact
-                )
-                new_sm.save()
-          
+        if new_sm_name != None and new_sm_contact != None:
+            # print("====================")/
             try:
-                sage_mitra = Sagemitra.objects.create(
-                    new_sm_contact=new_sm_contact,
-                    uname=uname,
-                    SM_name=new_sm_name,
-                    followUp_date=today_date,
-                    No_leads=no_leads,
-                    lead_detail=lead_detail,
-                    new_sm_name=new_sm_name,
-                    submission_date = sub_date,
-                )
+                data = SageMitraList.objects.filter(sm_ph=new_sm_contact).first()
+                print("===========", data)
+                if data:
+                  
+                    sage_mitra = Sagemitra.objects.create(
+                        new_sm_contact=new_sm_contact,
+                        uname=uname,
+                        SM_name=new_sm_name,
+                        followUp_date=today_date,
+                        No_leads=no_leads,
+                        lead_detail=lead_detail,
+                        new_sm_name=new_sm_name,
+                        submission_date = sub_date,
+                    )
+                    success_message = 'SageMitra Detail Added and Your Filled SM Contact Already Exists'
+                    
+                
+                else:
+                  
+                    new_sm = SageMitraList.objects.create(
+                        sm_name = new_sm_name,
+                        sm_ph=new_sm_contact
+                    )
+                    new_sm.save()
+            
+                
+                    sage_mitra = Sagemitra.objects.create(
+                        new_sm_contact=new_sm_contact,
+                        uname=uname,
+                        SM_name=new_sm_name,
+                        followUp_date=today_date,
+                        No_leads=no_leads,
+                        lead_detail=lead_detail,
+                        new_sm_name=new_sm_name,
+                        submission_date = sub_date,
+                    )
+                    success_message = 'SageMitra Detail Added and New Sage Mitra Added'
+
                 sage_mitra.save()
-                success_message = 'SageMitra Detail Added'
+               
                 return Response({'success':success_message}, status= status.HTTP_200_OK)
             except Exception as e:
-                error_message = 'Invalid input'
-                return Response({'error': error_message}, status=status.HTTP_200_OK)
+                print("==============", e)
+                return Response({'error': e}, status=status.HTTP_200_OK)
         else:
             try:                
                 sage_mitra = Sagemitra.objects.create(
