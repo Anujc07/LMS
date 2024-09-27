@@ -118,6 +118,9 @@ const LeadType = (GetData) => {
               }
           },
           plugins: {
+            legend: {
+              display: false
+            },
               datalabels: {
                   anchor: 'end',
                   align: 'end',
@@ -240,6 +243,9 @@ const Visit = (GetData) => {
               }
           },
           plugins: {
+            legend: {
+              display: false
+            },
               datalabels: {
                   anchor: 'end',
                   align: 'end',
@@ -300,6 +306,9 @@ const LeadStates = (GetData) => {
               }
           },
           plugins: {
+            legend: {
+              display: false
+            },
               datalabels: {
                   anchor: 'end',
                   align: 'end',
@@ -376,6 +385,9 @@ const EmpPerformance = (GetData) => {
         }
       },
       plugins: {
+        legend: {
+          display: false
+        },
         datalabels: {
           anchor: 'end',
           align: 'end',
@@ -439,6 +451,9 @@ const EmpAchievement = (GetData) => {
         }
       },
       plugins: {
+        legend: {
+          display: false
+        },
         datalabels: {
           anchor: 'end',
           align: 'end',
