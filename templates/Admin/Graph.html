@@ -9,8 +9,9 @@
     width: auto !important;
 }
 /* HTML: <div class="loader"></div> */
-#loadertext {
-    margin:0 auto 30px auto;
+.loaderclass {
+  
+    margin:100px auto 30px auto;
     display: block;
     justify-content:center !important;
     text-align:center !important;
@@ -103,9 +104,9 @@
         </div>
     </div>
     
-    <div id="loadertext">
+    {% comment %} <div id="loadertext">
         
-    </div>
+    </div> {% endcomment %}
 
     <div class="row">        
         <div class="col-xl-4 col-md-6">
@@ -123,7 +124,7 @@
                         </div>         
                         <div class="avatar-sm flex-shrink-0">
                             <span class="avatar-title bg-warning rounded-2 fs-2">
-                                <i data-feather="award"></i>
+                                 <i class="mdi mdi-account-multiple-plus"></i>
                             </span>
                         </div>           
                     </div>
@@ -145,7 +146,8 @@
                         </div>        
                         <div class="avatar-sm flex-shrink-0">
                             <span class="avatar-title bg-danger rounded fs-3">
-                            <i class="mdi mdi-table-arrow-up"></i>
+                                <i class="mdi mdi-table-arrow-up"></i>
+                               
                             </span>
                         </div>            
                     </div>
@@ -234,6 +236,7 @@
                     <h4 class="card-title mb-0">Lead Type wise leads</h4>
                 </div><!-- end card header -->
                 <div class="card-body">
+                   <div  class='loaderclass'></div>
                     <canvas id="myChart"></canvas>    
                 </div><!-- end card-body -->
             </div><!-- end card -->
@@ -244,6 +247,7 @@
                     <h4 class="card-title mb-0">Lead Stage</h4>
                 </div><!-- end card header -->
                 <div class="card-body">
+                  <div class='loaderclass'></div>
                 <canvas id="myDoughnutChart"></canvas>
                 </div><!-- end card-body -->
             </div><!-- end card -->
@@ -258,6 +262,7 @@
                     <h4 class="card-title mb-0">SR Tracker Data</h4>
                 </div><!-- end card header -->
                 <div class="card-body">
+                  <div id="" class='loaderclass'></div>
                     <canvas id="myLeadChart"></canvas>    
                 </div><!-- end card-body -->
             </div><!-- end card -->
@@ -269,6 +274,7 @@
                     <h4 class="card-title mb-0">Lead Wise State </h4>
                 </div><!-- end card header -->
                 <div class="card-body">
+                  <div id="" class='loaderclass'></div>
                     <canvas id="myFollowupChart"></canvas>    
                 </div><!-- end card-body -->
             </div><!-- end card -->
@@ -283,6 +289,7 @@
                     <h4 class="card-title mb-0">Employee wise Performance</h4>
                 </div><!-- end card header -->
                 <div class="card-body">
+                <div class='loaderclass'></div>
                     <canvas id="myPerformanceChart"></canvas>    
                 </div><!-- end card-body -->
             </div><!-- end card -->
@@ -296,6 +303,7 @@
                     <h4 class="card-title mb-0">Employee wise Achievements</h4>
                 </div>
                 <div class="card-body">
+                <div class='loaderclass'></div>
                     <canvas id="myAchivementsChart"></canvas>    
                 </div>
             </div>

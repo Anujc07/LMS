@@ -6,11 +6,23 @@ let myPerformanceChart = null;
 let myAcieventmentChart = null;
 
 const showLoader = () => {
-  document.getElementById('loadertext').style.display = 'block';
+  let loaders = document.getElementsByClassName('loaderclass');
+  if (loaders.length > 0) {
+    Array.from(loaders).forEach( (loader)=>{
+      loader.style.display = 'block';
+    })
+    
+  }
 }
 
 const hideLoader = () => {
-  document.getElementById('loadertext').style.display = 'none';
+  let loaders = document.getElementsByClassName('loaderclass');
+  if (loaders.length > 0) {
+    Array.from(loaders).forEach( (loader)=>{
+      loader.style.display = 'none';
+    })
+    
+  }
 }
 
 const PerformanceAPI = async (option) =>{
