@@ -4,12 +4,13 @@ let myLeadChart = null;
 let myFollowupChart = null;
 let myPerformanceChart = null;
 let myAcieventmentChart = null;
+
 const showLoader = () => {
-  document.getElementById('loader').style.display = 'block';
+  document.getElementById('loadertext').style.display = 'block';
 }
 
 const hideLoader = () => {
-  document.getElementById('loader').style.display = 'none';
+  document.getElementById('loadertext').style.display = 'none';
 }
 
 const PerformanceAPI = async (option) =>{
@@ -256,7 +257,6 @@ const LeadStates = (GetData) => {
       data: {
           labels: ['Total Leads', 'Follow Up', 'New Leads'],
           datasets: [{
-              label: 'Leads State',
               data: [GetData.total_Leads, GetData.total_followUp, GetData.total_new_leads],
               backgroundColor: [
                 'rgb(54, 162, 235)',

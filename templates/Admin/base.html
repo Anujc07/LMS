@@ -231,7 +231,10 @@
                 <ul class="navbar-nav" id="navbar-nav">
                     {% comment %} <li class="menu-title"><span data-key="t-menu">Menu</span></li> {% endcomment %}
                     <li class="nav-item">
-                        <a class="nav-link menu-link" href="{% url 'Dashboard' %}">
+                        {% comment %} <a class="nav-link menu-link" href="{% url 'Dashboard' %}">
+                            <i class="mdi mdi-atlassian"></i> <span>Dashboards</span>
+                        </a> {% endcomment %}
+                        <a class="nav-link menu-link" href="{% url 'GraphCharts' %}">
                             <i class="mdi mdi-atlassian"></i> <span>Dashboards</span>
                         </a>
                         <a class="nav-link menu-link" href="{% url 'Target_assign' %}">
