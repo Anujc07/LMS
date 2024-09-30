@@ -87,28 +87,6 @@ WSGI_APPLICATION = 'Highrise.wsgi.application'
 
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'acc-dashboard',
-#         'USER': 'acc-dashboard',
-#         'PASSWORD': '',
-#         'HOST': '127.0.0.1',   
-#         'PORT': '3306',
-#     }
-# }
-
-
-# DATABASES = {
-#      'default': {
-#          'ENGINE': 'django.db.backends.mysql',
-#          'NAME': 'acc_tracker',
-#          'USER': 'acc_tracker',
-#          'PASSWORD': 'I2n7t9r@',
-#          'HOST': 'localhost',   
-#          'PORT': '3306',  
-#      }
-#  }
 
 
 DATABASES = {
