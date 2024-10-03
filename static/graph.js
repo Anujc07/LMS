@@ -27,6 +27,7 @@ const hideLoader = () => {
 
 const PerformanceAPI = async (option) =>{
   showLoader(); 
+  
   let url = `http://10.22.130.15:8000/admin/Performance-Graph`;
   if (option){
      url += `?startDate=${option.startDate}&endDate=${option.endDate}&teamId=${option.teamId}&memberName=${option.memberName}` 

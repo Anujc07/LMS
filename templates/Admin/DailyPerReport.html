@@ -209,6 +209,83 @@ function daysInMonth(month, year) {
     return new Date(year, month, 0).getDate();
 }
 
+var FW_target; 
+var SM_FW_target; 
+var home_visit_target; 
+var Corp_visit_target; 
+var IP_target; 
+var Admission_target; 
+
+const trget_obj = {
+    'FW_target': FW_target,
+    'SM_FW_target': SM_FW_target,
+    'home_visit_target': home_visit_target,
+    'Corp_visit_target': Corp_visit_target,
+    'IP_target':IP_target,
+    'Admission_target': Admission_target
+}
+    
+const colorFun = (daysDifference, current_value, target, same_month, days_start_month, target_end, targetKey, index, cells) => {
+        current_target = (target/25)*daysDifference;       
+
+        if (!same_month){
+            end_target = (target_end/25)*days_start_month;
+            current_target = end_target + current_target;
+         
+        }                 
+        percentage = (current_value / current_target) * 100;
+        //Corp_visit_target = Math.round(current_target);
+        trget_obj[targetKey] = Math.round(current_target);
+
+        if (percentage < 40) {
+            cells[index].style.backgroundColor='red';
+            cells[index].style.setProperty('color', 'white', 'important');
+
+        }        
+        else if(percentage >= 40 && percentage < 60) {
+            // cells[9].style.backgroundColor = 'yellow';
+            cells[index].classList.add('bg-danger');
+            cells[index].style.setProperty('color', 'white', 'important');
+
+         } else if (percentage >= 60 && percentage < 80) {
+           // cells[9].style.backgroundColor = 'yellow';
+            cells[index].classList.add('bg-warning');
+        }  else if (percentage >= 80) {
+          //  cells[9].style.backgroundColor = 'green';
+            cells[index].classList.add('bg-success');
+            cells[index].style.setProperty('color', 'white', 'important');
+
+        }
+     
+}
+
+
+const colorFunWithoutDate = (current_value, target, index, cells, targetKey) => {
+
+        percentage = (current_value / target) * 100;
+        trget_obj[targetKey] = target
+
+
+        if (percentage < 40) {
+            cells[index].style.backgroundColor='red';
+            cells[index].style.setProperty('color', 'white', 'important');
+
+        }        
+        else if(percentage >= 40 && percentage < 60) {
+            // cells[9].style.backgroundColor = 'yellow';
+            cells[index].classList.add('bg-danger');
+            cells[index].style.setProperty('color', 'white', 'important');
+
+         } else if (percentage >= 60 && percentage < 80) {
+           // cells[9].style.backgroundColor = 'yellow';
+            cells[index].classList.add('bg-warning');
+        }  else if (percentage >= 80) {
+          //  cells[9].style.backgroundColor = 'green';
+            cells[index].classList.add('bg-success');
+            cells[index].style.setProperty('color', 'white', 'important');
+
+        }
+}
 
 function Table(mainData) {
     mainData.forEach(function (lead, index) {
@@ -226,14 +303,10 @@ function Table(mainData) {
 
         var cells = row.cells;
    //     var booked_target; 
-        var FW_target; 
-        var SM_FW_target; 
-        var home_visit_target; 
-        var Corp_visit_target; 
-        var IP_target; 
-        var Admission_target; 
+        
         var targetArray = lead.target;
         var targetEnd = lead.target_values_end;
+        
         var date = new Date();
         var currentDay = date.getDate();
         var startDate = document.getElementById("StartDate").value;
@@ -262,7 +335,7 @@ function Table(mainData) {
                 var end_month = start.getMonth();
                 var end_year = start.getFullYear();
                 var days_start_month = daysInMonth(start_month, start_year) - start.getDate();
-                var days_start_month = days_start_month ;
+              //  var days_start_month = days_start_month ;
                 var daysDifference = end.getDate();
                 if (days_start_month>25){
                     days_start_month = 25;
@@ -276,169 +349,90 @@ function Table(mainData) {
                 }
 
 
-            targetArray.forEach(function(item, index) {
-
+            targetArray.forEach(function(item, index) {                
+                
                 var target_id = item.Target_id;
                 if (start.getMonth() == end.getMonth()){
                     var target = item.target;
                 }
                 else {
                     var target = item.target;
-                    var target_end = targetEnd[index].target;
+                    var target_end = targetEnd[index] ? targetEnd[index].target : null;
                 }
               
                
                 var percentage;
              //   console.log(target)
                 if (target_id == 2) {
-                    current_corp_visit_target = (target/25)*daysDifference;
-                    if (!same_month){
-                        end_corp_visit_target = (target_end/25)*days_start_month;
-                        current_corp_visit_target = end_corp_visit_target + current_corp_visit_target;
-                     
-                    }
+                    var current_value = lead.corpo_visit
 
+                    colorFun(daysDifference, current_value, target, same_month, days_start_month, target_end, 'Corp_visit_target', 8, cells)
+                   // current_corp_visit_target = (target/25)*daysDifference;
+                   // if (!same_month){
+                   //     end_corp_visit_target = (target_end/25)*days_start_month;
+                   //     current_corp_visit_target = end_corp_visit_target + current_corp_visit_target;                     
+                   // }
+                   // percentage = (lead.corpo_visit / current_corp_visit_target) * 100;
+                   // Corp_visit_target = Math.round(current_corp_visit_target);
                     
 
-                    percentage = (lead.corpo_visit / current_corp_visit_target) * 100;
-                    Corp_visit_target = Math.round(current_corp_visit_target);
-
-                    if (percentage < 40) {
-                        cells[8].style.backgroundColor='red';
-                        cells[8].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                        // cells[9].style.backgroundColor = 'yellow';
-                        cells[8].classList.add('bg-danger');
-                        cells[8].style.color = 'white'; 
-                     } else if (percentage >= 60 && percentage < 80) {
-                       // cells[9].style.backgroundColor = 'yellow';
-                        cells[8].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-                      //  cells[9].style.backgroundColor = 'green';
-                        cells[8].classList.add('bg-success');
-                        cells[8].style.color = 'white'; 
-                    }
                 } else if (target_id == 3) {
+                    var current_value = lead.lead_FW
+                    colorFun(daysDifference, current_value, target, same_month, days_start_month, target_end, 'FW_target', 4, cells)
                     
-                    current_FW_target = (target/25)*daysDifference;
-                    if (!same_month){
-                        end_FW_target = (target_end/25)*days_start_month;
-                        current_FW_target = end_FW_target + current_FW_target;                     
-                    }
-                    FW_target =  Math.round(current_FW_target);
-             
-                    percentage = (lead.lead_FW / current_FW_target) * 100;
-                    if (percentage < 40) {
-                        cells[4].style.backgroundColor='red';
-                        cells[4].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                      
-                        cells[4].classList.add('bg-danger');
-                        cells[4].style.color = 'white'; 
+                //   current_FW_target = (target/25)*daysDifference;
+                //         if (!same_month){
+                //             end_FW_target = (target_end/25)*days_start_month;
+                //        current_FW_target = end_FW_target + current_FW_target;                     
+                //         }
+                //  FW_target =  Math.round(current_FW_target);             
+                //   percentage = (lead.lead_FW / current_FW_target) * 100;
+                //    colorFun(percentage, 4, cells)
 
-                     } else if (percentage >= 60 && percentage < 80) {
-                     
-                        cells[4].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-                     
-                        cells[4].classList.add('bg-success');
-                        cells[4].style.color = 'white'; 
-                    }
                 } else if (target_id == 4) {
+                    var current_value = lead.home_visit
+                    colorFun(daysDifference, current_value, target, same_month, days_start_month, target_end, 'home_visit_target', 7, cells)
 
-                    current_home_visit_target = (target/25)*daysDifference;
-                    if (!same_month){
-                        end_FW_target = (target_end/25)*days_start_month;
-                        current_home_visit_target = end_FW_target + current_home_visit_target;                     
-                    }
-                    home_visit_target = Math.round(current_home_visit_target);
-                    percentage = (lead.home_visit / current_home_visit_target) * 100;
+
+                //current_home_visit_target = (target/25)*daysDifference;
+                // if (!same_month){
+                //        end_FW_target = (target_end/25)*days_start_month;
+                //        current_home_visit_target = end_FW_target + current_home_visit_target;                     
+                //    }
+                //home_visit_target = Math.round(current_home_visit_target);
+                //percentage = (lead.home_visit / current_home_visit_target) * 100;
        
-                    if (percentage < 40) {
-                        cells[7].style.backgroundColor='red';
-                        cells[7].style.color = 'white'; 
-                    } 
-                    else if(percentage >= 40 && percentage < 60) {
-                     
-                        cells[7].classList.add('bg-danger');
-                        cells[7].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 60 && percentage < 80) {
-                     
-                        cells[7].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-          
-                        cells[7].classList.add('bg-success');
-                        cells[7].style.color = 'white'; 
-                    }
+                     //colorFun(percentage, 7, cells)
+
                 } else if (target_id == 5) {
-                    current_sm_fw_target = (target/25)*daysDifference;
-                    if (!same_month){
-                        end_sm_fw_target = (target_end/25)*days_start_month;
-                        current_sm_fw_target = end_sm_fw_target + current_sm_fw_target;                     
-                    }
-                    SM_FW_target =  Math.round(current_sm_fw_target);
-                    percentage = (lead.sm_followup / current_sm_fw_target) * 100;
-                    if (percentage < 40) {
-                        cells[6].style.backgroundColor='red';
-                        cells[6].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                
-                        cells[6].classList.add('bg-danger');
-                        cells[6].style.color = 'white'; 
-                     }  else if (percentage >= 60 && percentage < 80) {
-               
-                        cells[6].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-               
-                        cells[6].classList.add('bg-success');
-                        cells[6].style.color = 'white'; 
-                    }
+                    var current_value = lead.sm_followup
+                    colorFun(daysDifference, current_value, target, same_month, days_start_month, target_end, 'SM_FW_target', 6, cells)
+
+                //   current_sm_fw_target = (target/25)*daysDifference;
+                // if (!same_month){
+                //       end_sm_fw_target = (target_end/25)*days_start_month;
+                //       current_sm_fw_target = end_sm_fw_target + current_sm_fw_target;                     
+                //   }
+                //   SM_FW_target =  Math.round(current_sm_fw_target);
+                //   percentage = (lead.sm_followup / current_sm_fw_target) * 100;
+                //   colorFun(percentage, 6, cells)
+
                 }          
                 else if (target_id == 7) {
-                    current_Admission_target = target;
-                    Admission_target =   Math.round(current_Admission_target);                    
-                    percentage = (lead.total_admission / current_Admission_target) * 100;
-                    if (percentage < 40) {
-                        cells[10].style.backgroundColor='red';
-                        cells[10].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-           
-                        cells[10].classList.add('bg-danger');
-                        cells[10].style.color = 'white'; 
-                     }  else if (percentage >= 60 && percentage < 80) {
-                 
-                        cells[10].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-        
-                        cells[10].classList.add('bg-success');
-                        cells[10].style.color = 'white'; 
-                    }
+                    var current_value = lead.total_admission
+                    colorFun(daysDifference, current_value, target, same_month, days_start_month, target_end, 'Admission_target', 10, cells)
+                   //current_Admission_target = target;
+                   // Admission_target =   Math.round(current_Admission_target);                    
+                    //percentage = (lead.total_admission / current_Admission_target) * 100;
+                    //colorFun(percentage, 10, cells)
                 }           
                  else if (target_id == 8) {
-                    current_IP_target = target;
-                    IP_target =   Math.round(current_IP_target);                  
-                    percentage = (lead.total_ip / current_IP_target) * 100;
-                    if (percentage < 40) {
-                        cells[9].style.backgroundColor='red';
-                        cells[9].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-    
-                        cells[9].classList.add('bg-danger');
-                        cells[9].style.color = 'white'; 
-                     } else if (percentage >= 60 && percentage < 80) {
-                  
-                        cells[9].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-                   
-                        cells[9].classList.add('bg-success');
-                        cells[9].style.color = 'white'; 
-                    }
+                    var current_value = lead.total_ip
+                    colorFun(daysDifference, current_value, target, same_month, days_start_month, target_end, 'IP_target', 9, cells)
+                  //  current_IP_target = target;
+                  //  IP_target =   Math.round(current_IP_target);                  
+                  //  percentage = (lead.total_ip / current_IP_target) * 100;
+                  //   colorFun(percentage, 9, cells)
                 }     
             });
         }else{
@@ -450,142 +444,66 @@ function Table(mainData) {
          
                 if (target_id == 2) {
                  //   console.log('=========', target_id)
-                    percentage = (lead.corpo_visit / target) * 100;
-                    Corp_visit_target = target;
-                    if (percentage < 40) {
-                        cells[8].style.backgroundColor='red';
-                        cells[8].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                        // cells[9].style.backgroundColor = 'yellow';
-                        cells[8].classList.add('bg-danger');
-                        cells[8].style.color = 'white'; 
-                     }           
-                    
-                    else if (percentage >= 60 && percentage < 80) {
-                       // cells[9].style.backgroundColor = 'yellow';
-                        cells[8].classList.add('bg-warning');
-                    }  else if (percentage > 80) {
-                        cells[8].classList.add('bg-success');
-                        cells[8].style.color = 'white'; 
-                    }
+                    var current_value = lead.corpo_visit
+                    colorFunWithoutDate(current_value, target, 8, cells, 'Corp_visit_target');
+                   // percentage = (lead.corpo_visit / target) * 100;
+                   // Corp_visit_target = target;
+                   // colorFun(percentage, 8, cells)
                 } else if (target_id == 3) {
-                    FW_target = target;
-                    percentage = (lead.lead_FW / target) * 100;
-                    if (percentage < 40) {
-                        cells[4].style.backgroundColor='red';
-                        cells[4].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                        // cells[9].style.backgroundColor = 'yellow';
-                        cells[4].classList.add('bg-danger');
-                        cells[4].style.color = 'white'; 
-                     } else if (percentage >= 60 && percentage < 80) {
-                      //  cells[5].style.backgroundColor = 'yellow';
-                        cells[4].classList.add('bg-warning');
-                        
-                    }  else if (percentage >= 80) {
-                      //  cells[5].style.backgroundColor = 'green';
-                        cells[4].classList.add('bg-success');
-                        cells[4].style.color = 'white'; 
-                    }
+                    var current_value = lead.corpo_visit
+                    colorFunWithoutDate(current_value, target, 4, cells, 'FW_target');
+                 //   FW_target = target;
+                //    percentage = (lead.lead_FW / target) * 100;
+                 //    colorFun(percentage, 4, cells)
                 } else if (target_id == 4) {
-                    home_visit_target = target;
-                    percentage = (lead.home_visit / target) * 100;
-                    if (percentage < 40) {
-                        cells[7].style.backgroundColor='red';
-                        cells[7].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                        // cells[9].style.backgroundColor = 'yellow';
-                        cells[7].classList.add('bg-danger');
-                        cells[7].style.color = 'white'; 
-                     } else if (percentage >= 60 && percentage < 80) {
-                        //cells[8].style.backgroundColor = 'yellow';
-                        cells[7].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-                       // cells[8].style.backgroundColor = 'green';
-                        cells[7].classList.add('bg-success');
-                        cells[7].style.color = 'white'; 
-                    }
+                    colorFunWithoutDate(current_value, target, 7, cells, 'home_visit_target');
+                    //home_visit_target = target;
+                    //percentage = (lead.home_visit / target) * 100;
+                    /// colorFun(percentage, 7, cells)
                 } else if (target_id == 5) {
-                    SM_FW_target = target;
-                    percentage = (lead.sm_followup / target) * 100;
-                    if (percentage < 40) {
-                        cells[6].style.backgroundColor='red';
-                        cells[6].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                        // cells[9].style.backgroundColor = 'yellow';
-                        cells[6].classList.add('bg-danger');
-                        cells[6].style.color = 'white'; 
-                     }  else if (percentage >= 60 && percentage < 80) {
-                       // cells[7].style.backgroundColor = 'yellow';
-                        cells[6].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-                      //  cells[7].style.backgroundColor = 'green';
-                        cells[6].classList.add('bg-success');
-                        cells[6].style.color = 'white'; 
-                    }
+                     colorFunWithoutDate(current_value, target, 6, cells, 'SM_FW_target');
+                  //  SM_FW_target = target;
+                  //  percentage = (lead.sm_followup / target) * 100;
+                    // colorFun(percentage, 6, cells)
                 }           
                  else if (target_id == 8) {
-                    IP_target = target;
-                    percentage = (lead.total_ip / target) * 100;
-                    if (percentage < 40) {
-                        cells[9].style.backgroundColor='red';
-                        cells[9].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                        // cells[9].style.backgroundColor = 'yellow';
-                        cells[9].classList.add('bg-danger');
-                        cells[9].style.color = 'white'; 
-                     }  else if (percentage >= 60 && percentage < 80) {
-                       // cells[7].style.backgroundColor = 'yellow';
-                        cells[9].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-                      //  cells[7].style.backgroundColor = 'green';
-                        cells[9].classList.add('bg-success');
-                        cells[9].style.color = 'white'; 
-                    }
+                    colorFunWithoutDate(current_value, target, 9, cells, 'IP_target');
+                  //  IP_target = target;
+                //    percentage = (lead.total_ip / target) * 100;
+                 //    colorFun(percentage, 9, cells)
                 }           
                  else if (target_id == 7) {
-                    Admission_target = target;
-                    percentage = (lead.total_admission / target) * 100;
+                    colorFunWithoutDate(current_value, target, 10, cells, 'Admission_target');
+                   // Admission_target = target;
+                   // percentage = (lead.total_admission / target) * 100;
                    
-                    if (percentage < 40) {
-                        cells[10].style.backgroundColor='red';
-                        cells[10].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                        // cells[9].style.backgroundColor = 'yellow';
-                        cells[10].classList.add('bg-danger');
-                        cells[10].style.color = 'white'; 
-                     } else if (percentage >= 60 && percentage < 80) {
-                       // cells[7].style.backgroundColor = 'yellow';
-                        cells[10].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-                      //  cells[7].style.backgroundColor = 'green';
-                        cells[10].classList.add('bg-success');
-                        cells[10].style.color = 'white'; 
-                    }
+                    // colorFun(percentage, 10, cells)
                 }           
             });
         }
         
+        var startDate = document.getElementById("StartDate").value;
+        var endDate = document.getElementById("EndDate").value;
+        var dateUrl = ''
+        
+        if (startDate && endDate){
+            dateUrl = `&start_date=${startDate}&end_date=${endDate}`
+        }
       
-      
-        cells[1].innerHTML = lead.HandledByEmployee ? "<a class='fw-medium'>" + lead.HandledByEmployee + "</a>" : "No employee data available";
+        cells[1].innerHTML = lead.HandledByEmployee? "<a class='fw-medium' style='cursor: pointer;'>" + lead.HandledByEmployee + "</a>" : "No employee data available";
     
-        cells[2].textContent = lead.new_leads;
-        cells[3].textContent = lead.leadsSageMitra;
-        cells[4].textContent = `${lead.lead_FW}/${FW_target || '0'}`;
+        cells[2].textContent =  lead.new_leads? lead.new_leads : 0 ;
+        cells[3].innerHTML = lead.leadsSageMitra? lead.leadsSageMitra : 0 ;
+        cells[4].innerHTML = lead.lead_FW? `<a class='' style='cursor: pointer; ' href='/admin/employee/${lead.HandledByEmployee}?view=Leads${dateUrl}'>` + lead.lead_FW + "/" + (FW_target? FW_target:0) + "</a>" : 0 ;
 
         cells[5].textContent = lead.missed_followUp;
-        cells[6].textContent = `${lead.sm_followup}/${SM_FW_target || '0'}`;
-        cells[7].textContent = `${lead.home_visit}/${home_visit_target || '0'}`;
-        cells[8].textContent = `${lead.corpo_visit}/${Corp_visit_target || '0'}`;
-        cells[9].textContent = `${lead.total_ip}/${IP_target || '0'}`;
-        cells[10].textContent = `${lead.total_admission}/${Admission_target || '0'}`;
+        cells[6].innerHTML = lead.sm_followup? `<a class='' style='cursor: pointer;' href='/admin/employee/${lead.HandledByEmployee}?view=SM-FW${dateUrl}'>` + lead.sm_followup + "/" + (SM_FW_target? SM_FW_target:0) + "</a>" : 0 ;
+
+        cells[7].innerHTML = lead.home_visit? `<a class='' style='cursor: pointer;' href='/admin/employee/${lead.HandledByEmployee}?view=Home-Visit${dateUrl}'>` + lead.home_visit + "/" + (home_visit_target? home_visit_target:0) + "</a>" : 0 ;
+        cells[8].innerHTML = lead.corpo_visit? `<a class='' style='cursor: pointer;' href='/admin/employee/${lead.HandledByEmployee}?view=Corp-visits${dateUrl}'>` + lead.corpo_visit + "/" + (Corp_visit_target? Corp_visit_target:0) + "</a>" : 0 ;
+        cells[9].innerHTML = lead.total_ip? `<a class='' style='cursor: pointer;' href='/admin/employee/${lead.HandledByEmployee}?view=IP${dateUrl}'>` + lead.total_ip + "/" + (IP_target? IP_target:0) + "</a>" : 0 ;
+        cells[10].innerHTML = lead.total_admission? `<a class='' style='cursor: pointer;' href='/admin/employee/${lead.HandledByEmployee}?view=Admission${dateUrl}'>` + lead.total_admission + "/" + (Admission_target? Admission_target:0) + "</a>" : 0 ;
+
     });
 }
 
@@ -744,31 +662,6 @@ function DPR(queryString) {
     xhr.send();
 }
     
-document.getElementById("DPR-table-body").addEventListener("click", function(event) {
-    var target = event.target;
-    if (target.tagName === "A" && target.classList.contains("fw-medium")) {
-        var name = target.textContent.trim();
-        var startDate = document.getElementById("StartDate").value;
-        var endDate = document.getElementById("EndDate").value;
 
-        var host = window.location.hostname;
-        var relativeUrl = "/admin/employee/" + encodeURIComponent(name);
-        if (startDate || endDate) {
-            relativeUrl += "?";
-            if (startDate) {
-                relativeUrl += "start_date=" + startDate;
-            }
-            if (endDate) {
-                if (startDate) {
-                    relativeUrl += "&";
-                }
-                relativeUrl += "end_date=" + endDate;
-            }
-        }
-        var url = "http://" + host + ':8000' + relativeUrl;
-        window.location.href = url;
-    }
-});
-    
 </script>
 {% endblock %}
