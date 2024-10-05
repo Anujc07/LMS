@@ -1407,11 +1407,13 @@ def DPR_Date_Range(emp, start_date, end_date, request):
                 if employee in co_fellows:
                     team_home_visit_count += 1
         home_visit = solo_home_visit + team_home_visit_count
+
+        new_leads = HighRiseData.objects.filter(Q(HandledByEmployee=employee) & Q(EDate__range=(start_date, end_date))).count()                 
         high_rise_data = HighRiseData.objects.filter(HandledByEmployee=employee)                 
         employee_data = high_rise_data.aggregate(
-                new_leads=Count('EDate', filter=Q(EDate__range=(start_date, end_date))),
                 leadsSageMitra=Count('Enquirytype', filter=Q(Enquirytype__contains='Sage Mitra') & Q(EDate__range=(start_date, end_date)))
             )
+        employee_data['new_leads'] = new_leads
         employee_data['HandledByEmployee'] = employee
         employee_data['corpo_visit'] = corpo_visit
         employee_data['total_ip'] = total_ip
@@ -1496,11 +1498,12 @@ def DPR_Without_Date_Range(emp, request):
         #     new_leads=Sum(Case(When(EDate__date=current_date, then=1), default=0, output_field=IntegerField())),
         #     leadsSageMitra=Sum(Case(When(Enquirytype__contains='Sage Mitra', then=1), default=0, output_field=IntegerField())),
         # )
+        new_leads = HighRiseData.objects.filter(Q(HandledByEmployee=employee) & Q(EDate__date=(current_date))).count()       
         high_rise_data = HighRiseData.objects.filter(HandledByEmployee=employee)                 
-        employee_data = high_rise_data.aggregate(
-                new_leads=Count('EDate', filter=Q(EDate__date=current_date)),
+        employee_data = high_rise_data.aggregate(                
                 leadsSageMitra=Count('Enquirytype', filter=Q(Enquirytype__contains='Sage Mitra'))
             )
+        employee_data['new_leads'] = new_leads
         employee_data['HandledByEmployee'] = employee
         employee_data['corpo_visit'] = corpo_visit
         employee_data['total_ip'] = total_ip
