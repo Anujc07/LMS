@@ -653,9 +653,20 @@ def EmployeeData(request, employee):
         end_date =  datetime.strptime(end_date_str, '%Y-%m-%d') + timedelta(days=1) - timedelta(seconds=1)
         previous_date = end_date - timedelta(days=1)
         previous_date_str = previous_date.strftime('%Y-%m-%d')
-        total_sm_leads = HighRiseData.objects.filter(HandledByEmployee=employee, EDate__date__range=(start_date, end_date), Enquirytype__contains='Sage Mitra').count()
-                          
-        total_leads = FollowUpData.objects.filter(Q(Employee_Name=employee) & Q(FollowUp_Date__range=(start_date, end_date))).count()                        
+        # total_sm_leads = HighRiseData.objects.filter(Q(HandledByEmployee=employee) & Q(EDate__date__range=(start_date, end_date)) & Q(Enquirytype__contains='Sage Mitra')).count()
+        # sm_leads_data = HighRiseData.objects.filter(HandledByEmployee=employee).aggregate(
+        #     leadsSageMitra=Count('Enquirytype', filter=Q(Enquirytype__contains='Sage Mitra'))
+        # )
+
+        # total_sm_leads = sm_leads_data['leadsSageMitra']
+        total_sm_leads = HighRiseData.objects.filter(
+            Q(HandledByEmployee=employee) & 
+            Q(EDate__range=(start_date, end_date)) & 
+            Q(Enquirytype__contains='Sage Mitra')
+        ).count()
+        # print("==============", total_sm_leads)
+        total_leads = FollowUpData.objects.filter(Q(Employee_Name=employee) & Q(FollowUp_Date__range=(start_date, end_date))).count()   
+        # print("======", total_leads)                     
         total_home_visits = HomeVisit.objects.filter(Q(Q(name=employee) | Q(co_fellow__contains=employee)) & Q(date__range=(start_date, end_date))).count()
         # solo_home_visit = HomeVisit.objects.filter(Q(name = employee) & Q(date__range=(start_date, end_date)) & Q(visit_type='solo')).count()  
         # home_visits = HomeVisit.objects.filter(Q(date__range=(start_date, end_date)) & Q(visit_type='team'))
@@ -704,7 +715,13 @@ def EmployeeData(request, employee):
         elif view == 'Home-Visit':
             data = HomeVisit.objects.filter(Q(Q(name=employee) | Q(co_fellow__contains=employee)) & Q(date__range=(start_date, end_date))).order_by('-date').values()
         elif view == 'SM-Leads':
-            data = HighRiseData.objects.filter(HandledByEmployee=employee, EDate__date__range=(start_date, end_date), Enquirytype='Sage Mitra').values()
+            # data = HighRiseData.objects.filter(Q(HandledByEmployee=employee) & Q(EDate__date__range=(start_date, end_date)) & Q(Enquirytype__contains='Sage Mitra')).values()
+            data = HighRiseData.objects.filter(
+                    Q(HandledByEmployee=employee) & 
+                    Q(EDate__range=(start_date, end_date)) & 
+                    Q(Enquirytype__contains='Sage Mitra')
+                ).values()
+
         elif view == '1Site-Visits':
             data = SiteVisit.objects.filter(Q(Q(sales_name = employee) & Q(Visit_Date__range = (start_date, end_date))) | Q(reference = employee)).order_by('-Visit_Date').values()
         elif view == 'Hot-Leads':
@@ -725,13 +742,14 @@ def EmployeeData(request, employee):
     else:
 
         data =FollowUpData.objects.filter(Employee_Name=employee).values()      
-        total_sm_leads = HighRiseData.objects.filter(HandledByEmployee=employee, Enquirytype__contains='Sage Mitra').count()
+        # total_sm_leads = HighRiseData.objects.filter(HandledByEmployee=employee, Enquirytype__contains='Sage Mitra').count()
+        # total_sm_leads = HighRiseData.objects.filter(HandledByEmployee=employee).aggregate( new_leads=Count('EDate', filter=Q(EDate__month=current_month_number)), leadsSageMitra=Count('Enquirytype', filter=Q(Enquirytype__contains='Sage Mitra')) )
+        total_sm_leads =  HighRiseData.objects.filter( Q(HandledByEmployee=employee) & Q(Enquirytype__contains='Sage Mitra')).count()
         total_1_site_visits = SiteVisit.objects.filter(Q(sales_name = employee) | Q(reference = employee)).count()
         total_leads = FollowUpData.objects.filter(Employee_Name=employee).count()      
         total_bookings = HighRiseData.objects.filter(HandledByEmployee=employee, Enquiry_Status='Booked').count()
-        
-
         total_home_visits = HomeVisit.objects.filter(Q(Q(name=employee) | Q(co_fellow__contains=employee)) & Q(date__month=current_month_number)).count()
+      
         # solo_home_visit = HomeVisit.objects.filter(Q(name = employee) & Q(date__month=(current_month_number)) & Q(visit_type='solo')).count()  
         # home_visits = HomeVisit.objects.filter(Q(date__month=(current_month_number)) & Q(visit_type='team'))
         # team_home_visit_count = 0
@@ -767,16 +785,20 @@ def EmployeeData(request, employee):
         # print('=================', employee)
         if view == 'Bookings':
             data = HighRiseData.objects.filter(HandledByEmployee=employee, Enquiry_Status='Booked').values()
+
         elif view == 'IP':
-           
             data = IpData.objects.filter(Q(name_id__in= emp_name) & Q(date__month=current_month_number)).order_by('-date').values()
-        elif view == 'Admission':
         
+        elif view == 'Admission':
             data = AdmissionData.objects.filter(Q(name_id__in= emp_name) & Q(date__month=current_month_number)).order_by('-date').values()
+        
         elif view == 'Home-Visit':
             data = HomeVisit.objects.filter(Q(Q(name=employee) | Q(co_fellow__contains=employee)) & Q(date__month=current_month_number)).order_by('-date').values()
+        
         elif view == 'SM-Leads':
-            data = HighRiseData.objects.filter(HandledByEmployee=employee, Enquirytype__contains='Sage Mitra').values()
+            # data = HighRiseData.objects.filter(HandledByEmployee=employee, Enquirytype__contains='Sage Mitra').values()
+            data = HighRiseData.objects.filter( Q(HandledByEmployee=employee) & Q(Enquirytype__contains='Sage Mitra')).values()
+            # print("===============", data)
         elif view == '1Site-Visits':
             data = SiteVisit.objects.filter(Q(sales_name = employee) | Q(reference = employee)).order_by('-Visit_Date').values()
         elif view == 'Hot-Leads':
@@ -790,8 +812,10 @@ def EmployeeData(request, employee):
             data = Sagemitra.objects.filter(Q(uname=employee) & Q(followUp_date__month=current_month_number)).order_by('-followUp_date').values()
         elif view == 'Corp-visits':
             data = CorpFormData.objects.filter(Q(Q(name=employee) | Q(cofel_name__contains =employee)) & Q(visit_date__month=current_month_number)).order_by('-visit_date').values()   
-          
-    
+        
+        # print(data, '=====================')
+
+        
     return render(request, 'Admin/UserData.html', {   'total_admission': total_admission,'total_IP':total_IP, 'total_corpo_visits': total_corpo_visits, 'SM_FW': SM_FW, 'missed_fw': missed_fw, 'total_2_site_visits': total_2_site_visits, 'hot_leads': hot_leads,
                                                    'view': view, 'team': team, 'start_date': start_date_str, 'end_date': end_date_str, 'data': data, 'name': employee,
                                                    'total_sm_leads': total_sm_leads, 'total_home_visits': total_home_visits,'total_leads': total_leads, 'total_1_site_visits': total_1_site_visits })
@@ -1489,7 +1513,7 @@ def DPR_Without_Date_Range(emp, request):
 
         data.append(employee_data)
     
-    
+    print("==============", data)  
     # end_time = time.time()  
     # query_time = end_time - start_time  
     
@@ -1586,7 +1610,8 @@ def DPR(request):
 
 
 
-#=====end====DPR===section====== 
+#=========================end===============DPR==============section======================= 
+
 from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def Delete_Record(request):
@@ -1821,8 +1846,7 @@ def TeamEdit(request):
 
 
 
-def GraphCharts(request):    
-    
+def GraphCharts(request):        
     teamList = Teams.objects.filter(status=1).all().values()
     memberList = Members.objects.filter(status = 1).order_by('member_name').all().values()
     return render(request, 'Admin/Graph.html', {'teamList': teamList, 'memberList': memberList})

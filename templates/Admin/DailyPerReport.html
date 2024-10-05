@@ -490,10 +490,11 @@ function Table(mainData) {
             dateUrl = `&start_date=${startDate}&end_date=${endDate}`
         }
       
-        cells[1].innerHTML = lead.HandledByEmployee? "<a class='fw-medium' style='cursor: pointer;'>" + lead.HandledByEmployee + "</a>" : "No employee data available";
+        cells[1].innerHTML = lead.HandledByEmployee? `<a class='fw-medium' style='cursor: pointer;'  href='/admin/employee/${lead.HandledByEmployee}'>` + lead.HandledByEmployee + "</a>" : "No employee data available";
     
         cells[2].textContent =  lead.new_leads? lead.new_leads : 0 ;
-        cells[3].innerHTML = lead.leadsSageMitra? lead.leadsSageMitra : 0 ;
+       // cells[3].innerHTML = lead.leadsSageMitra? lead.leadsSageMitra : 0 ;
+        cells[3].innerHTML = lead.leadsSageMitra? `<a class='' style='cursor: pointer; ' href='/admin/employee/${lead.HandledByEmployee}?view=SM-Leads${dateUrl}'>` + lead.leadsSageMitra + "</a>" : 0 ;
         cells[4].innerHTML = lead.lead_FW? `<a class='' style='cursor: pointer; ' href='/admin/employee/${lead.HandledByEmployee}?view=Leads${dateUrl}'>` + lead.lead_FW + "/" + (FW_target? FW_target:0) + "</a>" : 0 ;
 
         cells[5].textContent = lead.missed_followUp;

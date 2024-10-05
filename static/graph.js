@@ -558,5 +558,4 @@ const TabCards = (GetData) => {
     }
   });
   
-  console.log('Data-targets set successfully');
 };

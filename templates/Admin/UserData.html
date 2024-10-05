@@ -48,7 +48,7 @@
                     {% elif view == '2Site-Visits' %}
                         <option >Re-site Visits</option>
                     {% elif view == 'SM-Leads' %}
-                        <option > SM Leads</option>
+                        <option> SM Leads</option>
                     {% elif view == 'Hot-Leads' %}
                         <option > Hot Leads</option>
                     {% elif view == 'Missed-FW' %}
@@ -162,6 +162,7 @@
                                     <th scope="col" class='text-center'>Submission Date</th>       
                                     <th scope="col" class='text-center'>Leads</th>       
                                     <th scope="col" class='text-center'>Leads Detail</th>
+                                    <th scope="col" class='text-center'>Broker Name</th>
                                     
                                     {% if request.session.teamIDs %}
                             
@@ -182,6 +183,8 @@
                                     <td class='text-center'>{{ item.submission_date}}</td>
                                     <td class='text-center'>{{ item.No_leads }}</td>
                                     <td class='text-center'>{{ item.lead_detail }}</td>
+                                    <td class='text-center'>{{ item.Broker_Name }}</td>
+                                    
                                     {% if request.session.teamIDs %}
                             
                                     {% else %}
