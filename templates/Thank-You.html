@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none">
+
+
+<head>
+{% load static %}
+    <meta charset="utf-8" />
+    <title>Thank You</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- App favicon -->
+    <!-- Layout config Js -->
+    <script src="{% static 'assets/js/layout.js' %}"></script>
+    <!-- Bootstrap Css -->
+    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+    <!-- Icons Css -->
+    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="{% static 'assets/css/app.min.css' %}" rel="stylesheet" type="text/css" />
+    <!-- custom Css-->
+    <link href="{% static 'assets/css/custom.min.css' %}" rel="stylesheet" type="text/css" />
+    <style>
+        .carousel-item {
+            position: relative;
+        }
+    
+        .carousel-item .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); 
+            z-index: 1;
+        }
+    
+        .carousel-item img {
+            z-index: 0;
+        }
+    
+        .carousel-caption {
+            z-index: 2; 
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- auth-page wrapper -->
+    <div class="auth-page-wrapper auth-bg-cover py-5 d-flex justify-content-center align-items-center min-vh-100">
+        <div class="bg-overlay"></div>
+        <!-- auth-page content -->
+        <div class="auth-page-content overflow-hidden pt-lg-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card overflow-hidden">
+                            <div class="row justify-content-center g-0">
+                                <div class="col-lg-6">
+                                    <div class="p-lg-5 p-4 h-100">
+                                        <div class="bg-overlay"></div>
+                                        <div class="position-relative h-100 d-flex flex-column">
+                                            {% comment %} <div class="mb-4">
+                                                <a href="index-2.html" class="d-block">
+                                                    <img src="assets/images/logo-light.png" alt="" height="18">
+                                                </a>
+                                            </div> {% endcomment %}
+                                            <div class="mt-auto">
+                                                
+
+                                                <div id="carouselExampleCaption" class="carousel slide" data-bs-ride="carousel">
+                                                    <div class="carousel-inner" role="listbox">
+                                                       
+                                                        <div class="carousel-item active">
+                                                            <div class="overlay"></div> <!-- Overlay div -->
+                                                            <img src="/static/2.jpg" alt="" class="d-block img-fluid mx-auto">
+                                                            <div class="carousel-caption d-none d-md-block text-white-50">
+                                                                <h5 class="text-white">SAGE Golden Plaza</h5>
+                                                                <p style='color:white;'>SAGE Golden Spring, is an exclusively designed project with elegance and style for comfort and luxury. We provide the perfect balance of amenities and ambiance. Serenity in the neighborhood, living in these abodes is a synonym for healthy modern life.</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="carousel-item ">
+                                                            <div class="overlay"></div> <!-- Overlay div -->
+                                                            <img src="/static/1.jpg" alt="" class="d-block img-fluid mx-auto">
+                                                            <div class="carousel-caption d-none d-md-block text-white-50">
+                                                                <h5 class="text-white">SAGE Milestone</h5>
+                                                                <p style='color:white;'>The Epitome of Luxury Living with Excellent Connectivity from Main Hoshangabad Road, Raisen Road & Bhojpur Road.</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="carousel-item ">
+                                                            <div class="overlay"></div> <!-- Overlay div -->
+                                                            <img src="/static/3.jpg" alt="" class="d-block img-fluid mx-auto">
+                                                            <div class="carousel-caption d-none d-md-block text-white-50">
+                                                                <h5 class="text-white">SAGE Sun City</h5>
+                                                                <p style='color:white;'>Sage sun city 1, 3 and 4 BHK duplex, near katara extension, sahara bypass road, Bhopal (MP) - 462022</p>
+                                                            </div>
+                                                        </div>
+                                                       
+                                                    </div>
+                                                    <a class="carousel-control-prev" href="#carouselExampleCaption" role="button" data-bs-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+                                                    <a class="carousel-control-next" href="#carouselExampleCaption" role="button" data-bs-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
+                                                </div>
+                                                <!-- end carousel -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end col -->
+
+                                <div class="col-lg-6">
+                                    <div class="p-lg-5 p-4 text-center">
+                                        <div class="avatar-lg mx-auto mt-2">
+                                            <div class="avatar-title bg-light text-success display-3 rounded-circle">
+                                                <i class="ri-checkbox-circle-fill"></i>
+                                            </div>
+                                        </div>
+                                        <div class="mt-4 pt-2">
+                                            <h4>Thank You !</h4>
+                                            <p class="text-muted mx-4">Thank you for Visit.</p>
+                                            <div class="mt-4">
+                                                <a class="btn btn-success w-150">Feedback Code for Sales Person : "{{ request.GET.access_id }}"</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end col -->
+                            </div>
+                            <!-- end row -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+
+                </div>
+                <!-- end row -->
+            </div>
+            <!-- end container -->
+        </div>
+        <!-- end auth page content -->
+
+        <!-- footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="text-center">
+                            <p class="mb-0">&copy;
+                                <script>document.write(new Date().getFullYear())</script> The SAGE Crafted with <i class="mdi mdi-heart text-danger"></i> by Anuj Choubey
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- end Footer -->
+    </div>
+    <!-- end auth-page-wrapper -->
+  <!-- JAVASCRIPT -->
+  <script src="{% static 'assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
+  <script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
+  <script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
+  <script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
+  <script src="{% static 'assets/js/plugins.js' %}"></script>
+
+  <!-- particles js -->
+  <script src="{% static 'assets/libs/particles.js/particles.js' %}"></script>
+  <!-- particles app js -->
+  <script src="{% static 'assets/js/pages/particles.app.js' %}"></script>
+</body>
+
+
+<!-- Mirrored from themesbrand.com/velzon/html/material/auth-success-msg-cover.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 10 Sep 2022 09:07:40 GMT -->
+</html>

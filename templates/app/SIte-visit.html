@@ -1,0 +1,434 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<!-- CORE CSS TEMPLATE - END -->
+<style>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+</style>
+
+<div class="container">
+  <div class="sect">
+     <h5 class="pagetitle">Site Visit Form</h5>
+     <p>Feed Your Site Visit Details.</p>
+    
+      <div class="row">
+          <div class="col s4">
+              <button  class="waves-effect waves-light btn-large bg-primary" id='newform'>Add Client Site Visit Details</button>
+          </div>
+          <div class="col s4">
+              <button  class="waves-effect waves-light btn-large bg-primary" id='exisingform'>Update Client Site Visit Details</button>
+          </div>
+      </div>
+      <div class="divider"></div>
+  </div>
+</div> 
+
+<!-- Form Section Starts -->
+<div class="container">
+  <div class="section">
+      <form action='{% url 'Site_Visit' %}' method='POST' enctype="multipart/form-data" id='Form'>
+          {% csrf_token %}    
+              <div class='section'>
+                    <div class="row">
+                      <div class="col s12 pad-0">
+                          {% comment %} <h5 class="bot-18 sec-tit" style="font-size: 16px;">Visit Type</h5> {% endcomment %}
+                          <p>
+                              <label>
+                                  <input type="radio" name="visit_type" value="direct" class="with-gap" id='direct-visit' checked/>
+                                  <span>Direct Visit</span>
+                              </label>
+                          </p>
+                          <p>
+                              <label>
+                                  <input type="radio" name="visit_type" value="indirect" class="with-gap" id='indirect-visit'/>
+                                  <span>Indirect Visit</span>
+                              </label>
+                          </p>
+                      </div>
+                    </div>
+                    
+                <div class="row" id='member-list'>
+                  <div class="input-field col s12">
+                      <select name='member'>
+                          <option value=''>Select Member</option>                          
+                          {% for i in member_list %}
+                          <option value='{{ i.member_name }}'>{{ i.member_name }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>                 
+              </div>
+              <div class="row">
+                <div class="input-field col s12">                 
+                    <input id="event_title11" type="text" name='username' required value="{{ request.session.first_name }}" readonly>
+                    <label for="event_title11">Your Name</label>
+                </div>
+              </div> 
+              <div class="row" id='customerid1' style= "display:none;" >
+                  <div class="col s12">
+                    <label for="customer_id">Customer id<span style="color:red; font-size:18px;">*</span></label>  
+                    <input id="customer_id" type="number" name='customer_id' onchange='Get_customer()'>
+                      
+                  </div>
+              </div>
+              <div class="row" id='customerid2' style= "display:none;">
+                <div class="col s12">
+                    <button class="waves-effect waves-light btn-large bg-success" id='customer_id_btn'>Save</button>
+                </div>
+            </div>
+          </div>
+        <div class='section' id='existing_emp'>
+            <div class="row  ">
+                <div class=" col s12">
+                    <label for="customer_name">Customer Name<span style="color:red; font-size:18px;">*</span></label>
+                    <input id="customer_name" type="text" name='customer_name' required>
+                    
+                </div>
+            </div>
+
+            <div class="row  ">
+              <div class="col s12">
+                  <label for="start-date">Visit Date <span style="color:red; font-size:18px;">*</span></label>
+                  <input type="date" id="date" class="datepicker datepicker" name="date" onfocus="(this.type='date')" onblur="(this.type='text')" required onchange="checkDate()">
+                  
+              </div>
+            </div>
+
+            <div class="row  ">
+              <div class=" col s12">
+                <label for="Monthly-Rent">Monthly Rent</label>
+                  <input type="text" id="Monthly-Rent" class="Monthly-Rent datepicker" name="monthly_rent"  >
+                  
+              </div>
+            </div>
+
+            <div class="row  ">
+              <div class=" col s12">
+                <label for="Address">Address <span style="color:red; font-size:18px;">*</span> </label>
+                  <input type="text" id="Address" class="Address datepicker" name='address' required>
+                
+              </div>
+            </div>
+
+            <div class="row  ">
+              <div class=" col s12">
+                <label for="Contact_Number">Contact Number of Customer <span style='color:red; font-size:18px;'>*</span></label>
+                  <input type="text" id="Contact_Number" class="datepicker datepicker800" name='customer_contact' required pattern="[6-9]{1}[0-9]{9}" title="Contact number should be 10 digits long and start with 6, 7, 8, or 9">
+                
+              </div>
+            </div>  
+
+            <div class="row  ">
+              <div class=" col s12">
+                <label for="Whatspp">Whatspp Number of Customer</label>
+                  <input type="text" id="Whatspp" class="Whatspp datepicker800" name='customer_whatspp' pattern="[6-9]{1}[0-9]{9}" title="Contact number should be 10 digits long and start with 6, 7, 8, or 9">
+                  
+              </div>
+            </div>  
+
+            <div class="row  ">
+              <div class=" col s12">
+                <label for="Instagram">Instagram Id</label>
+                  <input type="text" id="Instagram" class="Instagram datepicker" name='instagram' >
+                  
+              </div>
+            </div>
+
+            <div class="row  ">
+              <div class=" col s12">
+                <label for="email">Email Id <span style="color:red; font-size:18px;">*</span></label>
+                  <input type="email" id="email" class="email datepicker" required  name='email'>
+                  
+              </div>
+            </div>
+
+            <div class="row  ">
+              <div class=" col s12">
+                <label for="official_email">Offical Email Id <span style="color:red; font-size:18px;">*</span></label>
+                  <input type="email" id="official_email" class="official_email datepicker" required  name='official_email'>
+                  
+              </div>
+            </div>
+
+            <div class="row  ">
+              <div class=" col s12">
+                <label for="Facebook">Facebook Id </label>
+                  <input type="text" id="Facebook" class="Facebook datepicker" name='facebook'>
+                  
+              </div>
+            </div>
+
+            <div class="row  ">
+              <div class=" col s12">
+                <label for="Company">Company</label>
+                  <input type="text" id="Company" class="Company datepicker" name='company'>
+                  
+              </div>
+            </div>
+
+            <div class="row  ">
+              <div class=" col s12">
+                <label for="Gross">Gross Annual Income</label>
+                  <input type="text" id="Gross" class="Gross datepicker" name='annual_income'>
+                  
+              </div>
+            </div>
+
+            <div class="row  ">
+              <div class=" col s12">
+                <label for="Department">Department</label>
+                  <input type="text" id="Department" class="Department datepicker"  name='department'>
+                  
+              </div>
+            </div>
+
+            <div class="row  ">
+              <div class=" col s12">
+                <label for="Designation">Designation </label>
+                  <input type="text" id="Designation" class="Designation datepicker" name='designation'  >
+                
+              </div>
+            </div>
+
+            <div class="row ">
+              <div class=" col s12">
+                <label for="DOB">Date of Birth </label>
+                  <input type="date" id="DOB" class="DOB datepicker" name='DOB'  onfocus="(this.type='date')" onblur="(this.type='text')">
+                
+              </div>
+            </div>
+
+            <div class="row ">
+              <div class=" col s12">
+                <label for="Marriage">Marriage Anniversary </label>
+                  <input type="date" id="Marriage" class="Marriage datepicker" name='marriage_anniversary' onfocus="(this.type='date')" onblur="(this.type='text')">
+                  
+              </div>
+            </div>
+
+            <div class="row ">
+              <div class="col s12">
+                <label for="Interest">Interest</label>
+                  <input type="text" id="Interest" class="Interest datepicker" name='interest' >
+                
+              </div>
+            </div>
+
+            <div class="row ">
+              <div class=" col s12">
+                <label for="Budget">Budget<span style="color:red; font-size:18px;">*</span></label>
+                  <input type="text" id="Budget" class="Budget datepicker" name='Budget' required >
+                  
+              </div>
+            </div>
+
+            {% comment %} <div class="row ">
+              <div class=" col s12">
+                <label for="Expected">Expected Possession Date</label>
+                  <input type="date" id="Expected" class="Expected datepicker" name='expected_possession_date' onfocus="(this.type='date')" onblur="(this.type='text')">
+                  
+              </div>
+            </div> {% endcomment %}
+            <div class="row" id='expected _possession'>
+                  <label for="Remark">Expected Possession</label>
+                  <div class="input-field col s12">
+                      <select name='expected_possession' id='expected_possession'>
+                          <option value=''>Select Member</option>                          
+                          <option value='ready to move'>Ready to move</option>                          
+                          <option value='6 months'>Within 6 months</option>                          
+                          <option value='can wait'>Can wait</option>                          
+                       
+                          
+                      </select>
+                  </div>  
+ 
+            <div class="row ">
+              <div class=" col s12">
+                <label for="Remark">Remark</label>
+                <input type="text" id="Remark" class="Expected datepicker" name='Remark'>
+                  <!-- <textarea type="text" id="Remark" class="Expected datepicker" name='remark'> </textarea> -->
+                  
+              </div>
+            </div>
+
+            <div class="row" >
+                <div class="col s12">
+                    <button type='submit' class="waves-effect waves-light btn-large bg-primary" id='submitBtn'>Save</button>
+                </div>
+            </div>
+        </div>
+          <div class="row">
+              <div class="col s12">&nbsp;</div>
+          </div>
+
+      </form>
+  </div>        
+</div>
+<br>
+<br>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const directVisit = document.getElementById('direct-visit');
+  const indirectVisit = document.getElementById('indirect-visit');
+  const member = document.getElementById('member-list');
+  // Function to toggle dropdown visibility
+  function toggleDropdown() {
+      if (indirectVisit.checked) {
+        member.style.display = 'block';
+
+      } else {
+        member.style.display = 'none';
+      }
+  }
+  // Event listeners for radio buttons
+  directVisit.addEventListener('change', toggleDropdown);
+  indirectVisit.addEventListener('change', toggleDropdown);
+  // Initial check on page load
+  toggleDropdown();
+});
+
+
+
+document.getElementById('exisingform').addEventListener('click', newform);
+function newform(){
+  var element1 =   document.getElementById('customerid1');  
+  var element2 =   document.getElementById('customerid2');  
+  var field =  document.getElementById('existing_emp');
+
+  if (element1.style.display === 'none'){
+    element1.style.display = "block";
+    element2.style.display = "block";
+    field.style.display = 'none';
+  }
+}
+
+
+document.getElementById('newform').addEventListener('click', existingform);
+function existingform(){
+  var elemnt1 = document.getElementById('customerid1');
+  var elemnt2 = document.getElementById('customerid2');
+  var field =  document.getElementById('existing_emp');
+
+  if  (elemnt1.style.display === 'block'){
+    elemnt1.style.display = 'none';
+    elemnt2.style.display = 'none';
+    field.style.display = 'block';
+  }
+}
+
+
+document.getElementById('customer_id_btn').addEventListener('click', Get_customer);
+function Get_customer(){
+  var customer_value = document.getElementById('customer_id').value;
+  var customer_value = '?customer_value=' + customer_value;
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "{% url 'Get_Customer_id' %}" + customer_value, true);
+  xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+  xhr.onreadystatechange = function () {  
+      if (xhr.readyState === 4 && xhr.status === 200) {
+          var responseData = JSON.parse(xhr.responseText);
+          var data = responseData.FormData[0];
+          existingform();         
+          Set_values(data);
+      }    
+    };
+  xhr.send();
+}
+
+function Set_values(data) {
+  if (data) {
+    console.log("=", data)
+      document.getElementById('customer_name').value = data.Customer_name || '';
+      document.getElementById('customer_name').readOnly  = true;
+
+      document.getElementById('date').value = data.Visit_Date || '';
+      document.getElementById('date').readOnly  = true;
+
+      document.getElementById('Monthly-Rent').value = data.Monthly_rent || '';
+
+
+      document.getElementById('Address').value = data.Address || '';
+
+
+      document.getElementById('Contact_Number').value = data.Customer_Contact_number || '';
+      document.getElementById('Contact_Number').readOnly  = true;
+
+      document.getElementById('Whatspp').value = data.Customer_Whatspp_number || '';
+
+
+      document.getElementById('Instagram').value = data.Instagram || '';
+
+
+      document.getElementById('official_email').value = data.official_mail || '';
+
+      document.getElementById('email').value = data.Email_id || '';
+      document.getElementById('email').readOnly  = true;
+
+      document.getElementById('Facebook').value = data.Facebook_id || '';
+
+
+      document.getElementById('Company').value = data.Company || '';
+
+
+      document.getElementById('Gross').value = data.Gross_Income || '';
+
+
+      document.getElementById('Department').value = data.Department || '';
+
+
+      document.getElementById('Designation').value = data.Designation || '';
+
+
+      document.getElementById('DOB').value = data.DOB || '';
+
+
+      document.getElementById('Marriage').value = data.marriage_anniversary || '';
+
+
+      document.getElementById('Interest').value = data.Interest || '';
+
+
+      document.getElementById('Budget').value = data.Budget || '';
+
+
+      document.getElementById('expected_possession').value = data.Expected_possession || '';
+
+      document.getElementById('Remark').value = data.Remark || '';
+
+  }
+}
+
+function formatInputWithCommas(id) {
+  document.getElementById(id).addEventListener('input', function(e) {
+      var value = e.target.value;
+      value = value.replace(/[^0-9]/g, '');
+      value = parseInt(value, 10);
+
+
+      if (!isNaN(value)) {
+          e.target.value = value.toLocaleString();
+      } else {
+          e.target.value = '';
+      }
+  });
+}
+
+formatInputWithCommas('Income');
+formatInputWithCommas('Rent');
+formatInputWithCommas('Budget');
+
+
+
+
+
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,923 @@
+{% extends 'Admin/base.html' %} 
+{% block content %}
+
+<style>
+    .percentage {
+        display: none;
+    }
+    
+</style>
+
+<div class="row">
+  <div class="col-12">
+      <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+      
+          <h4 class="mb-sm-0">Daily Team Performance Report</h4>
+        <div class='row ' >
+          <p class='col-2'><span class="badge badge-soft-danger" style='color:red;'>Below 40%</span> </p>
+          <p class='col-2'><span class="badge badge-soft-danger" style='white-space: normal;'>Above 40% & Below 60%</span> </p>
+          <p class='col-2'><span class="badge badge-soft-warning" style='white-space: normal;'>Above 60% & Below 80%</span></p>
+          <p class='col-2'><span class="badge badge-soft-success">Above 80%</span></p>
+          <p class='col-2'><span class="badge badge-soft-light" style='color:black;'>Target Not Set</span></p>
+        </div>
+          {% comment %} <div class="page-title-right">
+            
+                 
+              <ol class="breadcrumb m-0">
+                  
+                  <li class="breadcrumb-item active">Daily Team Performance Report</li>
+                  
+              </ol>
+          </div> {% endcomment %}
+
+      </div>
+  </div>
+</div>
+<div class="row" id='navbar' >
+  <div class="col-12">
+      <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+        <form method="GET" action="{% url 'RPT_team_per' %}" id="monthForm">
+          <div class='row'>       
+            <div class='col-6'>
+                <label for="StartDate" class="form-label">Start Date</label>
+                <input type="date" onfocus="(this.type='date')" onblur="(this.type='text')" class="form-control" id="StartDate" name='start_date' value="{{ start_date }}">
+            </div>
+            <div class='col-6'>
+                <label for="EndDate" class="form-label">End Date</label>
+                <input type="date" onfocus="(this.type='date')" onblur="(this.type='text')" class="form-control" id="EndDate" name='end_date' value="{{ end_date }}">
+            </div>
+          </div>
+      </form>
+      
+        <div class="page-title-right">
+            <button class='btn btn-warning waves-effect waves-light' id="toggle-view-btn">Show Percentage</button>
+        </div>
+    
+      <div class="page-title-right">
+          <button class='btn btn-info waves-effect waves-light' onclick="goBack()"> <i class="ri-arrow-left-line"></i></button>
+      </div>
+      </div>
+  </div>
+</div>
+{% for team, members in team_members.items %}
+<div class="card">      
+    <div class="card-body">
+        <div class="live-preview">
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle table-nowrap mb-0" style='margin-top:20px;'>
+                    <thead>
+                      <tr>
+                        <th colspan='8' class='text-center' id='team-name'>{{ team|upper }}</th>            
+                       
+                      </tr>  
+                      <tr>
+                        <th>S.No.</th>
+                        <th>Member</th>
+                        {% comment %} <th class='text-center'>Bookings</th>      {% endcomment %}
+                        <th class='text-center'>Home Visits</th>     
+                        <th class='text-center'>Corp. Visits</th>     
+                        {% if team == 'Sage Information Center' %}{% else %} <th class='text-center'>Customer F/W</th>      {% endif %}     
+   
+                        {% if team == 'Sage Information Center' %}{% else %} <th class='text-center'>New Leads</th>  {% endif %} 
+                        <th class='text-center'>Direct Site <br>Visit</th> 
+                        <th class='text-center'>Indirect Site <br> Visit</th> 
+                        <th class='text-center'>SM F/W</th> 
+                        <th class='text-center'>IP</th> 
+                        <th class='text-center'>Admission</th> 
+                        {% if team == 'Sage Information Center' %}<th class='text-center'>Event</th>  {% endif %}        
+
+                        {% comment %} <th class='text-center'>Target Value</th>   {% endcomment %}
+                      </tr> 
+                    </thead>
+                    <tbody class='tbody'>
+                      {% for member_name, member_data in members.items %}     
+                        {% comment %} {{ member_data }} {% endcomment %}
+                          <tr>
+                              <td>{{ forloop.counter }}</td>
+                              <td>{{ member_name }}</td>
+                             
+                              {% comment %} <td class='text-center'><span class='first'>{{ member_data.bookings }}</span><span class='split' hidden>{% for target_value in member_data.target_values %}{% if target_value.Target_id == 1 %}{{ target_value.target }}{% endif %}{% endfor %}</span></td> {% endcomment %}
+                              <td class='text-center'>
+                                <span class='second'>{{ member_data.home_visit }}</span> /
+                                <span class='split'>{% for target_value in member_data.target_values %}{% if target_value.Target_id == 4 %}{{ target_value.target }}{% endif %}{% endfor %}</span>
+                                <span class='end_date' hidden>{% for target_value in member_data.target_values_end %}{% if target_value.Target_id == 4%}{{ target_value.target }}{% endif %}{% endfor %}</span>
+                                <span class='percentage' ></span>
+                              </td>
+
+                              <td class='text-center'>
+                                <span class='third'>{{ member_data.corp_visits }}</span> /
+                                <span class='split' >{% for target_value in member_data.target_values %}{% if target_value.Target_id == 2 %}{{ target_value.target }}{% endif %}{% endfor %}</span>
+                                <span class='end_date' hidden>{% for target_value in member_data.target_values_end %}{% if target_value.Target_id == 2 %}{{ target_value.target }}{% endif %}{% endfor %}</span>
+                                <span class='percentage'></span> 
+                            </td>
+
+                              {% if team == 'Sage Information Center' %}{% else %}                              
+                              <td class='text-center'><span class='fourth'>{{ member_data.customerfollowup }}</span> /
+                                <span class='split' >{% for target_value in member_data.target_values %}{% if target_value.Target_id == 3 %}{{ target_value.target }}{% endif %}{% endfor %}</span>
+                                <span class='end_date' hidden>{% for target_value in member_data.target_values_end %}{% if target_value.Target_id == 3 %}{{ target_value.target }}{% endif %}{% endfor %}</span>
+                                <span class='percentage' ></span> 
+                            </td>{% endif %}
+                              {% if team == 'Sage Information Center' %}{% else %}
+                              
+                              <td class='text-center'><span class='fifth'>{{ member_data.new_leads }}</span></td>{% endif %}
+
+
+
+                              
+                              <td class='text-center'><span class='sixth'>{{ member_data.total_direct_site_visit }}</span> /
+                                <span class='split' >{% for target_value in member_data.target_values %}{% if target_value.Target_id == 6 %}{{ target_value.target }}{% endif %}{% endfor %}</span>
+                                <span class='end_date' hidden>{% for target_value in member_data.target_values_end %}{% if target_value.Target_id == 6 %}{{ target_value.target }}{% endif %}{% endfor %}</span>
+                                <span class='percentage'></span> 
+                              </td> 
+                              <td class='text-center'><span class='seventh'>{{ member_data.total_indirect_site_visit }}</span></td>
+
+                              <td class='text-center'><span class='eight'>{{ member_data.total_sm_leads }}</span> /
+                                <span class='split' >{% for target_value in member_data.target_values %}{% if target_value.Target_id == 5 %}{{ target_value.target }}{% endif %}{% endfor %}</span>
+                                <span class='end_date' hidden>{% for target_value in member_data.target_values_end %}{% if target_value.Target_id == 5 %}{{ target_value.target }}{% endif %}{% endfor %}</span>
+                                <span class='percentage'></span> 
+                              </td>     
+
+                              <td class='text-center'><span class='ninth'>{{ member_data.total_ip }}</span> /
+                                <span class='split' >{% for target_value in member_data.target_values %}{% if target_value.Target_id == 8 %}{{ target_value.target }}{% endif %}{% endfor %}</span>
+                                <span class='end_date' hidden>{% for target_value in member_data.target_values_end %}{% if target_value.Target_id == 8 %}{{ target_value.target }}{% endif %}{% endfor %}</span>
+                                <span class='percentage'></span> 
+                            </td>            
+                              
+                              <td class='text-center'><span class='tenth'>{{ member_data.total_admission }}</span> /
+                                <span class='split' >{% for target_value in member_data.target_values %}{% if target_value.Target_id == 7 %}{{ target_value.target }}{% endif %}{% endfor %}</span>
+                                <span class='end_date' hidden>{% for target_value in member_data.target_values_end %}{% if target_value.Target_id == 7 %}{{ target_value.target }}{% endif %}{% endfor %}</span>
+                                <span class='percentage'></span> 
+                            </td>            
+                              {% if team == 'Sage Information Center' %}
+                                <td class='text-center'><span class='eleventh'>{{ member_data.total_event }}</span></td>
+                              {% endif %}
+
+                            </tr>                       
+                      {% endfor %}
+                  </tbody>
+                  
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleButton = document.getElementById('toggle-view-btn');
+    const percentages = document.querySelectorAll('.percentage');
+    const splits = document.querySelectorAll('.split');
+
+    toggleButton.addEventListener('click', () => {
+        const showPercentages = percentages[0].style.display === 'none' || percentages[0].style.display === '';
+
+        percentages.forEach(percentage => {
+            percentage.style.display = showPercentages ? 'inline' : 'none';
+        });
+
+        splits.forEach(split => {
+            split.style.display = showPercentages ? 'none' : 'inline';
+        });
+
+        toggleButton.textContent = showPercentages ? 'Hide Percentage' : 'Show Percentage';
+    });
+});
+
+    
+function goBack() {
+  window.history.back();
+}
+
+var startDateInput = document.getElementById('StartDate');
+var endDateInput = document.getElementById('EndDate');
+
+
+startDateInput.addEventListener('change', function() {           
+    if (startDateInput.value && endDateInput.value) {
+        document.getElementById('monthForm').submit();
+    }
+});
+
+endDateInput.addEventListener('change', function() {      
+    if (startDateInput.value && endDateInput.value) {      
+      document.getElementById('monthForm').submit();
+    }
+});
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const teams = document.querySelectorAll('.card');
+
+    teams.forEach(team => {
+        const tableBody = team.querySelector('tbody');
+        const totalRow = document.createElement('tr');
+        totalRow.innerHTML = `<td colspan='2' style='font-weight:800;'>Grand Total</td>`;
+
+        const totals = {
+            homeVisits: 0,
+            corpVisits: 0,
+            customerFW: 0,
+            newLeads: 0,
+            directVisit: 0,
+            indirectVisit: 0,
+            smFW: 0,
+            ip: 0,
+            admission: 0,
+            event: 0
+        };
+
+        const teamNameElement = team.querySelector('#team-name');
+        const rows = tableBody.querySelectorAll('tr');
+
+        rows.forEach(row => {
+            ['second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eight', 'ninth', 'tenth', 'eleventh'].forEach((className, index) => {
+                const span = row.querySelector(`.${className}`);
+                if (span) {
+                    const value = parseInt(span.textContent.trim()) || 0;
+                    const keys = Object.keys(totals);
+                    totals[keys[index]] += value;
+                }
+            });
+        });
+
+        if (teamNameElement && teamNameElement.textContent.trim() === 'SAGE INFORMATION CENTER') {
+            totalRow.innerHTML += `<td class='text-center' style='font-weight:800;'>${totals.homeVisits}</td>
+                                    <td class='text-center' style='font-weight:800;'>${totals.corpVisits}</td>
+                                    <td class='text-center' style='font-weight:800;'>${totals.smFW}</td>
+                                    <td class='text-center' style='font-weight:800;'>${totals.directVisit}</td>
+                                    <td class='text-center' style='font-weight:800;'>${totals.indirectVisit}</td>
+                                    <td class='text-center' style='font-weight:800;'>${totals.ip}</td>
+                                    <td class='text-center' style='font-weight:800;'>${totals.admission}</td>
+                                    <td class='text-center' style='font-weight:800;'>${totals.event}</td>`;
+        } else {
+            totalRow.innerHTML += `<td class='text-center' style='font-weight:800;'>${totals.homeVisits}</td>
+                                    <td class='text-center' style='font-weight:800;'>${totals.corpVisits}</td>
+                                    <td class='text-center' style='font-weight:800;'>${totals.customerFW}</td>
+                                    <td class='text-center' style='font-weight:800;'>${totals.newLeads}</td>
+                                    <td class='text-center' style='font-weight:800;'>${totals.directVisit}</td>
+                                    <td class='text-center' style='font-weight:800;'>${totals.indirectVisit}</td>
+                                    <td class='text-center' style='font-weight:800;'>${totals.smFW}</td>
+                                    <td class='text-center' style='font-weight:800;'>${totals.ip}</td>
+                                    <td class='text-center' style='font-weight:800;'>${totals.admission}</td>`;
+        }
+
+        tableBody.appendChild(totalRow);
+    });
+});
+
+
+function daysInMonth(month, year) {
+    return new Date(year, month, 0).getDate();
+}
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    var teams = document.querySelectorAll('.card');
+    teams.forEach(function(team) {
+        var tableBody = team.querySelector('tbody');
+        var totalRow = document.createElement('tr');
+        totalRow.innerHTML = `<td colspan='2' style='font-weight:800;'>Monthly Target</td>`;
+       // var targetBookings = 0;
+        var targetHomeVisits = 0;
+        var targetCorpVisits = 0;
+        var targetCustomerFW = 0;
+        var targetNewLeads = 0;
+        var targetSmFW = 0;
+        var targetIP = 0;
+        var targetAdmission = 0;
+        var targetEvent = 0;
+        var targetsiteVisit = 0;        
+        var date = new Date();
+        var currentDay = date.getDate();
+        var teamName = team.querySelector('#team-name');
+       
+        var rows = tableBody.querySelectorAll('tr');
+
+        rows.forEach(function(row) {
+          
+            startdate = startDateInput.value;
+            enddate = endDateInput.value;
+            if(startdate && enddate){
+                var start = new Date(startdate);
+                var end = new Date(enddate);
+                
+                var same_month = false;
+                if (start.getMonth() == end.getMonth()){
+                    var timeDifference = end - start; 
+                    var days = timeDifference / (1000 * 3600 * 24); 
+                    var daysDifference = days ;
+                    if (daysDifference>25){
+                        daysDifference = 25;
+                    }
+                    same_month = true;
+
+                }
+                else {
+                    var start_month = start.getMonth() + 1;
+                    var start_year = start.getFullYear();
+
+                    var end_month = start.getMonth();
+                    var end_year = start.getFullYear();
+
+                    var days_start_month = daysInMonth(start_month, start_year) - start.getDate();
+                    var days_start_month = days_start_month ;
+                    var daysDifference = end.getDate();
+
+                    if (days_start_month>25){
+                        days_start_month = 25;
+                    }
+
+                    if (daysDifference>25){
+                        daysDifference = 25;
+                    }
+                   
+                }
+                
+                if (start.getDate() == end.getDate()){
+                   daysDifference = 1;
+                }
+
+                colNum = 11
+                
+                if ( teamName.textContent.trim() === 'SAGE INFORMATION CENTER'){                   
+                    colNum = 10
+                    
+                }
+                var cells = row.querySelectorAll('td');
+               // console.log("============", daysDifference)
+                
+                if (cells.length >= colNum) {
+                    var homeVisitSpan = cells[2].querySelector('span.split');                    
+                    var homeVisitSpan_end = cells[2].querySelector('span.end_date');                                        
+                    var t_homevisit = row.querySelector('.second');                    
+                    var homevisit_text = t_homevisit.textContent.trim();
+                    var percentageSpan = cells[2].querySelector('span.percentage');
+                    if (homeVisitSpan) {                       
+                        var HomeVisitTargetSet = homeVisitSpan.textContent.trim();                       
+                        var homeVisitValue = (HomeVisitTargetSet/25)*daysDifference;
+                        if (!same_month){
+                            var HomeVisitTargetSet_end = homeVisitSpan_end.textContent.trim();     
+                            var homeVisitValue_end = (HomeVisitTargetSet_end/25)*days_start_month;                               
+                            homeVisitValue = homeVisitValue + homeVisitValue_end;
+                        }
+                        
+                        current_Home_target = Math.round(homeVisitValue);
+                        homeVisitSpan.innerHTML = `<span>${current_Home_target}</span>`;
+                        percentage = (homevisit_text/homeVisitValue)*100;         
+                        if (percentage === Infinity || isNaN(percentage)) {
+                            percentage = 0; 
+                        }              
+                        percentageSpan.innerHTML = `<span>${percentage.toFixed()}%</span>`
+                        if (HomeVisitTargetSet == 0) {
+                                
+                            }
+                            
+                        else 
+                        if (percentage < 40) {
+
+                            cells[2].style.backgroundColor='red';
+                            cells[2].style.color = 'white'; 
+                        } 
+                        else if ( percentage >= 40 && percentage < 60)  {
+                            cells[2].classList.add('bg-danger');
+                            cells[2].style.color = 'white'; 
+                        } else if (percentage >= 60 && percentage < 80) {
+                         
+                            cells[2].classList.add('bg-warning');
+                       
+                        }  else if (percentage >= 80) {
+                            cells[2].classList.add('bg-success');
+                    
+                            cells[2].style.color = 'white'; 
+                        } 
+                        
+                        targetHomeVisits += parseFloat(homeVisitValue) || 0;
+                    }
+                    
+                    var corpVisitSpan = cells[3].querySelector('span.split');
+                    var corpVisitSpan_end = cells[3].querySelector('span.end_date');
+                    var t_corpovisit = row.querySelector('.third');
+                    var corpovisit_text = t_corpovisit.textContent.trim();
+                    var percentageSpan = cells[3].querySelector('span.percentage');
+                    if (corpVisitSpan) {
+                        var CorpoVisitTargetSet = corpVisitSpan.textContent.trim();
+                        var corpVisitValue = (CorpoVisitTargetSet/25)*daysDifference;
+                        if (!same_month){
+                            var CorpoVisitTargetSet_end = corpVisitSpan_end.textContent.trim();     
+                            var corpVisitValue_end = (CorpoVisitTargetSet_end/25)*days_start_month;                               
+                            corpVisitValue = corpVisitValue + corpVisitValue_end;
+                        }
+                        current_corp_target = Math.round(corpVisitValue);
+                        corpVisitSpan.innerHTML = `<span>${current_corp_target}</span>`;
+                        percentage = (corpovisit_text/corpVisitValue)*100;
+                        if (percentage === Infinity || isNaN(percentage)) {
+                            percentage = 0; 
+                        }
+                        percentageSpan.innerHTML = `<span>${percentage.toFixed()}%</span>`
+                        if (CorpoVisitTargetSet == 0) {
+                                
+                            }
+                            
+                        else 
+                       if (percentage < 40) {
+
+                            cells[3].style.backgroundColor='red';
+                            cells[3].style.color = 'white'; 
+                        } 
+                        else if ( percentage >= 40 && percentage < 60) {                           
+                            cells[3].classList.add('bg-danger');
+                            cells[3].style.color = 'white'; 
+                        } else if (percentage >= 60 && percentage < 80) {
+                          
+                            cells[3].classList.add('bg-warning');
+                       
+                        }  else if (percentage >= 80) {                        
+                            cells[3].classList.add('bg-success');                     
+                            cells[3].style.color = 'white'; 
+                        }                         
+                        targetCorpVisits += parseFloat(corpVisitValue) || 0;
+                    }
+                    
+                    var customerFWSpan = cells[4].querySelector('span.split');
+                    var customerFWSpan_end = cells[4].querySelector('span.end_date');
+                    var t_FW = row.querySelector('.fourth');
+                    var FW_text = t_FW.textContent.trim();
+                    var percentageSpan = cells[4].querySelector('span.percentage');
+                    if (customerFWSpan) {
+                        var FWTargetSet = customerFWSpan.textContent.trim();
+                        
+                        var customerFWValue = (FWTargetSet/25)*daysDifference;
+                        if (!same_month){
+                            var FWTargetSet_end = customerFWSpan_end.textContent.trim();     
+                            var customerFWValue_end = (FWTargetSet_end/25)*days_start_month;                               
+                            customerFWValue = customerFWValue_end + customerFWValue;
+                        }
+                        current_FW_target = Math.round(customerFWValue);
+                        customerFWSpan.innerHTML = `<span>${current_FW_target}</span>`;
+                        percentage = (FW_text/customerFWValue)*100;
+                        if (percentage === Infinity || isNaN(percentage)) {
+                            percentage = 0; 
+                        }
+                        percentageSpan.innerHTML = `<span>${percentage.toFixed()}%</span>`
+                        if (FWTargetSet == 0) {
+                                
+                        }                            
+                        else 
+                        if (percentage < 40) {
+                            cells[4].style.backgroundColor='red';
+                            cells[4].style.color = 'white';                         } 
+                        else if ( percentage >= 40 && percentage < 60)  {                           
+                            cells[4].classList.add('bg-danger');
+                            cells[4].style.color = 'white';                         }
+                        else if (percentage >= 60 && percentage < 80) {                          
+                            cells[4].classList.add('bg-warning');
+                        }
+                        else if (percentage >= 80) {                        
+                            cells[4].classList.add('bg-success');                     
+                            cells[4].style.color = 'white'; 
+                        } 
+                       
+                        targetCustomerFW += parseFloat(customerFWValue) || 0;
+                    }
+                    
+
+                    var DirectsiteVisitSpan = cells[6].querySelector('span.split');
+                    var DirectsiteVisitSpan_end = cells[6].querySelector('span.end_date');
+                    var t_Directsitevisit = row.querySelector('.sixth');
+                    var DirectSiteVisit_text = t_Directsitevisit.textContent.trim();
+                    var percentageSpan = cells[6].querySelector('span.percentage');
+                    if (DirectsiteVisitSpan) {
+                        var SiteVisitTargetSet = DirectsiteVisitSpan.textContent.trim();
+                        var directSiteVisitValue = (SiteVisitTargetSet/25)*daysDifference;
+                        if (!same_month){
+                            var DirectSiteVisitTargetSet_end = DirectsiteVisitSpan_end.textContent.trim();     
+                            var directSiteVisitValue_end = (DirectSiteVisitTargetSet_end/25)*days_start_month;                               
+                            directSiteVisitValue = directSiteVisitValue + directSiteVisitValue_end;
+                        }
+                        current_siteVisit_target = Math.round(directSiteVisitValue);
+                        DirectsiteVisitSpan.innerHTML = `<span>${current_siteVisit_target}</span>`;
+                        percentage = (DirectSiteVisit_text/directSiteVisitValue)*100;
+                        if (percentage === Infinity || isNaN(percentage)) {
+                            percentage = 0; 
+                        }
+                        percentageSpan.innerHTML = `<span>${percentage.toFixed()}%</span>`
+                        if (SiteVisitTargetSet == 0) {
+                                
+                            }
+                            
+                        else 
+                       if (percentage < 40) {
+
+                            cells[6].style.backgroundColor='red';
+                            cells[6].style.color = 'white'; 
+                        } 
+                        else if ( percentage >= 40 && percentage < 60) {                           
+                            cells[6].classList.add('bg-danger');
+                            cells[6].style.color = 'white'; 
+                        } else if (percentage >= 60 && percentage < 80) {
+                          
+                            cells[6].classList.add('bg-warning');
+                       
+                        }  else if (percentage >= 80) {                        
+                            cells[6].classList.add('bg-success');                     
+                            cells[6].style.color = 'white'; 
+                        }                         
+                        targetsiteVisit += parseFloat(directSiteVisitValue) || 0;
+                    }
+
+
+                    var smFWSpan = cells[8].querySelector('span.split');
+                    var smFWSpan_end = cells[8].querySelector('span.end_date');
+                    var t_smFW = row.querySelector('.eight');
+                    var smFW_text = t_smFW.textContent.trim();
+                    var percentageSpan = cells[8].querySelector('span.percentage');
+                    if (smFWSpan) {
+                        var SmFwTargetSet = smFWSpan.textContent.trim();
+                        var smFWValue = (SmFwTargetSet/25)*daysDifference;
+                        if (!same_month){
+                            var SmFwTargetSet_end = smFWSpan_end.textContent.trim();     
+                            var smFWValue_end = (SmFwTargetSet_end/25)*days_start_month;                               
+                            smFWValue = smFWValue + smFWValue_end;
+                        }
+                        current_SmFW_target = Math.round(smFWValue);
+                        smFWSpan.innerHTML = `<span>${current_SmFW_target}</span>`;
+                        percentage = (smFW_text/smFWValue)*100;
+                        if (percentage === Infinity || isNaN(percentage)) {
+                            percentage = 0; 
+                        }
+                        percentageSpan.innerHTML = `<span>${percentage.toFixed()}%</span>`
+                        if (SmFwTargetSet == 0) {
+                                
+                            }
+                            
+                        else 
+                        if (percentage < 40) {
+                            cells[8].style.backgroundColor='red';
+                            cells[8].style.color = 'white'; 
+                        } 
+                        else if ( percentage >= 40 && percentage < 60)  {                           
+                            cells[8].classList.add('bg-danger');
+                            cells[8].style.color = 'white'; 
+                        } 
+                        else if (percentage >= 60 && percentage < 80) {
+                          
+                            cells[8].classList.add('bg-warning');
+                       
+                        } 
+                        else if (percentage >= 80) {
+                        
+                            cells[8].classList.add('bg-success');
+                     
+                            cells[8].style.color = 'white'; 
+                        } 
+                        
+                        targetSmFW += parseFloat(smFWValue) || 0;
+                    }                    
+
+                    var IPSpan = cells[9].querySelector('span.split');
+                    var IPSpan_end = cells[9].querySelector('span.end_date');
+                    var t_IP = row.querySelector('.ninth');
+                    var IP_text = t_IP.textContent.trim();
+                    var percentageSpan = cells[9].querySelector('span.percentage');
+                    if (IPSpan) {
+                        var IpTargetSet = IPSpan.textContent.trim();
+                        var IPValue = IpTargetSet;
+                        current_IP_target = Math.round(IPValue);
+                        IPSpan.innerHTML = `<span>${current_IP_target}</span>`;
+                        percentage = (IP_text/IPValue)*100;
+                        if (percentage === Infinity || isNaN(percentage)) {
+                            percentage = 0; 
+                        }
+                        percentageSpan.innerHTML = `<span>${percentage.toFixed()}%</span>`
+
+                        if (IpTargetSet == 0) {
+                                
+                            }
+                            
+                        else if (percentage >= 80) {
+                            cells[9].classList.add('bg-success');
+                
+                            cells[9].style.color = 'white'; 
+                        } 
+                        
+                        targetIP += parseFloat(IPValue) || 0;
+                    }
+
+                    var AdmissionSpan = cells[10].querySelector('span.split');
+                    var AdmissionSpan_end = cells[10].querySelector('span.end_date');
+                    var t_admission = row.querySelector('.tenth');
+                    var admission_text = t_admission.textContent.trim();
+                    var percentageSpan = cells[10].querySelector('span.percentage');
+                    if (AdmissionSpan) {
+                        var AdmissionTargetSet = AdmissionSpan.textContent.trim();
+                       // var AdmissionValue = (AdmissionTargetSet/25)*daysDifference;
+                        var AdmissionValue = AdmissionTargetSet;
+                        
+                        current_Admission_target = Math.round(AdmissionValue);
+                        AdmissionSpan.innerHTML = `<span>${current_Admission_target}</span>`
+                        percentage = (admission_text/AdmissionValue)*100;
+                        if (percentage === Infinity || isNaN(percentage)) {
+                            percentage = 0; 
+                        }
+                        percentageSpan.innerHTML = `<span>${percentage.toFixed()}%</span>`
+                        if (AdmissionTargetSet == 0) {
+                                
+                            }
+                        else if (percentage >= 80) {
+                            cells[10].classList.add('bg-success');
+                    
+                            cells[10].style.color = 'white'; 
+                        } 
+                        
+                        targetAdmission += parseFloat(AdmissionValue) || 0;
+                    }                  
+                   
+                }
+            }   
+            else{
+              
+                var cells = row.querySelectorAll('td');
+                let isPercentageVisible = false;
+                if (cells.length >= 11) {
+                    
+                    var homeVisitSpan = cells[2].querySelector('span.split');
+                    var t_homevisit = row.querySelector('.second');
+                    var homevisit_text = t_homevisit.textContent.trim();
+                    var percentageSpan = cells[2].querySelector('span.percentage');
+                    if (homeVisitSpan && percentageSpan) {
+                        var HomeVisitTargetSet = homeVisitSpan.textContent.trim();
+                        percentage = (homevisit_text/HomeVisitTargetSet)*100;
+                        
+                       
+                        if (percentage === Infinity || isNaN(percentage)) {
+                            percentage = 0; 
+                        } 
+                        percentageSpan.textContent = percentage.toFixed() + "%";
+                       
+                        if (HomeVisitTargetSet == 0) {
+                            
+                        }
+                        else if (percentage < 40) {
+                            cells[2].style.backgroundColor='red';
+                            cells[2].style.color = 'white'; 
+                        } 
+                        else if (percentage >= 40 && percentage < 60) {
+                            cells[2].classList.add('bg-danger');
+                            cells[2].style.color = 'white'; 
+                        } 
+                        else if (percentage >= 60 && percentage < 80) {
+                         
+                            cells[2].classList.add('bg-warning');
+                       
+                        }  else if (percentage >= 80) {
+                            cells[2].classList.add('bg-success');
+                    
+                            cells[2].style.color = 'white'; 
+                        } 
+                        var homeVisitValue = (HomeVisitTargetSet/25)*currentDay;
+                        targetHomeVisits += parseFloat(homeVisitValue) || 0;
+                       // console.log("homeVisitValue", homeVisitValue)
+                    }
+                    
+                    var corpVisitSpan = cells[3].querySelector('span.split');
+                    var t_corpovisit = row.querySelector('.third');
+                    var corpovisit_text = t_corpovisit.textContent.trim();
+                    var percentageSpan = cells[3].querySelector('span.percentage');
+                    if (corpVisitSpan) {
+                        var CorpoVisitTargetSet = corpVisitSpan.textContent.trim();
+                        percentage = (corpovisit_text/CorpoVisitTargetSet)*100;
+                        //corpVisitSpan.textContent = percentage.toFixed() + "%";
+                        if (percentage === Infinity || isNaN(percentage)) {
+                            percentage = 0; 
+                        }
+                        percentageSpan.textContent = percentage.toFixed() + "%";
+                        if (CorpoVisitTargetSet == 0) {
+
+                        }
+                        else if (percentage < 40) {                           
+                            cells[3].style.backgroundColor='red';
+                            cells[3].style.color = 'white'; 
+                        
+                        }else if (percentage >= 40 && percentage < 60) {                           
+                            cells[3].classList.add('bg-danger');
+                            cells[3].style.color = 'white'; 
+                        }
+                        else if (percentage >= 60 && percentage < 80) {
+                          
+                            cells[3].classList.add('bg-warning');
+                       
+                        }  else if (percentage >= 80) {
+                        
+                            cells[3].classList.add('bg-success');
+                     
+                            cells[3].style.color = 'white'; 
+                        } 
+                        var corpVisitValue = (CorpoVisitTargetSet/25)*currentDay;
+                        targetCorpVisits += parseFloat(corpVisitValue) || 0;
+                    }
+                    
+                    var customerFWSpan = cells[4].querySelector('span.split');
+                    var t_FW = row.querySelector('.fourth');
+                    var FW_text = t_FW.textContent.trim();
+                    var percentageSpan = cells[4].querySelector('span.percentage');
+                    if (customerFWSpan) {
+                        var FWTargetSet = customerFWSpan.textContent.trim();
+                        percentage = (FW_text/FWTargetSet)*100;
+                        if (percentage === Infinity || isNaN(percentage)) {
+                            percentage = 0; 
+                        }
+                       // customerFWSpan.textContent = percentage.toFixed() + "%";
+                        percentageSpan.textContent = percentage.toFixed() + "%";
+                        if (FWTargetSet == 0) {
+
+                        }
+                        else if (percentage < 40) {                           
+                            cells[4].style.backgroundColor='red';
+                            cells[4].style.color = 'white'; 
+                        }
+                        else if (percentage >= 40 && percentage < 60) {                           
+                            cells[4].classList.add('bg-danger');
+                            cells[4].style.color = 'white'; 
+                        }
+                        else if (percentage >= 60 && percentage < 80) {
+                          
+                            cells[4].classList.add('bg-warning');
+                       
+                        }  else if (percentage >= 80) {
+                        
+                            cells[4].classList.add('bg-success');
+                     
+                            cells[4].style.color = 'white'; 
+                        } 
+                        var customerFWValue = (FWTargetSet/25)*currentDay;
+                        targetCustomerFW += parseFloat(customerFWValue) || 0;
+                    }
+
+
+
+                    var directsiteVisitSpan = cells[6].querySelector('span.split');
+                    var t_directsitevisit = row.querySelector('.sixth');
+                    var directsiteVisit_text = t_directsitevisit.textContent.trim();
+                    var percentageSpan = cells[6].querySelector('span.percentage');
+                    if (directsiteVisitSpan) {
+                        var directSiteVisitTargetSet = directsiteVisitSpan.textContent.trim();
+                        percentage = (directsiteVisit_text/directSiteVisitTargetSet)*100;
+                        if (percentage === Infinity || isNaN(percentage)) {
+                            percentage = 0; 
+                        }
+                       // customerFWSpan.textContent = percentage.toFixed() + "%";
+                        percentageSpan.textContent = percentage.toFixed() + "%";
+                        if (directSiteVisitTargetSet == 0) {
+
+                        }
+                        else if (percentage < 40) {                           
+                            cells[6].style.backgroundColor='red';
+                            cells[6].style.color = 'white'; 
+                        }
+                        else if (percentage >= 40 && percentage < 60) {                           
+                            cells[6].classList.add('bg-danger');
+                            cells[6].style.color = 'white'; 
+                        }
+                        else if (percentage >= 60 && percentage < 80) {
+                          
+                            cells[6].classList.add('bg-warning');
+                       
+                        }  else if (percentage >= 80) {
+                        
+                            cells[6].classList.add('bg-success');
+                     
+                            cells[6].style.color = 'white'; 
+                        } 
+                        var directSiteVisitValue = (directSiteVisitTargetSet/25)*currentDay;
+                        targetsiteVisit += parseFloat(directSiteVisitValue) || 0;
+                    }
+
+                    
+                    var smFWSpan = cells[8].querySelector('span.split');
+                    var t_smFW = row.querySelector('.eight');
+                    var smFW_text = t_smFW.textContent.trim();
+                    var percentageSpan = cells[8].querySelector('span.percentage');
+                    if (smFWSpan) {
+                        var SmFwTargetSet = smFWSpan.textContent.trim();
+                        percentage = (smFW_text/SmFwTargetSet)*100;
+                        if (percentage === Infinity || isNaN(percentage)) {
+                            percentage = 0; 
+                        }
+                       // smFWSpan.textContent = percentage.toFixed() + "%";
+                        percentageSpan.textContent = percentage.toFixed() + "%";
+                        if (SmFwTargetSet == 0) {
+                                
+                            }
+                        else if (percentage < 40) {                           
+                            cells[8].style.backgroundColor= 'red';
+                            cells[8].style.color = 'white'; 
+                        } 
+                        else if (percentage >= 40 && percentage < 60) {                           
+                            cells[8].classList.add('bg-danger');
+                            cells[8].style.color = 'white'; 
+                        } 
+                        else if (percentage >= 60 && percentage < 80) {
+                          
+                            cells[8].classList.add('bg-warning');
+                       
+                        }  else if (percentage >= 80) {
+                        
+                            cells[8].classList.add('bg-success');
+                     
+                            cells[8].style.color = 'white'; 
+                        }
+                        var smFWValue = (SmFwTargetSet/25)*currentDay;
+                        targetSmFW += parseFloat(smFWValue) || 0;
+                    }
+
+                    var IPSpan = cells[9].querySelector('span.split');
+                    var t_IP = row.querySelector('.ninth');
+                    var IP_text = t_IP.textContent.trim();
+                    var percentageSpan = cells[9].querySelector('span.percentage');
+                    if (IPSpan) {
+                        var IpTargetSet = IPSpan.textContent.trim();
+                        percentage = (IP_text/IpTargetSet)*100;
+                        if (percentage === Infinity || isNaN(percentage)) {
+                            percentage = 0; 
+                        }
+                      //  IPSpan.textContent = percentage.toFixed() + "%";
+                      
+                        percentageSpan.textContent = percentage.toFixed() + "%";
+                         if (SmFwTargetSet == 0) {
+                                
+                            }
+                        else if (percentage >= 80) {
+                            cells[9].classList.add('bg-success');
+                
+                            cells[9].style.color = 'white'; 
+                        } 
+                        var IPValue = (IpTargetSet/25)*currentDay;
+                        targetIP += parseFloat(IPValue) || 0;
+                    }
+                    
+                    var AdmissionSpan = cells[10].querySelector('span.split');
+                    var t_admission = row.querySelector('.tenth');
+                    var admission_text = t_admission.textContent.trim();
+                    var percentageSpan = cells[10].querySelector('span.percentage');
+                    if (AdmissionSpan) {
+                        var AdmissionTargetSet = AdmissionSpan.textContent.trim();
+                        percentage = (admission_text/AdmissionTargetSet)*100;
+                        if (percentage === Infinity || isNaN(percentage)) {
+                            percentage = 0; 
+                        }
+                        //AdmissionSpan.textContent = percentage.toFixed() + "%";
+                        percentageSpan.textContent = percentage.toFixed() + "%";
+                       
+                        if (SmFwTargetSet == 0) {
+                                
+                            }
+                            
+                        else if (percentage >= 80) {
+                            cells[10].classList.add('bg-success');
+                    
+                            cells[10].style.color = 'white'; 
+                        } 
+                        var AdmissionValue = (AdmissionTargetSet/25)*currentDay;
+                        targetAdmission += parseFloat(AdmissionValue) || 0;
+                    }      
+                }
+
+            }
+            
+        });
+
+       
+        targetHomeVisits = Math.floor(targetHomeVisits);
+        targetCorpVisits = Math.floor(targetCorpVisits);
+        targetCustomerFW = Math.floor(targetCustomerFW);
+        targetSmFW = Math.floor(targetSmFW);
+        targetsiteVisit = Math.floor(targetsiteVisit);
+        targetIP = Math.floor(targetIP);
+        targetAdmission = Math.floor(targetAdmission);
+        if (teamName && teamName.textContent.trim() === 'SAGE INFORMATION CENTER') {
+           
+            totalRow.innerHTML += `<td class='text-center' style='font-weight:800;'>${targetHomeVisits}</td><td class='text-center' style='font-weight:800;'>${targetCorpVisits}</td><td class='text-center' style='font-weight:800;'>${targetSmFW}</td><td class='text-center' style='font-weight:800;'>${targetIP}</td><td class='text-center' style='font-weight:800;'>${targetAdmission}</td><td class='text-center' style='font-weight:800;'>${targetEvent}</td>`;
+            tableBody.insertBefore(totalRow, tableBody.secondChild);
+
+        }
+        else{
+       
+            totalRow.innerHTML += `<td class='text-center' style='font-weight:800;'>${targetHomeVisits}</td><td class='text-center' style='font-weight:800;'>${targetCorpVisits}</td><td class='text-center' style='font-weight:800;'>${targetCustomerFW}</td><td class='text-center' style='font-weight:800;'>${targetNewLeads}</td><td class='text-center' style='font-weight:800;'>${targetsiteVisit}</td><td class='text-center' style='font-weight:800;'>0</td><td class='text-center' style='font-weight:800;'>${targetSmFW}</td><td class='text-center' style='font-weight:800;'>${targetIP}</td><td class='text-center' style='font-weight:800;'>${targetAdmission}</td>`;
+            tableBody.insertBefore(totalRow, tableBody.secondChild);
+        }
+
+      
+    });
+}); 
+
+
+
+
+
+
+</script>
+{% endblock %}
