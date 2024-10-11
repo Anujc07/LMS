@@ -531,11 +531,14 @@ class HomeVisit(models.Model):
     revisit = models.TextField(max_length=255, null=True, blank=True)
 
 
+from django.utils import timezone
 
 class CorporatesList(models.Model):
     corpo_name = models.TextField(null=True, blank=True, max_length=255)
     corporate_type_id = models.TextField(null=True, blank=True, max_length=255)
     status = models.TextField(default=1)
+    added_by = models.TextField(max_length=255, default="Admin")
+    added_at = models.DateTimeField(default=timezone.localtime(timezone.now()))
 
 
 class CorporateType(models.Model):

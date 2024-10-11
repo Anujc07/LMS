@@ -1,6 +1,6 @@
 {% extends 'Admin/base.html' %}
 {% block content %}
-
+ {% load humanize %}
 <style>
     .sticky {
         position: fixed;
@@ -125,6 +125,20 @@
                 <button class='btn btn-info waves-effect waves-light' onclick="goBack()"> <i class="ri-arrow-left-line"></i></button>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+   
+    <div class="col-12">     
+        <div class="col-sm">
+            <div class="d-flex justify-content-sm-end">
+                <div class="search-box ms-2">
+                    <input type="text" class="form-control search" placeholder="Search..." oninput="Search(value)">
+                    <i class="ri-search-line search-icon"></i>
+                </div>
+            </div>
+        </div>       
     </div>
 </div>
 
@@ -496,7 +510,7 @@
                                     <td><b>Name: </b>{{ item.Customer_name }}<br><b>Mobile No.:</b> {{ item.Customer_Contact_number }} <br><b>Email:</b> {{item.Email_id}} <br><b>Visit Date: </b> {{ item.Visit_Date|date:'d-m-y' }} <br><b>Address: </b>{{item.Address}}</td>
                                                    
                                     <td class='text-ce nter'><b>Sales Person : </b>{{ item.sales_name }} <br><b>Ref.: </b>{{item.reference}}</td>                                                                        
-                                    <td class='text-ce nter'><b>Budget: </b>{{ item.Budget }} <br><b> Income:</b> {{ item.Gross_Income }}</td>        
+                                    <td class='text-ce nter'><b>Budget: </b>{{ item.Budget|intcomma }} <br><b> Income:</b> {{ item.Gross_Income }}</td>        
                                     <td class='text-ce nter'>{{item.Expected_possession}}</td>        
                                     <td class='text-ce nter'><b>Company:</b> {{item.Company}} <br><b>Department:</b> {{item.Department}}<br><b>Designation:</b> {{item.Designation}}</td>        
                                     <td class='text-ce nter'><b>Interest Location:</b>{{item.Interest}} <br><b>Accommodation:</b> {{item.accommodation}}<br><b>Site Visit Location:</b> {{item.site_location}}</td>        

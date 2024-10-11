@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+     'django.contrib.humanize',
     'highrise_app',
     'highrise_admin',
     'rest_framework',
@@ -99,28 +100,28 @@ WSGI_APPLICATION = 'Highrise.wsgi.application'
 # }
 
 
-DATABASES = {
-     'default': {
-         'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'acc_tracker',
-         'USER': 'acc_tracker',
-         'PASSWORD': 'I2n7t9r@',
-         'HOST': 'localhost',   
-         'PORT': '3306',  
-     }
- }
-
-
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'new_highrise_data_backup',
-#         'USER': 'root',
-#         'PASSWORD': '',
-#         'HOST': 'localhost',   
-#         'PORT': '3306',
-#     }
-# }
+#      'default': {
+#          'ENGINE': 'django.db.backends.mysql',
+#          'NAME': 'acc_tracker',
+#          'USER': 'acc_tracker',
+#          'PASSWORD': 'I2n7t9r@',
+#          'HOST': 'localhost',   
+#          'PORT': '3306',  
+#      }
+#  }
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'new_highrise_data_backup',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',   
+        'PORT': '3306',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -146,7 +147,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -224,3 +225,4 @@ SIMPLE_JWT = {
 
 
 
+USE_THOUSAND_SEPARATOR = True

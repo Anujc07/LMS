@@ -288,271 +288,6 @@ def CityData(request):
 
 
 
-# @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-# def CorporateForm(request):
-    
-#     if request.method == 'POST':
-#         try:
-           
-#             name =  request.data.get('name')           
-#             corp_type = request.data.get('corp_type')
-#             corp_name = request.data.get('corp_name')
-#             meet_person = request.data.get('meet_person')
-#             presentation = request.data.get('presentation')
-#             today_date = datetime.now()
-#             nxt_pre_date = request.data.get('nxt_date')
-#             reason = request.data.get('reason')
-#             key_person = request.data.get('key_person')
-#             key_person_contact = request.data.get('key_person_contact')
-#             key_person2 = request.data.get('key_person2')
-#             key_person_contact2 = request.data.get('key_person_contact2')
-#             data_collect = request.data.get('data_collect')
-#             visit_type = request.data.get('visit_type')
-#             location = request.data.get('location')
-#             lat_long = request.data.get('lat_long')
-#             # image = request.FILES.get('corporateVisitImage')
-#             image = request.data.get('image') 
-#             num_attend = request.data.get('num_attend') 
-#             # print('===========', image)
-#             imgstr = image['base64']
-            
-#             team_members = request.data.get('co_name')
-#             if isinstance(team_members, str):
-#                 team_members = team_members.split(',')
-#             elif not isinstance(team_members, list):
-#                 team_members = []
-
-#             # Validate and process dates
-#             # try:
-#             #     visit_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-#             # except (ValueError, TypeError):
-#             #     return Response({'error': 'Invalid date format. Please enter the date in YYYY-MM-DD format.'}, status=status.HTTP_200_OK)
-
-#             nxt_date = None
-#             if nxt_pre_date:
-#                 try:
-#                     nxt_date = datetime.strptime(nxt_pre_date, '%Y-%m-%d').date()
-#                 except (ValueError, TypeError):
-#                     return Response({'error': 'Invalid next date format. Please enter the date in YYYY-MM-DD format.'}, status=status.HTTP_200_OK)
-
-#             # Validate image
-#             if not image:
-#                 return Response({'error': 'No image file provided.'}, status=status.HTTP_200_OK)
-
-#             current_time = datetime.now().strftime('%Y%m%d%H%M%S')
-#             # image_name, image_ext = os.path.splitext(image.name)
-#             # new_filename = f"{slugify(name)}_{date_str}_{slugify(corp_name)}_{current_time}{image_ext}"
-#             # image.name = new_filename
-#             ext = image['fileName'].split('.')[-1]
-#             new_filename = f"{slugify(name)}_{today_date}_{slugify(corp_name)}_{slugify(current_time)}.{ext}"
-#             image_content = ContentFile(base64.b64decode(imgstr), name=new_filename)
-        
-#             # Handle team members
-#             co_names_str = ','.join(team_members) if team_members else None
-#             username = CorpFormData.objects.filter(Q(key_person_contact = key_person_contact) & Q(name = name)).count()
-#             if username > 0:
-#                 revisit = 1 + username                                                         
-#             else:
-#                 revisit = 1
-
-#             # Save to model
-#             corp_form_data = CorpFormData.objects.create(
-#                 lat_long= lat_long,
-#                 key_person2=key_person2,
-#                 key_person_contact2=key_person_contact2,
-#                 name=name,
-#                 corp_name=corp_name,
-#                 corp_type=corp_type,
-#                 meet_person=meet_person,
-#                 presentation=presentation,
-#                 cofel_name=co_names_str,
-#                 visit_date=today_date,
-#                 reason=reason,
-#                 nxt_pre_date=nxt_date,
-#                 key_person=key_person,
-#                 images=image_content,
-#                 data_collect=data_collect,
-#                 key_person_contact=key_person_contact,
-#                 visit_type=visit_type,
-#                 location=location,
-#                 num_attend = num_attend,
-#                 revisit=revisit
-#             )
-#             corp_form_data.save()
-#             return Response({'success': 'Your entry has been saved'}, status=status.HTTP_200_OK)
-
-#         except Exception as e:
-#             return Response({'error': str(e)}, status=status.HTTP_200_OK)
-
-
-#     return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-# @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-# def SageMitraForm(request):
-#     if request.method == 'POST':
-#         uname = request.data.get('username')
-#         sm_name = request.data.get('sm_name')
-#         today_date = datetime.now()  
-#         no_leads = request.data.get('no_leads')
-#         lead_detail = request.data.get('lead_Detail')
-#         sm_contact = request.data.get('sm_contact')
-#         new_sm_name = request.data.get('new_sm_name')
-#         new_sm_contact = request.data.get('new_sm_contact')
-#         # followup_date = datetime.strptime(date, '%Y-%m-%d').date()
-#         sub_date = timezone.now()
-#         # try:
-#         if new_sm_name != '' and new_sm_contact != '':
-#             try:
-#                     print("====================")
-#                 # print("====================", new_sm_name, new_sm_contact )
-#                     new_sm = SageMitraList.objects.create(
-#                         sm_name = new_sm_name,
-#                         sm_ph=new_sm_contact
-#                     )
-#                     new_sm.save()
-                
-#                     data = SageMitraList.objects.get(sm_ph = new_sm_contact)
-#                     if data is None:
-#                         # p
-#                         new_sm = SageMitraList.objects.create(
-#                             sm_name = new_sm_name,
-#                             sm_ph=new_sm_contact
-#                         )
-#                         new_sm.save()
-                    
-#                     # else:
-#                     #     print("============")
-#                     #     new_sm = SageMitraList.objects.create(
-#                     #         sm_name = new_sm_name,
-#                     #         sm_ph=new_sm_contact
-#                     #     )
-#                     #     new_sm.save()
-                
-#                 # try:
-#                     sage_mitra = Sagemitra.objects.create(
-#                         new_sm_contact=new_sm_contact,
-#                         uname=uname,
-#                         SM_name=new_sm_name,
-#                         followUp_date=today_date,
-#                         No_leads=no_leads,
-#                         lead_detail=lead_detail,
-#                         new_sm_name=new_sm_name,
-#                         submission_date = sub_date,
-#                     )
-#                     sage_mitra.save()
-#                     success_message = 'SageMitra Detail Added'
-#                     return Response({'success':success_message}, status= status.HTTP_200_OK)
-#             except Exception as e:
-#                 error_message = print(e)
-#                 return Response({'error': error_message}, status=status.HTTP_200_OK)
-            
-#         else:
-#             try:                
-#                 sage_mitra = Sagemitra.objects.create(
-#                     sm_contact=sm_contact,
-#                     uname=uname,
-#                     SM_name=sm_name,
-#                     followUp_date=today_date,
-#                     No_leads=no_leads,
-#                     lead_detail=lead_detail,
-#                     submission_date = sub_date,
-#                 )
-#                 sage_mitra.save()
-#                 success_message = 'SageMitra Detail Added'
-#                 return Response({'success': success_message}, status=status.HTTP_200_OK)
-#             except Exception as e:
-
-#                 error_message = 'Invalid input'
-#                 return Response({'error': error_message}, status=status.HTTP_200_OK)
-#     else:
-#         return Response({'error': 'Invalid Method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-
-
-# @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-# def SageMitraForm(request):
-#     if request.method == 'POST':
-#         uname = request.data.get('username')
-#         sm_name = request.data.get('sm_name')
-#         today_date = datetime.now()  
-#         no_leads = request.data.get('no_leads')
-#         lead_detail = request.data.get('lead_Detail')
-#         sm_contact = request.data.get('sm_contact')
-#         new_sm_name = request.data.get('new_sm_name')
-#         new_sm_contact = request.data.get('new_sm_contact')
-#         # followup_date = datetime.strptime(date, '%Y-%m-%d').date()
-#         sub_date = timezone.now()
-        
-#         if new_sm_name != '' and new_sm_contact != '':
-#             try:
-#                 data = SageMitraList.objects.get(sm_ph = new_sm_contact)
-#                 if data:
-#                     sage_mitra = Sagemitra.objects.create(
-#                         new_sm_contact=new_sm_contact,
-#                         uname=uname,
-#                         SM_name=new_sm_name,
-#                         followUp_date=today_date,
-#                         No_leads=no_leads,
-#                         lead_detail=lead_detail,
-#                         new_sm_name=new_sm_name,
-#                         submission_date = sub_date,
-#                     )
-#                     sage_mitra.save()
-#                     success_message = 'SageMitra Detail Added'
-#                     return Response({'success':success_message}, status= status.HTTP_200_OK)
-
-                    
-                
-#                 else:
-#                     new_sm = SageMitraList.objects.create(
-#                         sm_name = new_sm_name,
-#                         sm_ph=new_sm_contact
-#                     )
-#                     new_sm.save()
-            
-                
-#                     sage_mitra = Sagemitra.objects.create(
-#                         new_sm_contact=new_sm_contact,
-#                         uname=uname,
-#                         SM_name=new_sm_name,
-#                         followUp_date=today_date,
-#                         No_leads=no_leads,
-#                         lead_detail=lead_detail,
-#                         new_sm_name=new_sm_name,
-#                         submission_date = sub_date,
-#                     )
-#                     sage_mitra.save()
-#                     success_message = 'SageMitra Detail Added'
-#                     return Response({'success':success_message}, status= status.HTTP_200_OK)
-#             except Exception as e:
-#                 error_message = print("============", e)
-#                 return Response({'error': error_message}, status=status.HTTP_200_OK)
-#         else:
-#             try:                
-#                 sage_mitra = Sagemitra.objects.create(
-#                     sm_contact=sm_contact,
-#                     uname=uname,
-#                     SM_name=sm_name,
-#                     followUp_date=today_date,
-#                     No_leads=no_leads,
-#                     lead_detail=lead_detail,
-#                     submission_date = sub_date,
-#                 )
-#                 sage_mitra.save()
-#                 success_message = 'SageMitra Detail Added'
-#                 return Response({'success': success_message}, status=status.HTTP_200_OK)
-#             except Exception as e:
-
-#                 error_message = 'Invalid input'
-#                 return Response({'error': error_message}, status=status.HTTP_200_OK)
-#     else:
-#         return Response({'error': 'Invalid Method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def SageMitraForm(request):
@@ -629,70 +364,6 @@ def SageMitraForm(request):
     else:
         return Response({'error': 'Invalid Method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-# @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-# def Home_Visit(request):
-#     currentTime = datetime.now().strftime('%H-%M-%S')    
-#     if request.method == 'POST':
-#         name =  request.data.get('username')
-#         customer_name = request.data.get('customer_name')
-#         customer_contact = request.data.get('customer_contact')
-#         Today_date =  datetime.now()
-#         visit_details = request.data.get('visit_details')
-#         Visit_location = request.data.get('Visit_location')
-#         visit_type = request.data.get('visit_type')
-#         image = request.data.get('image') 
-#         lat_long = request.data.get('lat_long')
-        
-#         # print("====", lat_long['longitude'])
-
-#         imgstr = image['base64']
-        
-#         username = HomeVisit.objects.filter(Q(C_ph = customer_contact) & Q(name = name)).count()
-#         if username > 0:
-#             revisit = 1 + username                                                         
-#         else:
-#             revisit = 1
-
-       
-#         if not image:
-#             return Response({'error': 'No image file provided.'}, status=status.HTTP_200_OK) 
-        
-#         ext = image['fileName'].split('.')[-1]
-#         new_filename = f"{slugify(name)}_{date}_{slugify(Visit_location)}_{slugify(currentTime)}.{ext}"
-#         image_content = ContentFile(base64.b64decode(imgstr), name=new_filename)
-        
-#         team_members = request.data.get('co_name')
-        
-
-#         if isinstance(team_members, str):
-#             team_members = team_members.split(',')
-#         elif not isinstance(team_members, list):
-#             team_members = []
-#         co_names_str = ','.join(team_members) if team_members else None
-
-#         try:
-#             data = HomeVisit.objects.create(
-#                 name=name,
-#                 C_name=customer_name,
-#                 C_ph=customer_contact,
-#                 date=Today_date,
-#                 detail=visit_details,
-#                 Visit_location=Visit_location,
-#                 images=image_content,
-#                 co_fellow=co_names_str,
-#                 visit_type=visit_type,
-#                 lat_long= lat_long,
-#                 revisit= revisit
-#             )
-#             data.save()
-#             return Response({'success': 'Home visit recorded successfully.'}, status=status.HTTP_201_CREATED)
-#         except Exception as e:
-#             print("=========================", e)
-#             return Response({'error': 'Failed to save home visit.'}, status=status.HTTP_200_OK)
-#     else:
-#         return Response({'error': 'Invalid request method.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    
 
 
 
@@ -1006,317 +677,6 @@ def GetClientData(request):
         return JsonResponse({'error':'Id not Found'}, status=status.HTTP_400_BAD_REQUEST)
     
     
-# @permission_classes([AllowAny])
-# @api_view(['GET'])
-# def FormData(request, username, form_id):
-#     print("=================")
-
-#     if request.method == 'GET':
-#         print("=================", username, form_id)
-
-#         if form_id == 'corporate':
-#             todayDate = datetime.now().date
-#             data = CorpFormData.objects.filter().all().values()
-#             return Response({'data':data}, status=status.HTTP_200_OK)
-#         return Response(status=status.HTTP_200_OK)
-    
-
-#     else:
-#         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-# from datetime import date
-# @api_view(['GET'])
-# @permission_classes([AllowAny])
-# def FormData(request, username, form_id):
-#     if request.method == 'GET':
-#         todayDate = date.today()   
-
-#         if form_id == 'corporate':                     
-#             data = CorpFormData.objects.filter(Q(name = username) & Q(visit_date = todayDate)).all().values()
-#         elif form_id == 'home':
-#             data = HomeVisit.objects.filter(Q(name = username) & Q(date = todayDate)).all().values()
-#         elif form_id == 'ip':
-#             username = Members.objects.filter(member_name = username).values('id')
-#             data = IpData.objects.filter(Q(name_id__in = username) & Q(date = todayDate)).all().values()
-#         elif form_id == 'admission':
-#             username = Members.objects.filter(member_name = username).values('id')
-#             data = AdmissionData.objects.filter(Q(name_id__in = username) & Q(date = todayDate)).all().values()
-#         elif form_id == 'sagemitra':
-#             data = Sagemitra.objects.filter(Q(uname = username) & Q(followUp_data = todayDate)).all().values()
-#         elif form_id == 'site':
-#             data = SiteVisit.objects.filter(Q(sales_name = username) & Q(Visit_Date = todayDate)).all().values()
-
-
-#         return Response({'data':data}, status=status.HTTP_200_OK)
-#     else:
-#         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    
-
-
-# from datetime import date
-# @api_view(['GET'])
-# @permission_classes([AllowAny])
-# def FormData(request, username, form_id):
-
-#     if request.method == 'GET': 
-#         try:
-#             dateFilter = request.GET.get('date')
-#             # employee = Members.objects.get(member_name=username)
-#             currentMonth = None
-#             todayDate = None
-#             count = 0
-#             data = None
-#             if dateFilter is not None:
-#                 currentMonth = date.today().month  
-#             else:
-#                 todayDate = date.today()    
-
-#             if currentMonth is not None:
-             
-#                 if form_id == 'corporate':                     
-#                     # data = CorpFormData.objects.filter(Q(name = username) & Q(visit_date__month = currentMonth)).all().values()
-#                     # count = CorpFormData.objects.filter(Q(name = username) & Q(visit_date__month = currentMonth)).count()
-
-
-#                     data = []
-#                     count = 0
-#                     print("===hello===")
-#                     # First QuerySet (co_fellow based)
-#                     data_cofellow_entry = CorpFormData.objects.filter(Q(visit_date__month=currentMonth) & Q(visit_type='team')).values()
-#                     # print("==", data_cofellow_entry)
-#                     if data_cofellow_entry.exists():
-#                         for entry in data_cofellow_entry:
-#                             # print("==", entry)
-#                             co_fellow = entry['cofel_name']
-
-#                             if co_fellow == username:
-#                                 count += 1
-#                                 data.append({
-#                                     'corp_name': entry['corp_name'],
-#                                     'corp_type': entry['corp_type'],                               
-#                                     'name': entry['name'],
-#                                     'presentation':entry['presentaion'],
-#                                     'visit_date': entry['visit_date'],
-#                                     'visit_type': entry['visit_type'],
-#                                     'cofel_name': entry['cofel_name'],
-#                                     'Visit_location': entry['Visit_location'],
-#                                     'key_person': entry['key_person'],
-#                                     'data_collect': entry['data_collect'],
-                                   
-#                                 })
-
-#                     print("=============", data)
-#                     # Second QuerySet (username-based)
-#                     data_entry = CorpFormData.objects.filter(Q(name=username) & Q(visit_date__month=currentMonth)).values()
-#                     print("==", data_entry)
-#                     if data_entry.exists():
-#                         for entry in data_entry:  # Loop through the result
-#                             # print("==", entry)
-#                             count += 1
-#                             data.append({
-#                                 'corp_name': entry['corp_name'],
-#                                 'corp_type': entry['corp_type'],                               
-#                                 'name': entry['name'],
-#                                 'presentation':entry['presentaion'],
-#                                 'visit_date': entry['visit_date'],
-#                                 'visit_type': entry['visit_type'],
-#                                 'cofel_name': entry['cofel_name'],
-#                                 'Visit_location': entry['Visit_location'],
-#                                 'key_person': entry['key_person'],
-#                                 'data_collect': entry['data_collect'],
-                             
-#                             })
-#                     print("===========", data, count)
-                            
-#                 elif form_id == 'home':
-#                     # data = HomeVisit.objects.filter(Q(name = username) & Q(date__month = currentMonth)).all().values()
-#                     data = []
-#                     count = 0
-#                     data_entry = (HomeVisit.objects.filter(Q(name=username) & Q(date__month = currentMonth))  
-#                             .values('C_name', 'C_ph').annotate(No_Visits=Count('C_ph')).order_by('-date')) 
-#                     data_cofellow_entry = HomeVisit.objects.filter(Q(date__month = currentMonth) & Q(visit_type='team')).values()
-#                     if data_cofellow_entry.exists():
-#                         for entry in data_cofellow_entry:
-#                             co_fellow = entry['co_fellow']
-                            
-#                             if co_fellow == username:
-#                                 count += 1
-#                                 data.append({
-#                                     'C_name': entry['C_name'],
-#                                     'C_ph': entry['C_ph'],
-#                                     'record':[ {
-#                                         'name': entry['name'],
-#                                         'detail': entry['detail'],
-#                                         'date': entry['date'],
-#                                         'visit_type': entry['visit_type'],
-#                                         'co_fellow': entry['co_fellow'],
-#                                         'Visit_location': entry['Visit_location']
-#                                     }]
-#                                 }) 
-
-#                     if data_entry.exists():                       
-                       
-#                         for entry in data_entry:
-#                             C_ph = entry['C_ph']
-                            
-#                             detailed_data = HomeVisit.objects.filter(
-#                                 Q(name=username) & Q(date__month=currentMonth) & Q(C_ph=C_ph)).values('name','detail', 'date', 'visit_type', 'co_fellow', 'Visit_location').order_by('-date')
-#                             count += 1
-#                             data.append({
-#                                 # 'id' : entry['id'],
-#                                 'C_name': entry['C_name'],
-#                                 'C_ph': C_ph,                               
-#                                 'record': list(detailed_data) 
-#                             })                          
-#                     # print("==========", count)
-#                     # count = HomeVisit.objects.filter(Q(Q(date__month = currentMonth) & Q(visit_type='team')) | Q(co_fellow__icontains = username)).count()
-#                     # print("=============", data)
-#                 elif form_id == 'ip':
-#                     username = Members.objects.filter(member_name = username).values('id')
-#                     data = IpData.objects.filter(Q(name_id__in = username) & Q(date__month = currentMonth)).all().values()
-#                     count = IpData.objects.filter(Q(name_id__in = username) & Q(date__month = currentMonth)).count()
-#                 elif form_id == 'admission':
-#                     username = Members.objects.filter(member_name = username).values('id')
-#                     data = AdmissionData.objects.filter(Q(name_id__in = username) & Q(date__month = currentMonth)).all().values()
-#                     count = AdmissionData.objects.filter(Q(name_id__in = username) & Q(date__month = currentMonth)).count()
-#                 elif form_id == 'sagemitra':
-#                     data = Sagemitra.objects.filter(Q(uname = username) & Q(followUp_date__month = currentMonth)).all().values()
-#                     count = Sagemitra.objects.filter(Q(uname = username) & Q(followUp_date__month = currentMonth)).count()
-#                 elif form_id == 'site':
-#                     data = SiteVisit.objects.filter(Q(sales_name = username) & Q(Visit_Date__month = currentMonth)).all().values()
-#                     count = SiteVisit.objects.filter(Q(sales_name = username) & Q(Visit_Date__month = currentMonth)).count()
-#                 elif form_id == 'event':
-#                     data = EventAcc.objects.filter(Q(name = username) & Q(Q(start_date__month = currentMonth) | Q(end_date__month = currentMonth))).all().values()
-#                     count = EventAcc.objects.filter(Q(name = username) & Q(Q(start_date__month = currentMonth) | Q(end_date__month = currentMonth))).count()
-           
-#             elif todayDate is not None:
-              
-#                 if form_id == 'corporate':                     
-#                     # data = CorpFormData.objects.filter(Q(name = username) & Q(visit_date = todayDate)).all().values()
-#                     # count = CorpFormData.objects.filter(Q(name = username) & Q(visit_date = todayDate)).count()
-#                     data = []
-#                     count = 0
-
-#                     # First QuerySet (co_fellow based)
-#                     data_cofellow_entry = CorpFormData.objects.filter(Q(visit_date = todayDate) & Q(visit_type='team')).values()
-
-#                     if data_cofellow_entry.exists():
-#                         for entry in data_cofellow_entry:
-#                             co_fellow = entry['cofel_name']
-
-#                             if co_fellow == username:
-#                                 count += 1
-#                                 data.append({
-#                                     'corp_name': entry['corp_name'],
-#                                     'corp_type': entry['corp_type'],                               
-#                                     'name': entry['name'],
-#                                     'presentation':entry['presentaion'],
-#                                     'visit_date': entry['visit_date'],
-#                                     'visit_type': entry['visit_type'],
-#                                     'cofel_name': entry['cofel_name'],
-#                                     'Visit_location': entry['Visit_location'],
-#                                     'key_person': entry['key_person'],
-#                                     'data_collect': entry['data_collect'],
-                                   
-#                                 })
-
-
-#                     # Second QuerySet (username-based)
-#                     data_entry = CorpFormData.objects.filter(Q(name=username) & Q(visit_date = todayDate)).values()
-
-#                     if data_entry.exists():
-#                         for entry in data_entry:  # Loop through the result
-#                             count += 1
-#                             data.append({
-#                                 'corp_name': entry['corp_name'],
-#                                 'corp_type': entry['corp_type'],                               
-#                                 'name': entry['name'],
-#                                 'presentation':entry['presentaion'],
-#                                 'visit_date': entry['visit_date'],
-#                                 'visit_type': entry['visit_type'],
-#                                 'cofel_name': entry['cofel_name'],
-#                                 'Visit_location': entry['Visit_location'],
-#                                 'key_person': entry['key_person'],
-#                                 'data_collect': entry['data_collect'],
-                             
-#                             })
-#                 elif form_id == 'home':
-#                     # data = HomeVisit.objects.filter(Q(name = username) & Q(date = todayDate)).all().values()
-#                     data = []
-#                     count = 0
-#                     data_entry = (HomeVisit.objects.filter(Q(name=username) & Q(date = todayDate))  
-#                             .values('C_name', 'C_ph').annotate(No_Visits=Count('C_ph')).order_by('-date')) 
-                    
-
-
-#                     data_cofellow_entry = HomeVisit.objects.filter(Q(date = todayDate) & Q(visit_type='team')).values()
-#                     if data_cofellow_entry.exists():
-#                         for entry in data_cofellow_entry:
-#                             co_fellow = entry['co_fellow']
-                            
-#                             if co_fellow == username:
-#                                 # print( "=-======================",entry['detail'])
-#                                 count += 1
-#                                 data.append({
-#                                     'C_name': entry['C_name'],
-#                                     'C_ph': entry['C_ph'],
-#                                     'record': [{
-#                                         'name': entry['name'],
-#                                         'detail': entry['detail'],
-#                                         'date': entry['date'],
-#                                         'visit_type': entry['visit_type'],
-#                                         'co_fellow': entry['co_fellow'],
-#                                         'Visit_location': entry['Visit_location']
-#                                     }]
-#                                 }) 
-                    
-#                     if data_entry.exists():
-                        
-                       
-#                         for entry in data_entry:
-#                             C_ph = entry['C_ph']
-                            
-#                             detailed_data = HomeVisit.objects.filter(
-#                                 Q(name=username) & Q(date = todayDate) & Q(C_ph=C_ph)
-#                             ).values('detail', 'date', 'visit_type', 'co_fellow', 'Visit_location','name').order_by('-date')
-#                             count += 1
-#                             data.append({
-#                                 # 'id' : entry['id'],
-#                                 'C_name': entry['C_name'],
-#                                 'C_ph': C_ph,                               
-#                                 'record': list(detailed_data) 
-#                             })   
-#                     # print("======", count)
-#                     # count = HomeVisit.objects.filter(Q(Q(name = username) & Q(date = todayDate)) | Q(co_fellow__icontains = username)).count()
-
-#                 elif form_id == 'ip':
-#                     username = Members.objects.filter(member_name = username).values('id')                   
-#                     data = IpData.objects.filter(Q(name_id__in = username) & Q(date = todayDate)).all().values()
-#                     count = IpData.objects.filter(Q(name_id__in = username) & Q(date = todayDate)).count()
-
-#                 elif form_id == 'admission':
-#                     username = Members.objects.filter(member_name = username).values('id')
-#                     data = AdmissionData.objects.filter(Q(name_id__in = username) & Q(date = todayDate)).all().values()
-#                     count = AdmissionData.objects.filter(Q(name_id__in = username) & Q(date = todayDate)).count()
-
-#                 elif form_id == 'sagemitra':
-#                     data = Sagemitra.objects.filter(Q(uname = username) & Q(followUp_date = todayDate)).all().values()
-#                     count = Sagemitra.objects.filter(Q(uname = username) & Q(followUp_date = todayDate)).count()
-
-#                 elif form_id == 'site':
-#                     data = SiteVisit.objects.filter(Q(sales_name = username) & Q(Visit_Date = todayDate)).all().values()
-#                     count = SiteVisit.objects.filter(Q(sales_name = username) & Q(Visit_Date = todayDate)).count()
-
-#                 elif form_id == 'event':
-#                     data = EventAcc.objects.filter(Q(name = username) & Q(Q(start_date = todayDate) | Q(end_date = todayDate))).all().values()
-#                     count = EventAcc.objects.filter(Q(name = username) & Q(Q(start_date = todayDate) | Q(end_date = todayDate))).count()
-
-#             return Response({'data': data, 'count': count}, status=status.HTTP_200_OK)
-#         except Exception as e:
-#             print("=============", e)
-#             return Response(e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-#     else:
-#         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
 
 from django.core.files.base import ContentFile
 from PIL import Image
@@ -1325,10 +685,12 @@ from io import BytesIO
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def CorporateForm(request):
-    
+  
     if request.method == 'POST':
+        
         try:
             # Collecting the form data
+            new_corporate = request.data.get('new_corporate', None)
             name = request.data.get('name')
             corp_type = request.data.get('corp_type')
             corp_name = request.data.get('corp_name')
@@ -1358,7 +720,8 @@ def CorporateForm(request):
 
             # Validate and process dates
             nxt_date = None
-            if nxt_pre_date:
+            if nxt_pre_date and  (presentation == 'Planned'):
+                
                 try:
                     nxt_date = datetime.strptime(nxt_pre_date, '%Y-%m-%d').date()
                 except (ValueError, TypeError):
@@ -1390,6 +753,20 @@ def CorporateForm(request):
             username = CorpFormData.objects.filter(Q(key_person_contact=key_person_contact) & Q(name=name)).count()
             revisit = 1 + username if username > 0 else 1
 
+
+            if new_corporate:
+                corporate_type = CorporateType.objects.filter(corpo_type = corp_type).values_list('id', flat = True)
+                # print(corporate_type)
+                check_corporate = CorporatesList.objects.filter(corpo_name__icontains = new_corporate).first()
+                current_time = timezone.localtime(timezone.now())
+                # print(current_time)
+                if check_corporate:
+                    corp_name = new_corporate
+                else:
+                    # print("====================")
+                    data = CorporatesList.objects.create(corpo_name = new_corporate, added_by = name, status = 1, corporate_type_id = corporate_type, added_at = current_time)
+                    data.save()
+
             # Save to model
             corp_form_data = CorpFormData.objects.create(
                 lat_long=lat_long,
@@ -1418,6 +795,7 @@ def CorporateForm(request):
             return Response({'success': 'Your entry has been saved'}, status=status.HTTP_200_OK)
 
         except Exception as e:
+            print("============", e)
             return Response({'error': str(e)}, status=status.HTTP_200_OK)
 
     return Response(status=status.HTTP_400_BAD_REQUEST)

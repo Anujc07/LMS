@@ -10,7 +10,27 @@
 }
 
 </style>
+{% if error_message %}
+<div class="row" style='margin-bottom: 23px;' id='message'>     
+    <div class="col-12">       
+        <div class="alert alert-danger shadow" role="alert">
+           {{ error_message }}
+        </div> 
+    </div>
+</div>
+{% endif %}
 
+{% if messages %}
+<div class="row" style='margin-bottom: 23px;' id='message'>      
+    <div class="col-12">       
+        {% for message in messages %}
+        <div class="alert alert-success shadow" role="alert">
+            {{ message }}
+        </div> 
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
 
 <div class='container-flex'>
     <div class="row">
@@ -282,4 +302,10 @@
     </div> 
 </div>
 
+
+<script>
+    setTimeout(function () {
+        document.getElementById("message").innerHTML = "";
+    }, 8000);
+</script>
 {% endblock %}
