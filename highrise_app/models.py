@@ -581,3 +581,8 @@ class Source(models.Model):
 class Interested_localities(models.Model):
     localities = models.TextField(null=True, blank=True, max_length=255)
     
+
+
+class Visit_Type_Source(models.Model):
+    name = models.TextField(null=True, blank=True)
+    status = models.IntegerField(default=1)

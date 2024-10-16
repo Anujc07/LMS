@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from highrise_app.models import CorpFormData, EmpSetTarget, Members, FollowUpData, Sagemitra, HighRiseData, Target, CorporatesList, CorporateType, Interested_localities
-from highrise_app.models import HomeVisit, IpData, AdmissionData, EventAcc, SageMitraList, EventType, SiteVisit, Source, States, City
+from highrise_app.models import HomeVisit, IpData, AdmissionData, EventAcc, SageMitraList, EventType, SiteVisit, Source, States, City, Visit_Type_Source
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -250,7 +250,10 @@ def Data(request):
     interested_localities = Interested_localities.objects.values_list('localities', flat=True).order_by('localities')
     source =  Source.objects.values_list('name', 'id', 'source_id').order_by('name')
     state_location = States.objects.filter(country_id = 101).values_list('name', 'id').order_by('name')
+    sourceType = Visit_Type_Source.objects.filter(status=1).values_list('id', 'name')
     data = {
+        
+        'sourceType': list(sourceType),
         'corporate_list': list(corporate_list),
         'corporate_type': list(corporate_type),
         'members': list(members),

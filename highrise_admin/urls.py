@@ -34,6 +34,7 @@ urlpatterns = [
     path('admin/Graph', views.GraphCharts, name='GraphCharts'), 
     path('admin/Graph-Values', views.GraphChartsVlues, name='GraphChartsVlues'), 
     path('admin/Performance-Graph', views.GraphChartsPerformance, name='GraphChartsPerformance'), 
+    path('admin/Team-API', views.TeamGraphAPI, name='TeamGraphAPI'), 
     # path('admin/Employee-Add', views.Add_employee, name='Add_employee'),
     
 ]

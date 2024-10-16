@@ -2221,9 +2221,47 @@ def GraphChartsPerformance(request):
                 'targets': all_targets,
                 'data': all_achievement
             }
+    
             return JsonResponse(data, status=200)
         except Exception as e:
             print("=============", e)
             JsonResponse({'error': e}, status=500)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=400)
+    
+
+
+def TeamGraphAPI(request):
+    print("==================apicalled===================")
+    try:
+        all_Data = {}
+        teamID = Teams.objects.filter(status=1).values_list('id', 'T_name')
+        for ID, T_name in teamID:
+            all_Data[ID] = {
+                'team_id': T_name,
+                'employees': []
+            }
+            memberID = Members.objects.filter(Q(status=1) & Q(team_id = ID)).values_list('member_name', flat=True)
+            for Employee_name in memberID:
+
+                hot_leads  = HighRiseData.objects.filter(Q(HandledByEmployee=Employee_name) & Q(CustomerGrade='Hot') & Q(Enquiry_Status='Open')).count()
+                opportunity_leads = HighRiseData.objects.filter(Q(HandledByEmployee=Employee_name) & Q(CustomerGrade='Opportunity') & Q(Enquiry_Status='Open')).count()
+                proposal_leads = HighRiseData.objects.filter(Q(HandledByEmployee=Employee_name) & Q(CustomerGrade='Proposal') & Q(Enquiry_Status='Open')).count()
+                cold_leads = HighRiseData.objects.filter(Q(HandledByEmployee=Employee_name) & Q(CustomerGrade='Cold') & Q(Enquiry_Status='Open')).count()
+                employee_data = {
+                    'Employee_name': Employee_name,
+                    'hot_leads': hot_leads,
+                    'opportunity_leads': opportunity_leads,
+                    'proposal_leads': proposal_leads,
+                    'cold_leads': cold_leads
+                }
+
+                # Append the employee data to the team entry in the dictionary
+                all_Data[ID]['employees'].append(employee_data)
+                
+        
+      
+        return JsonResponse({'data': all_Data})
+    except Exception as e:
+        print("====", e)
+        return JsonResponse({'error': e})
