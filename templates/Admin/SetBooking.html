@@ -1,0 +1,196 @@
+{% extends 'Admin/base.html' %}
+{% block content %}
+
+
+<div class="row mt-3">
+    <div class="col-12">
+        {% if messages %}
+            <ul class="danger-message">
+                {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                        <div class="alert alert-danger shadow alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success shadow alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+<div class="row mb-4">
+   
+    <div class="col-12">     
+        <div class="col-sm">
+            <div class="d-flex justify-content-sm-end">
+                <div class="search-box ms-2">
+                    <input type="text" class="form-control search" placeholder="Search..." oninput="Search(value)">
+                    <i class="ri-search-line search-icon"></i>
+                </div>
+            </div>
+        </div>       
+    </div>
+</div>
+<div class="row" >
+    <div class="col-xl-12">
+        <div class="card">          
+            <div class="card-body">
+                <div class="live-preview">
+                    <div class="table-responsive" id="table-fixed-header">
+                        <table class="table align-middle table-nowrap mb-0">
+                            <thead>
+                                <tr>
+                                    <th>S.No</th>    
+                                    <th>Employee Details</th>    
+                                    <th>EDate</th>    
+                                    <th>Enquiry Details</th>
+                                    <th>Stage Change Date</th>
+                                    <th>Action</th>               
+                                </tr>
+                            </thead>
+                            <tbody>
+                        
+                                {% for item in allData %}
+                                <tr data-item-id="{{ item.Enquiry_id }}">
+                                    <td>{{ forloop.counter }}</td>                                
+                                    <td>{{ item.Name }}<br> {{ item.Mobile }}<br>{{ item.Enquiry_id }}</td>  
+                                    <td>{{ item.EDate|date:"Y-m-d" }}</td>  
+                                    <td>{{ item.Project|default_if_none:" " }}<br>{{ item.unit }}<br><b>{{ item.HandledByEmployee }}</b></td>  
+                                    <td>{{ item.StageChangeDate|default_if_none:''|date:"Y-m-d"  }}</td>  
+                                    <td>
+                                        <div class="d-flex gap-2">         
+                                            <button class="btn btn-sm btn-success remove-item-btn" data-bs-toggle="modal" data-bs-target="#booking" onclick="GetData(this)">Book</button>
+                                        </div>
+                                    </td>  
+                                </tr>
+                                {% endfor %}  
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Employee Modals -->
+<div id="booking" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+      
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addLabel">Add Booking</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
+                </div>
+                <div class="modal-body">
+                    <form method='POST' action="{% url 'SetBookings' %}" id="form">
+                       {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="mb-3 col-xxl-6">
+                                <label for="corp_value" class="form-label">Client Name</label>
+                                <input type="text" class="form-control" id="client_Name" name='client_Name' placeholder="Enter Client Name" required readonly>
+                            </div>
+                            <div class="mb-3 col-xxl-6">
+                                <label for="corp_value" class="form-label">Phone Number</label>
+                                <input type="text" class="form-control" id="phone_number" name='phone_number' placeholder="Enter Phone Number" required readonly>
+                            </div>
+                            <div class="mb-3 col-xxl-6">
+                                <label for="corp_value" class="form-label">Enquiry Id</label>
+                                <input type="text" class="form-control" id="enquiry_id" name='enquiry_id' placeholder="Enter Enquiry Id" required readonly>
+                            </div>
+                            <div class="mb-3 col-xxl-6">
+                                <label for="corp_value" class="form-label">EDate</label>
+                                <input type="text" class="form-control" id="edate" name='edate' onfocus="(this.type='date')" onblur="(this.type='text')"   required readonly>
+                            </div>
+                            <div class="mb-3 col-xxl-6">
+                                <label for="corp_value" class="form-label">Handled By</label>
+                                <input type="text" class="form-control" id="handledby" name='handledby' placeholder="Enter Handled By" required readonly>
+                            </div>
+                            <div class="mb-3 col-xxl-6">
+                                <label for="corp_value" class="form-label">Project</label>
+                                <input type="text" class="form-control" id="project" name='project' placeholder="Enter Project" required>
+                            </div>
+                            <div class="mb-3 col-xxl-6">
+                                <label for="corp_value" class="form-label">Unit</label>
+                                <input type="text" class="form-control" id="unit" name='unit' placeholder="Enter Unit" required>
+                            </div>
+                            <div class="mb-3 col-xxl-6">
+                                <label for="corp_value" class="form-label">Stage Change Date</label>
+                                <input type="text" class="form-control" id="stagechangedate" name='stagechangedate' onfocus="(this.type='date')" onblur="(this.type='text')" required>
+                            </div>
+                            <div class="mb-3 col-xxl-6">
+                                <label for="corp_value" class="form-label">Booking Date</label>
+                                <input type="date" class="form-control" id="bookingdate" name='bookingdate'  required>
+                            </div>
+                        
+                            
+                            
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Add Booking</button>
+                            </div>
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+       
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<script>
+const GetData = (element) => {
+    const row = element.closest('tr');
+
+
+    const clientName = row.cells[1].innerText.split("\n")[0].trim(); // Name
+    const phoneNumber = row.cells[1].innerText.split("\n")[1].trim(); // Mobile
+    const enquiryId = row.cells[1].innerText.split("\n")[2].trim(); // Enquiry ID
+    const eDate = row.cells[2].innerText.trim(); // EDate
+    const project = row.cells[3].innerText.split("\n")[0].trim(); // Project
+    const unit = row.cells[3].innerText.split("\n")[1].trim(); // Unit
+    const handledBy = row.cells[3].innerText.split("\n")[2].trim(); // Handled By
+    const stageChangeDate = row.cells[4].innerText.trim(); // Stage Change Date
+
+
+    const setFieldValue = (fieldId, value) => {
+        const field = document.getElementById(fieldId);
+        field.value = value || '';  
+        if (value && value.trim() !== '') {
+            field.setAttribute('readonly', true); 
+        } else {
+            field.removeAttribute('readonly'); 
+        }
+    };
+
+    // Populate the modal form fields and set readonly conditionally
+    setFieldValue('client_Name', clientName);
+    setFieldValue('phone_number', phoneNumber);
+    setFieldValue('enquiry_id', enquiryId);
+    setFieldValue('edate', eDate);
+    setFieldValue('handledby', handledBy);
+    setFieldValue('project', project);
+    setFieldValue('unit', unit);
+    setFieldValue('stagechangedate', stageChangeDate);
+};
+
+
+setTimeout(function() {
+    var alerts = document.querySelectorAll('.alert');
+    alerts.forEach(function(alert) {
+        var alertInstance = new bootstrap.Alert(alert);
+        alertInstance.close();
+    });
+}, 5000);
+
+</script>
+
+
+{% endblock %}
+
+

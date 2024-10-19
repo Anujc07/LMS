@@ -27,7 +27,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'django-insecure-p+^c*gfq8^4)q5zxt=%urjaaar@m(x$=juklm=k^^lbu+#rtqo'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 
@@ -50,8 +50,7 @@ INSTALLED_APPS = [
     
 ]
 
-MIDDLEWARE = [
-   
+MIDDLEWARE = [   
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',  
     'corsheaders.middleware.CorsMiddleware',
@@ -190,8 +189,6 @@ PASSWORD_HASHERS = [
 
 
 
-TIME_ZONE = 'Asia/Kolkata'
-USE_TZ = True
 
 CORS_ORIGIN_ALLOW_ALL  = True
 
@@ -200,6 +197,7 @@ CORS_ORIGIN_ALLOW_ALL  = True
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',

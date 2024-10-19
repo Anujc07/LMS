@@ -1,6 +1,6 @@
 {% extends 'Admin/base.html' %}
 {% block content %}
-
+{% block title %}DPR Section{% endblock %}
 <style>
     #table-fixed-header {
         height: 500px;
@@ -117,7 +117,7 @@
                                 <tr>
                                     <th scope="col" class="text-center">S.No.</th>
                                     <th scope="col" class="">NAME</th>
-                                    {% comment %} <th scope="col" class="text-center">BOOKINGS</th> {% endcomment %}
+                                    <th scope="col" class="text-center">BOOKINGS</th>
                                     <th scope="col" class="text-center">NEW LEADS</th>
                                     <th scope="col" class="text-center">SM LEADS</th>
                                     <th scope="col" class="text-center">LEADS F/W</th>
@@ -163,7 +163,7 @@ function displayTotalSum() {
     //console.log("=========")
     var tableBody = document.getElementById("DPR-table-body");
     var rows = tableBody.getElementsByTagName("tr");
-  //  var totalBookings = 0;
+    var totalBookings = 0;
     var totalNewLeads = 0;
     var totalSMLeads = 0;
     var totalLeadsFW = 0;
@@ -176,21 +176,21 @@ function displayTotalSum() {
     for (var i = 0; i < rows.length; i++) {
         var cells = rows[i].getElementsByTagName("td");
         if (cells.length > 1) {
-          //  totalBookings += parseInt(cells[2].textContent);
-            totalNewLeads += parseInt(cells[2].textContent);
-            totalSMLeads += parseInt(cells[3].textContent);
-            totalLeadsFW += parseInt(cells[4].textContent);
-            totalMissedFW += parseInt(cells[5].textContent);
-            totalSMFW += parseInt(cells[6].textContent);
-            totalHomeVisits += parseInt(cells[7].textContent);
-            totalCorpVisits += parseInt(cells[8].textContent);
-            totalIp += parseInt(cells[9].textContent);
-            totalAdmission += parseInt(cells[10].textContent);
+            totalBookings += parseInt(cells[2].textContent);
+            totalNewLeads += parseInt(cells[3].textContent);
+            totalSMLeads += parseInt(cells[4].textContent);
+            totalLeadsFW += parseInt(cells[5].textContent);
+            totalMissedFW += parseInt(cells[6].textContent);
+            totalSMFW += parseInt(cells[7].textContent);
+            totalHomeVisits += parseInt(cells[8].textContent);
+            totalCorpVisits += parseInt(cells[9].textContent);
+            totalIp += parseInt(cells[10].textContent);
+            totalAdmission += parseInt(cells[11].textContent);
         }
     }
     var newRow = document.createElement("tr");
     newRow.innerHTML = "<td colspan='2'>Total</td>" +
-       // "<td class='text-center'>" + totalBookings + "</td>" +
+        "<td class='text-center'>" + totalBookings + "</td>" +
         "<td class='text-center'>" + totalNewLeads + "</td>" +
         "<td class='text-center'>" + totalSMLeads + "</td>" +
         "<td class='text-center'>" + totalLeadsFW + "</td>" +
@@ -208,9 +208,43 @@ function displayTotalSum() {
 function daysInMonth(month, year) {
     return new Date(year, month, 0).getDate();
 }
+  
 
+
+
+const colorFun = (index, cells, percentage) => {
+
+       // console.log("==========", percentage)
+
+        if (percentage < 40) {
+            //console.log("========", cells[index])
+            cells[index].classList.add('dynamicCell');
+            
+            cells[index].style.backgroundColor='red';
+            cells[index].style.setProperty('color', 'white');
+
+        }        
+        else if(percentage >= 40 && percentage < 60) {
+            // cells[9].style.backgroundColor = 'yellow';
+            cells[index].classList.add('dynamicCell');
+            cells[index].classList.add('bg-danger');
+            cells[index].style.setProperty('color', 'white');
+
+         } else if (percentage >= 60 && percentage < 80) {
+           // cells[9].style.backgroundColor = 'yellow';
+           cells[index].classList.add('dynamicCell');
+            cells[index].classList.add('bg-warning');
+        }  else if (percentage >= 80) {
+          //  cells[9].style.backgroundColor = 'green';
+            cells[index].classList.add('dynamicCell');
+            cells[index].classList.add('bg-success');
+            cells[index].style.setProperty('color', 'white');
+
+        }
+}
 
 function Table(mainData) {
+   // console.log('==1==', mainData)
     mainData.forEach(function (lead, index) {
         var rowIndex = index;
         var tableBody = document.getElementById("DPR-table-body");
@@ -218,22 +252,25 @@ function Table(mainData) {
 
         if (!row) {
             row = tableBody.insertRow(rowIndex);
-            for (var i = 0; i < 11; i++) {
+            for (var i = 0; i < 12; i++) {
                 row.insertCell(i);
             }
             row.cells[0].textContent = rowIndex + 1;
         }
 
         var cells = row.cells;
-   //     var booked_target; 
+        var new_leads_target;
+        var booked_target; 
         var FW_target; 
         var SM_FW_target; 
         var home_visit_target; 
         var Corp_visit_target; 
         var IP_target; 
         var Admission_target; 
+        
         var targetArray = lead.target;
         var targetEnd = lead.target_values_end;
+        
         var date = new Date();
         var currentDay = date.getDate();
         var startDate = document.getElementById("StartDate").value;
@@ -275,7 +312,7 @@ function Table(mainData) {
                    daysDifference = 1;
                 }
 
-
+      //      console.log("===========", daysDifference)
             targetArray.forEach(function(item, index) {
 
                 var target_id = item.Target_id;
@@ -294,31 +331,37 @@ function Table(mainData) {
                     current_corp_visit_target = (target/25)*daysDifference;
                     if (!same_month){
                         end_corp_visit_target = (target_end/25)*days_start_month;
-                        current_corp_visit_target = end_corp_visit_target + current_corp_visit_target;
-                     
+                        current_corp_visit_target = end_corp_visit_target + current_corp_visit_target;                     
                     }
-
-                    
-
                     percentage = (lead.corpo_visit / current_corp_visit_target) * 100;
                     Corp_visit_target = Math.round(current_corp_visit_target);
 
-                    if (percentage < 40) {
-                        cells[8].style.backgroundColor='red';
-                        cells[8].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                        // cells[9].style.backgroundColor = 'yellow';
-                        cells[8].classList.add('bg-danger');
-                        cells[8].style.color = 'white'; 
-                     } else if (percentage >= 60 && percentage < 80) {
-                       // cells[9].style.backgroundColor = 'yellow';
-                        cells[8].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-                      //  cells[9].style.backgroundColor = 'green';
-                        cells[8].classList.add('bg-success');
-                        cells[8].style.color = 'white'; 
+                    colorFun(9, cells, percentage);
+                } 
+                else if (target_id == 1) {
+                    
+                  
+                    booking_target = (target/25)*daysDifference;
+                    if (!same_month){
+                        end_booking_target = (target_end/25)*days_start_month;
+                        booking_target = end_booking_target + booking_target;                     
                     }
+                    booked_target =  Math.round(booking_target);
+                  //  console.log("====booked_target====:", booked_target)
+                    percentage = (lead.new_leads / booking_target) * 100;
+                    colorFun(2, cells, percentage);
+                } 
+                else if (target_id == 9) {
+                    
+                    newleads_target = (target/25)*daysDifference;
+                    if (!same_month){
+                        end_newlead_target = (target_end/25)*days_start_month;
+                        newleads_target = end_newlead_target + newleads_target;                     
+                    }
+                    new_leads_target =  Math.round(newleads_target);
+             
+                    percentage = (lead.new_leads / newleads_target) * 100;
+                    colorFun(3, cells, percentage);
                 } else if (target_id == 3) {
                     
                     current_FW_target = (target/25)*daysDifference;
@@ -329,24 +372,19 @@ function Table(mainData) {
                     FW_target =  Math.round(current_FW_target);
              
                     percentage = (lead.lead_FW / current_FW_target) * 100;
-                    if (percentage < 40) {
-                        cells[4].style.backgroundColor='red';
-                        cells[4].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                      
-                        cells[4].classList.add('bg-danger');
-                        cells[4].style.color = 'white'; 
-
-                     } else if (percentage >= 60 && percentage < 80) {
-                     
-                        cells[4].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-                     
-                        cells[4].classList.add('bg-success');
-                        cells[4].style.color = 'white'; 
+                    colorFun(5, cells, percentage);
+                } 
+                else if (target_id == 5) {
+                    current_sm_fw_target = (target/25)*daysDifference;
+                    if (!same_month){
+                        end_sm_fw_target = (target_end/25)*days_start_month;
+                        current_sm_fw_target = end_sm_fw_target + current_sm_fw_target;                     
                     }
-                } else if (target_id == 4) {
+                    SM_FW_target =  Math.round(current_sm_fw_target);
+                    percentage = (lead.sm_followup / current_sm_fw_target) * 100;
+                    colorFun(7, cells, percentage);
+                } 
+                else if (target_id == 4) {
 
                     current_home_visit_target = (target/25)*daysDifference;
                     if (!same_month){
@@ -356,89 +394,19 @@ function Table(mainData) {
                     home_visit_target = Math.round(current_home_visit_target);
                     percentage = (lead.home_visit / current_home_visit_target) * 100;
        
-                    if (percentage < 40) {
-                        cells[7].style.backgroundColor='red';
-                        cells[7].style.color = 'white'; 
-                    } 
-                    else if(percentage >= 40 && percentage < 60) {
-                     
-                        cells[7].classList.add('bg-danger');
-                        cells[7].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 60 && percentage < 80) {
-                     
-                        cells[7].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-          
-                        cells[7].classList.add('bg-success');
-                        cells[7].style.color = 'white'; 
-                    }
-                } else if (target_id == 5) {
-                    current_sm_fw_target = (target/25)*daysDifference;
-                    if (!same_month){
-                        end_sm_fw_target = (target_end/25)*days_start_month;
-                        current_sm_fw_target = end_sm_fw_target + current_sm_fw_target;                     
-                    }
-                    SM_FW_target =  Math.round(current_sm_fw_target);
-                    percentage = (lead.sm_followup / current_sm_fw_target) * 100;
-                    if (percentage < 40) {
-                        cells[6].style.backgroundColor='red';
-                        cells[6].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                
-                        cells[6].classList.add('bg-danger');
-                        cells[6].style.color = 'white'; 
-                     }  else if (percentage >= 60 && percentage < 80) {
-               
-                        cells[6].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-               
-                        cells[6].classList.add('bg-success');
-                        cells[6].style.color = 'white'; 
-                    }
+                    colorFun(8, cells, percentage);
                 }          
                 else if (target_id == 7) {
                     current_Admission_target = target;
                     Admission_target =   Math.round(current_Admission_target);                    
                     percentage = (lead.total_admission / current_Admission_target) * 100;
-                    if (percentage < 40) {
-                        cells[10].style.backgroundColor='red';
-                        cells[10].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-           
-                        cells[10].classList.add('bg-danger');
-                        cells[10].style.color = 'white'; 
-                     }  else if (percentage >= 60 && percentage < 80) {
-                 
-                        cells[10].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-        
-                        cells[10].classList.add('bg-success');
-                        cells[10].style.color = 'white'; 
-                    }
+                    colorFun(11, cells, percentage);
                 }           
-                 else if (target_id == 8) {
+                else if (target_id == 8) {
                     current_IP_target = target;
                     IP_target =   Math.round(current_IP_target);                  
                     percentage = (lead.total_ip / current_IP_target) * 100;
-                    if (percentage < 40) {
-                        cells[9].style.backgroundColor='red';
-                        cells[9].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-    
-                        cells[9].classList.add('bg-danger');
-                        cells[9].style.color = 'white'; 
-                     } else if (percentage >= 60 && percentage < 80) {
-                  
-                        cells[9].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-                   
-                        cells[9].classList.add('bg-success');
-                        cells[9].style.color = 'white'; 
-                    }
+                    colorFun(10, cells, percentage);
                 }     
             });
         }else{
@@ -452,140 +420,68 @@ function Table(mainData) {
                  //   console.log('=========', target_id)
                     percentage = (lead.corpo_visit / target) * 100;
                     Corp_visit_target = target;
-                    if (percentage < 40) {
-                        cells[8].style.backgroundColor='red';
-                        cells[8].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                        // cells[9].style.backgroundColor = 'yellow';
-                        cells[8].classList.add('bg-danger');
-                        cells[8].style.color = 'white'; 
-                     }           
+                    colorFun(9, cells, percentage);
                     
-                    else if (percentage >= 60 && percentage < 80) {
-                       // cells[9].style.backgroundColor = 'yellow';
-                        cells[8].classList.add('bg-warning');
-                    }  else if (percentage > 80) {
-                        cells[8].classList.add('bg-success');
-                        cells[8].style.color = 'white'; 
-                    }
+                } else if (target_id == 9) {
+                    new_leads_target = target;
+                    percentage = (lead.new_leads / target) * 100;
+                     colorFun(3, cells, percentage);
+                } else if (target_id == 1) {
+                    booked_target = target;
+                    percentage = (lead.total_bookings / target) * 100;
+                     colorFun(2, cells, percentage);
                 } else if (target_id == 3) {
                     FW_target = target;
                     percentage = (lead.lead_FW / target) * 100;
-                    if (percentage < 40) {
-                        cells[4].style.backgroundColor='red';
-                        cells[4].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                        // cells[9].style.backgroundColor = 'yellow';
-                        cells[4].classList.add('bg-danger');
-                        cells[4].style.color = 'white'; 
-                     } else if (percentage >= 60 && percentage < 80) {
-                      //  cells[5].style.backgroundColor = 'yellow';
-                        cells[4].classList.add('bg-warning');
-                        
-                    }  else if (percentage >= 80) {
-                      //  cells[5].style.backgroundColor = 'green';
-                        cells[4].classList.add('bg-success');
-                        cells[4].style.color = 'white'; 
-                    }
+                     colorFun(5, cells, percentage);
                 } else if (target_id == 4) {
                     home_visit_target = target;
                     percentage = (lead.home_visit / target) * 100;
-                    if (percentage < 40) {
-                        cells[7].style.backgroundColor='red';
-                        cells[7].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                        // cells[9].style.backgroundColor = 'yellow';
-                        cells[7].classList.add('bg-danger');
-                        cells[7].style.color = 'white'; 
-                     } else if (percentage >= 60 && percentage < 80) {
-                        //cells[8].style.backgroundColor = 'yellow';
-                        cells[7].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-                       // cells[8].style.backgroundColor = 'green';
-                        cells[7].classList.add('bg-success');
-                        cells[7].style.color = 'white'; 
-                    }
+                     colorFun(8, cells, percentage);
                 } else if (target_id == 5) {
                     SM_FW_target = target;
                     percentage = (lead.sm_followup / target) * 100;
-                    if (percentage < 40) {
-                        cells[6].style.backgroundColor='red';
-                        cells[6].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                        // cells[9].style.backgroundColor = 'yellow';
-                        cells[6].classList.add('bg-danger');
-                        cells[6].style.color = 'white'; 
-                     }  else if (percentage >= 60 && percentage < 80) {
-                       // cells[7].style.backgroundColor = 'yellow';
-                        cells[6].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-                      //  cells[7].style.backgroundColor = 'green';
-                        cells[6].classList.add('bg-success');
-                        cells[6].style.color = 'white'; 
-                    }
+                     colorFun(7, cells, percentage);
                 }           
                  else if (target_id == 8) {
                     IP_target = target;
                     percentage = (lead.total_ip / target) * 100;
-                    if (percentage < 40) {
-                        cells[9].style.backgroundColor='red';
-                        cells[9].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                        // cells[9].style.backgroundColor = 'yellow';
-                        cells[9].classList.add('bg-danger');
-                        cells[9].style.color = 'white'; 
-                     }  else if (percentage >= 60 && percentage < 80) {
-                       // cells[7].style.backgroundColor = 'yellow';
-                        cells[9].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-                      //  cells[7].style.backgroundColor = 'green';
-                        cells[9].classList.add('bg-success');
-                        cells[9].style.color = 'white'; 
-                    }
+                     colorFun(10, cells, percentage);
                 }           
                  else if (target_id == 7) {
                     Admission_target = target;
                     percentage = (lead.total_admission / target) * 100;
                    
-                    if (percentage < 40) {
-                        cells[10].style.backgroundColor='red';
-                        cells[10].style.color = 'white'; 
-                    }        
-                    else if(percentage >= 40 && percentage < 60) {
-                        // cells[9].style.backgroundColor = 'yellow';
-                        cells[10].classList.add('bg-danger');
-                        cells[10].style.color = 'white'; 
-                     } else if (percentage >= 60 && percentage < 80) {
-                       // cells[7].style.backgroundColor = 'yellow';
-                        cells[10].classList.add('bg-warning');
-                    }  else if (percentage >= 80) {
-                      //  cells[7].style.backgroundColor = 'green';
-                        cells[10].classList.add('bg-success');
-                        cells[10].style.color = 'white'; 
-                    }
+                     colorFun(11, cells, percentage);
                 }           
             });
         }
         
+        var startDate = document.getElementById("StartDate").value;
+        var endDate = document.getElementById("EndDate").value;
+        var dateUrl = ''
       
+        if (startDate && endDate){
+            dateUrl = `&start_date=${startDate}&end_date=${endDate}`
+        }
       
-        cells[1].innerHTML = lead.HandledByEmployee ? "<a class='fw-medium'>" + lead.HandledByEmployee + "</a>" : "No employee data available";
-    
-        cells[2].textContent = lead.new_leads;
-        cells[3].textContent = lead.leadsSageMitra;
-        cells[4].textContent = `${lead.lead_FW}/${FW_target || '0'}`;
+        cells[1].innerHTML = lead.HandledByEmployee? `<a class='fw-medium' style='cursor: pointer;'  href='/admin/employee/${lead.HandledByEmployee}?${dateUrl}'>` + lead.HandledByEmployee + "</a>" : "No employee data available";
+        // cells[2].textContent =  lead.total_bookings? lead.total_bookings : 0 ;
+        cells[2].innerHTML = lead.total_bookings? `<a class='' style='cursor: pointer; ' href='/admin/employee/${lead.HandledByEmployee}?view=Bookings${dateUrl}'>` + lead.total_bookings + "/" + (booked_target? booked_target:0) + "</a>" : 0 + "/" + (booked_target? booked_target:0);
+     //  cells[3].innerHTML =  lead.new_leads? lead.new_leads : 0 ;
+        cells[3].innerHTML = lead.new_leads? `<a class='' style='cursor: pointer; ' href='/admin/employee/${lead.HandledByEmployee}?view=New-Leads${dateUrl}'>` + lead.new_leads + "/" + (new_leads_target? new_leads_target:0) + "</a>" : 0  + "/" + (new_leads_target? new_leads_target:0) ;
+        // cells[3].innerHTML = lead.leadsSageMitra? lead.leadsSageMitra : 0 ;
+        cells[4].innerHTML = lead.leadsSageMitra? `<a class='' style='cursor: pointer; ' href='/admin/employee/${lead.HandledByEmployee}?view=SM-Leads${dateUrl}'>` + lead.leadsSageMitra + "</a>" : 0 ;
+        cells[5].innerHTML = lead.lead_FW? `<a class='' style='cursor: pointer; ' href='/admin/employee/${lead.HandledByEmployee}?view=Leads${dateUrl}'>` + lead.lead_FW + "/" + (FW_target? FW_target:0) + "</a>" : 0 + "/" + (FW_target? FW_target:0)  ;
 
-        cells[5].textContent = lead.missed_followUp;
-        cells[6].textContent = `${lead.sm_followup}/${SM_FW_target || '0'}`;
-        cells[7].textContent = `${lead.home_visit}/${home_visit_target || '0'}`;
-        cells[8].textContent = `${lead.corpo_visit}/${Corp_visit_target || '0'}`;
-        cells[9].textContent = `${lead.total_ip}/${IP_target || '0'}`;
-        cells[10].textContent = `${lead.total_admission}/${Admission_target || '0'}`;
+        cells[6].textContent = lead.missed_followUp;
+        cells[7].innerHTML = lead.sm_followup? `<a class='' style='cursor: pointer;' href='/admin/employee/${lead.HandledByEmployee}?view=SM-FW${dateUrl}'>` + lead.sm_followup + "/" + (SM_FW_target? SM_FW_target:0) + "</a>" : 0 + "/" + (SM_FW_target? SM_FW_target:0);
+
+        cells[8].innerHTML = lead.home_visit? `<a class='' style='cursor: pointer;' href='/admin/employee/${lead.HandledByEmployee}?view=Home-Visit${dateUrl}'>` + lead.home_visit + "/" + (home_visit_target? home_visit_target:0) + "</a>" : 0 + "/" + (home_visit_target? home_visit_target:0);
+        cells[9].innerHTML = lead.corpo_visit? `<a class='' style='cursor: pointer;' href='/admin/employee/${lead.HandledByEmployee}?view=Corp-visits${dateUrl}'>` + lead.corpo_visit + "/" + (Corp_visit_target? Corp_visit_target:0) + "</a>" : 0  + "/" + (Corp_visit_target? Corp_visit_target:0);
+        cells[10].innerHTML = lead.total_ip? `<a class='' style='cursor: pointer;' href='/admin/employee/${lead.HandledByEmployee}?view=IP${dateUrl}'>` + lead.total_ip + "/" + (IP_target? IP_target:0) + "</a>" : 0 + "/" + (IP_target? IP_target:0) ;
+        cells[11].innerHTML = lead.total_admission? `<a class='' style='cursor: pointer;' href='/admin/employee/${lead.HandledByEmployee}?view=Admission${dateUrl}'>` + lead.total_admission + "/" + (Admission_target? Admission_target:0) + "</a>" : 0 + "/" + (Admission_target? Admission_target:0);
+
     });
 }
 
@@ -653,6 +549,7 @@ document.getElementById("memberSelect").addEventListener("change", function(even
         }
     }
 });
+
 document.getElementById("StartDate").addEventListener("change", function(event){
     date();
 });
@@ -744,31 +641,12 @@ function DPR(queryString) {
     xhr.send();
 }
     
-document.getElementById("DPR-table-body").addEventListener("click", function(event) {
-    var target = event.target;
-    if (target.tagName === "A" && target.classList.contains("fw-medium")) {
-        var name = target.textContent.trim();
-        var startDate = document.getElementById("StartDate").value;
-        var endDate = document.getElementById("EndDate").value;
 
-        var host = window.location.hostname;
-        var relativeUrl = "/admin/employee/" + encodeURIComponent(name);
-        if (startDate || endDate) {
-            relativeUrl += "?";
-            if (startDate) {
-                relativeUrl += "start_date=" + startDate;
-            }
-            if (endDate) {
-                if (startDate) {
-                    relativeUrl += "&";
-                }
-                relativeUrl += "end_date=" + endDate;
-            }
-        }
-        var url = "http://" + host + ':8000' + relativeUrl;
-        window.location.href = url;
-    }
-});
-    
 </script>
+
+<style>
+.dynamicCell a{
+    color:white;
+}
+</style>
 {% endblock %}

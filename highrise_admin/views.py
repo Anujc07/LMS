@@ -128,11 +128,6 @@ def DropDownTeam(request):
     return render(request, 'app/CreateMember.html',{'teams':teams})
 
 
-# @login_required()
-# def EmployeeData(request, employee):
-#     data = HighRiseData.objects.filter(HandledByEmployee=employee)
-#     return render(request, 'Admin/UserData.html', {'data': data})
-
 def Login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -190,7 +185,7 @@ def Dashboard(request):
         members = Members.objects.filter(team_id__in=teamIDs).values('member_name')
         if members.exists():
             for member in members:                
-                bookings = HighRiseData.objects.filter(Q(HandledByEmployee=member['member_name']) & Q(Enquiry_Status='Booked') & Q(Enquiry_Conclusion_Date__range=(start_date, end_date)) ).count()
+                bookings = Booking.objects.filter(Q(HandledBY = member['member_name']) & Q(BookingDate__range=(start_date, end_date))).count()
                 new_leads = HighRiseData.objects.filter(Q(HandledByEmployee=member['member_name']) & Q(EDate__range=(start_date, end_date))).count()
                 # new_leads = HighRiseData.objects.filter(Q(HandledByEmployee=member['member_name']) & Q(EDate__range=(start_date, end_date)) & Q(Enquiry_Status='Open')).count()
                 total_leads = HighRiseData.objects.filter(Q(HandledByEmployee=member['member_name']) & Q(Enquiry_Status = 'Open')).count()
@@ -649,55 +644,52 @@ def EmployeeData(request, employee):
     current_date = datetime.now().date().strftime("%Y-%m-%d")
     current_month_number = datetime.now().strftime("%m")
     if start_date_str and end_date_str:
+        # formate dates 
         start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
         # end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
         end_date =  datetime.strptime(end_date_str, '%Y-%m-%d') + timedelta(days=1) - timedelta(seconds=1)
         previous_date = end_date - timedelta(days=1)
         previous_date_str = previous_date.strftime('%Y-%m-%d')
-        total_sm_leads = HighRiseData.objects.filter(HandledByEmployee=employee, EDate__date__range=(start_date, end_date), Enquirytype__contains='Sage Mitra').count()
-                          
-        total_leads = FollowUpData.objects.filter(Q(Employee_Name=employee) & Q(FollowUp_Date__range=(start_date, end_date))).count()                        
-        total_home_visits = HomeVisit.objects.filter(Q(Q(name=employee) | Q(co_fellow__contains=employee)) & Q(date__range=(start_date, end_date))).count()
-        # solo_home_visit = HomeVisit.objects.filter(Q(name = employee) & Q(date__range=(start_date, end_date)) & Q(visit_type='solo')).count()  
-        # home_visits = HomeVisit.objects.filter(Q(date__range=(start_date, end_date)) & Q(visit_type='team'))
-        # team_home_visit_count = 0
-        # for visit in home_visits:
-        #     if visit.co_fellow: 
-        #         co_fellows = [name.strip() for name in visit.co_fellow.split(',')]                        
-        #         if employee in co_fellows:
-        #             team_home_visit_count += 1
-        # total_home_visits = solo_home_visit + team_home_visit_count
-      
-        # total_1_site_visits = FollowUpData.objects.filter(Employee_Name=employee, FollowUp_Date__range=(start_date, end_date), EnquiryStage__icontains='Site Visit - Done').count()
-        total_1_site_visits = SiteVisit.objects.filter(Q(Q(sales_name = employee) & Q(Visit_Date__range = (start_date, end_date))) | Q(reference = employee)).count()
-        hot_leads = HighRiseData.objects.filter(HandledByEmployee=employee, FollowUp_Date__range=(start_date, end_date), CustomerGrade='Hot', Enquiry_Status='Open').count()
-        total_2_site_visits =  FollowUpData.objects.filter(Employee_Name=employee, FollowUp_Date__range=(start_date, end_date), EnquiryStage__icontains='Site Visit - Revisit').count()
-        missed_fw = FollowUpData.objects.filter(Q(Employee_Name=employee) & Q(Next_FollowUp1__date=previous_date_str)).count()
-        SM_FW = Sagemitra.objects.filter(uname=employee, followUp_date__range=(start_date, end_date)).count()
-       
-        # corpo_solo = CorpFormData.objects.filter(Q(name=employee) & Q(visit_type='solo') & Q(visit_date__range = (start_date, end_date))).count()
-        # corporate = CorpFormData.objects.filter(Q(visit_type='team') & Q(visit_date__range = (start_date, end_date)) & Q(cofel_name__contains=employee)).count()
-        total_corpo_visits = CorpFormData.objects.filter(Q(Q(name=employee) | Q(cofel_name__contains =employee)) &  Q(visit_date__range=(start_date, end_date))).count()   
-        # corpo_solo = CorpFormData.objects.filter(Q(name=employee) & Q(visit_type='solo') & Q(visit_date__range = (start_date, end_date))).count()
-        # corporate = CorpFormData.objects.filter(Q(visit_type='team') & Q(visit_date__range = (start_date, end_date)))
-        # team_corporate_visit_count = 0
-        # for visit in corporate:        
-        #     if visit.cofel_name: 
-        #         co_fellows = [name.strip() for name in visit.cofel_name.split(',')]                                
-        #         if employee in co_fellows:
-                    
-        #             team_corporate_visit_count += 1
         
-        # total_corpo_visits = corpo_solo + team_corporate_visit_count
-                      
+        # count for detail page
+        
+        # SAGE Mitra leads count
+        total_sm_leads = HighRiseData.objects.filter(HandledByEmployee=employee, EDate__date__range=(start_date, end_date), Enquirytype__contains='Sage Mitra').count()
+        # Booking count
+        total_bookings = Booking.objects.filter(Q(HandledBY=employee) & Q(BookingDate__range = (start_date, end_date))).count()                  
+        # Total leads count
+        total_leads = FollowUpData.objects.filter(Q(Employee_Name=employee) & Q(FollowUp_Date__range=(start_date, end_date))).count()                        
+        # Home visit count
+        total_home_visits = HomeVisit.objects.filter(Q(Q(name=employee) | Q(co_fellow__contains=employee)) & Q(date__range=(start_date, end_date))).count()
+        # First site visit count
+        total_1_site_visits = SiteVisit.objects.filter(Q(Q(sales_name = employee) & Q(Visit_Date__range = (start_date, end_date))) | Q(reference = employee)).count()
+        # hot lead count    
+        hot_leads = HighRiseData.objects.filter(HandledByEmployee=employee, FollowUp_Date__range=(start_date, end_date), CustomerGrade='Hot', Enquiry_Status='Open').count()
+        # second site visit        
+        total_2_site_visits =  FollowUpData.objects.filter(Employee_Name=employee, FollowUp_Date__range=(start_date, end_date), EnquiryStage__icontains='Site Visit - Revisit').count()
+        # missed follow up count
+        missed_fw = FollowUpData.objects.filter(Q(Employee_Name=employee) & Q(Next_FollowUp1__date=previous_date_str)).count()
+        # sage mitra followup count
+        SM_FW = Sagemitra.objects.filter(uname=employee, followUp_date__range=(start_date, end_date)).count()
+        # corporate visit count
+        total_corpo_visits = CorpFormData.objects.filter(Q(Q(name=employee) | Q(cofel_name__contains =employee)) &  Q(visit_date__range=(start_date, end_date))).count()   
+        # this is defaut data when page first time render  
         data  = FollowUpData.objects.filter(Q(Employee_Name=employee) &  Q(FollowUp_Date__range=(start_date, end_date))).values()       
+        # this is for employee id for 
         emp_name = Members.objects.filter(member_name=employee).values_list('id')
+        # total ip count
         total_IP = IpData.objects.filter(name_id__in= emp_name, date__range= (start_date, end_date)).count()          
+        # total admission count
         total_admission  = AdmissionData.objects.filter(name_id__in= emp_name, date__range= (start_date, end_date)).count()          
         # print(total_leads)
+        # new leads
+        total_new_leads = HighRiseData.objects.filter(Q(HandledByEmployee=employee) & Q(EDate__range=(start_date, end_date))).count()
+        print("============", total_new_leads)
         if view == 'Bookings':
-            data = HighRiseData.objects.filter(HandledByEmployee=employee, Enquiry_Conclusion_Date__range=(start_date, end_date), Enquiry_Status='Booked').values()
+            data = Booking.objects.filter(Q(HandledBY=employee) & Q(BookingDate__range=(start_date, end_date))).values()
             # print('==============',data)
+        elif view == 'New-Leads':
+            data =  HighRiseData.objects.filter(Q(HandledByEmployee=employee) & Q(EDate__range=(start_date, end_date))).values()
         elif view == 'IP':
             data = IpData.objects.filter(name_id__in= emp_name, date__range=(start_date, end_date)).order_by('-date').values()
         elif view == 'Admission':
@@ -729,19 +721,10 @@ def EmployeeData(request, employee):
         total_sm_leads = HighRiseData.objects.filter(HandledByEmployee=employee, Enquirytype__contains='Sage Mitra').count()
         total_1_site_visits = SiteVisit.objects.filter(Q(sales_name = employee) | Q(reference = employee)).count()
         total_leads = FollowUpData.objects.filter(Employee_Name=employee).count()      
-        total_bookings = HighRiseData.objects.filter(HandledByEmployee=employee, Enquiry_Status='Booked').count()
-        
-
+        total_bookings = Booking.objects.filter(Q(HandledBY=employee)).count()
+        total_new_leads = HighRiseData.objects.filter(Q(HandledByEmployee=employee) & Q(EDate__date=(current_date))).count()
+        print("============", total_new_leads)
         total_home_visits = HomeVisit.objects.filter(Q(Q(name=employee) | Q(co_fellow__contains=employee)) & Q(date__month=current_month_number)).count()
-        # solo_home_visit = HomeVisit.objects.filter(Q(name = employee) & Q(date__month=(current_month_number)) & Q(visit_type='solo')).count()  
-        # home_visits = HomeVisit.objects.filter(Q(date__month=(current_month_number)) & Q(visit_type='team'))
-        # team_home_visit_count = 0
-        # for visit in home_visits:
-        #     if visit.co_fellow: 
-        #         co_fellows = [name.strip() for name in visit.co_fellow.split(',')]                        
-        #         if employee in co_fellows:
-        #             team_home_visit_count += 1
-        # total_home_visits = solo_home_visit + team_home_visit_count
 
         hot_leads = HighRiseData.objects.filter(HandledByEmployee=employee, CustomerGrade='Hot', Enquiry_Status='Open').count()
         total_2_site_visits = FollowUpData.objects.filter(Employee_Name=employee, EnquiryStage__icontains='Site Visit - REvisit').count()
@@ -749,30 +732,19 @@ def EmployeeData(request, employee):
         SM_FW = Sagemitra.objects.filter(Q(uname=employee) & Q(followUp_date__month=current_month_number)).count()
        
         total_corpo_visits = CorpFormData.objects.filter(Q(Q(name=employee) | Q(cofel_name__contains =employee)) & Q(visit_date__month=current_month_number)).count() 
-        # corpo_solo = CorpFormData.objects.filter(Q(name=employee) & Q(visit_type='solo') & Q(visit_date__month = (current_month_number))).count()
-        # corporate = CorpFormData.objects.filter(Q(visit_type='team') & Q(visit_date__month = (current_month_number)))
-        # team_corporate_visit_count = 0
-        # for visit in corporate:        
-        #     if visit.cofel_name: 
-        #         co_fellows = [name.strip() for name in visit.cofel_name.split(',')]                                
-        #         if employee in co_fellows:
-                    
-        #             team_corporate_visit_count += 1
-        
-        # total_corpo_visits = corpo_solo + team_corporate_visit_count
-        # print('========================', total_corpo_visits)
+
         emp_name = Members.objects.filter(member_name=employee).values_list('id')
         total_IP = IpData.objects.filter(Q(name_id__in= emp_name) & Q(date__month=current_month_number)).count()
         total_admission = AdmissionData.objects.filter(Q(name_id__in= emp_name) & Q(date__month=current_month_number)).count()
         
         # print('=================', employee)
         if view == 'Bookings':
-            data = HighRiseData.objects.filter(HandledByEmployee=employee, Enquiry_Status='Booked').values()
-        elif view == 'IP':
-           
+            data = Booking.objects.filter(Q(HandledBY=employee)).values()
+        elif view == 'New-Leads':
+            data =  HighRiseData.objects.filter(Q(HandledByEmployee=employee) & Q(EDate__date=(current_date))).values()
+        elif view == 'IP':           
             data = IpData.objects.filter(Q(name_id__in= emp_name) & Q(date__month=current_month_number)).order_by('-date').values()
         elif view == 'Admission':
-        
             data = AdmissionData.objects.filter(Q(name_id__in= emp_name) & Q(date__month=current_month_number)).order_by('-date').values()
         elif view == 'Home-Visit':
             data = HomeVisit.objects.filter(Q(Q(name=employee) | Q(co_fellow__contains=employee)) & Q(date__month=current_month_number)).order_by('-date').values()
@@ -793,7 +765,8 @@ def EmployeeData(request, employee):
             data = CorpFormData.objects.filter(Q(Q(name=employee) | Q(cofel_name__contains =employee)) & Q(visit_date__month=current_month_number)).order_by('-visit_date').values()   
           
     
-    return render(request, 'Admin/UserData.html', {   'total_admission': total_admission,'total_IP':total_IP, 'total_corpo_visits': total_corpo_visits, 'SM_FW': SM_FW, 'missed_fw': missed_fw, 'total_2_site_visits': total_2_site_visits, 'hot_leads': hot_leads,
+    return render(request, 'Admin/UserData.html', { 'total_new_leads': total_new_leads ,'total_bookings':total_bookings ,'total_admission': total_admission,'total_IP':total_IP, 'total_corpo_visits': total_corpo_visits, 'SM_FW': SM_FW,
+                                                    'missed_fw': missed_fw, 'total_2_site_visits': total_2_site_visits, 'hot_leads': hot_leads,
                                                    'view': view, 'team': team, 'start_date': start_date_str, 'end_date': end_date_str, 'data': data, 'name': employee,
                                                    'total_sm_leads': total_sm_leads, 'total_home_visits': total_home_visits,'total_leads': total_leads, 'total_1_site_visits': total_1_site_visits })
 
@@ -878,7 +851,7 @@ def get_report_data(start_date=None, end_date=None, request=None):
                 total_direct_site = direct_site_visit + direct_site_visit_2
 
                 indirect_site_visit = SiteVisit.objects.filter(Q(Q(sales_name = member['member_name']) & Q(Visit_Date__range = (start_date, end_date)) & Q(visit_type = 'indirect'))).count()
-                
+                total_booking = Booking.objects.filter(Q(HandledBY = member['member_name']) & Q(BookingDate__range = (start_date, end_date))).count()
                
                 
                 # direct_site_visit = SiteVisit.objects.filter(Q(reference = member['member_name'])).count()
@@ -899,6 +872,7 @@ def get_report_data(start_date=None, end_date=None, request=None):
                 member_data['home_visit'] = Home_visit
                 member_data['total_direct_site_visit'] = total_direct_site
                 member_data['total_indirect_site_visit'] = indirect_site_visit
+                member_data['total_booking'] = total_booking
                 member_data['target_values'] = target_values_start
                
                 member_data['target_values_end'] = target_values_end
@@ -972,9 +946,8 @@ def get_report_data(start_date=None, end_date=None, request=None):
                 direct_site_visit = SiteVisit.objects.filter(Q(Q(sales_name = member['member_name']) & Q(visit_type = 'direct'))).count()
                 direct_site_visit_2 = SiteVisit.objects.filter(Q(Q(reference = member['member_name']) & Q(visit_type = 'indirect'))).count()
                 total_direct_site = direct_site_visit + direct_site_visit_2
-
+                total_booking = Booking.objects.filter(Q(HandledBY = member['member_name'])).count()
                 indirect_site_visit = SiteVisit.objects.filter(Q(Q(sales_name = member['member_name']) & Q(visit_type = 'indirect'))).count()       
-                
                 member_data = high_rise_data.aggregate(
                     bookings=Count('Enquiry_Status', filter=Q(Enquiry_Status='Booked')),                    
                     new_leads=Count('EDate', filter=Q(EDate__date=current_date)),
@@ -982,6 +955,7 @@ def get_report_data(start_date=None, end_date=None, request=None):
                 member_data['total_event'] = total_event
                 member_data['corp_visits'] = corp
                 member_data['total_sm_leads'] = sm_sum
+                member_data['total_booking'] = total_booking
                 member_data['target_values'] = target_values
                 member_data['customerfollowup'] = followup
                 member_data['home_visit'] = Home_visit
@@ -1303,9 +1277,6 @@ def L_Funnel(request):
 #=============== end of lead funnel ===============
 
 
-
-
-
 def DPR_Date_Range(emp, start_date, end_date, request):
     end_date_str = datetime.strptime(end_date, '%Y-%m-%d')
     end_date_present = datetime.strptime(end_date, '%Y-%m-%d') + timedelta(days=1) - timedelta(seconds=1)
@@ -1351,6 +1322,10 @@ def DPR_Date_Range(emp, start_date, end_date, request):
         corpo_solo = CorpFormData.objects.filter(Q(name=employee) & Q(visit_date__range = (start_date, end_date))).count()
 
         corporate = CorpFormData.objects.filter(Q(visit_type='team') & Q(visit_date__range = (start_date, end_date)))
+        total_bookings = Booking.objects.filter(Q(HandledBY = employee) & Q(BookingDate__range = (start_date, end_date))).count()
+        
+        
+        
         team_corporate_visit_count = 0
         for visit in corporate:        
             if visit.cofel_name: 
@@ -1391,6 +1366,7 @@ def DPR_Date_Range(emp, start_date, end_date, request):
             )
         employee_data['HandledByEmployee'] = employee
         employee_data['corpo_visit'] = corpo_visit
+        employee_data['total_bookings'] = total_bookings
         employee_data['total_ip'] = total_ip
         employee_data['total_admission'] = total_admission
         employee_data['home_visit'] = home_visit
@@ -1426,7 +1402,7 @@ def DPR_Without_Date_Range(emp, request):
         
 
         target = EmpSetTarget.objects.filter(Employee_id=employee_id, month=current_month).values('Target_id', 'target')
-
+        total_bookings = Booking.objects.filter(Q(HandledBY = employee)).count()
         # corpo_solo = CorpFormData.objects.filter(Q(name=employee) & Q(visit_type='solo') & Q(visit_date__month=current_month_number) ).count()
         # corporate = CorpFormData.objects.filter(Q(visit_type='team') & Q(cofel_name__contains=(employee)) & Q(visit_date__month=current_month_number)).count()
               
@@ -1480,6 +1456,7 @@ def DPR_Without_Date_Range(emp, request):
             )
         employee_data['HandledByEmployee'] = employee
         employee_data['corpo_visit'] = corpo_visit
+        employee_data['total_bookings'] = total_bookings
         employee_data['total_ip'] = total_ip
         employee_data['total_admission'] = total_admission
         employee_data['home_visit'] = home_visit
@@ -1878,6 +1855,7 @@ def GraphChartsVlues(request):
         total_followUp = 0 
         total_Leads = 0 
         total_new_leads = 0
+        total_bookings = 0
         if request.method == 'GET':    
             for member in members:
                 member_name = member['member_name']  
@@ -1899,6 +1877,7 @@ def GraphChartsVlues(request):
                     total_close_leads += HighRiseData.objects.filter(HandledByEmployee=member_name, Enquiry_Status='Closed', FollowUp_Date__range=(start_date, end_date)).count()
                     total_open_leads += HighRiseData.objects.filter(HandledByEmployee=member_name, Enquiry_Status='Open').count()
                     total_new_leads += HighRiseData.objects.filter(Q(HandledByEmployee=member_name) & Q(EDate__range=(start_date, end_date))).count()
+                    total_bookings += Booking.objects.filter(Q(HandledBY = member_name) & Q(BookingDate__range = (start_date, end_date))).count()
 
                     corpo_solo = CorpFormData.objects.filter(Q(name=member_name) & Q(visit_date__range = (start_date, end_date))).count()
                     corporate = CorpFormData.objects.filter(Q(visit_type='team') & Q(visit_date__range = (start_date, end_date)))
@@ -1964,7 +1943,7 @@ def GraphChartsVlues(request):
                     total_admission += AdmissionData.objects.filter(name_id=member_id).count()
                     total_followUp +=FollowUpData.objects.filter(Employee_Name=member_name).count()
                     total_Leads += HighRiseData.objects.filter(HandledByEmployee=member_name, Enquiry_Status='Open').count()
-
+                    total_bookings += Booking.objects.filter(Q(HandledBY = member_name)).count()
             data = {
                 'hot_leads': total_hot_leads,
                 'opportunity_leads': total_opportunity_leads,
@@ -1982,9 +1961,10 @@ def GraphChartsVlues(request):
                 'total_Leads': total_Leads,
                 'all_targets': all_targets,
                 'total_new_leads': total_new_leads,
+                'total_bookings': total_bookings,
                 'membersList' : list(members),
             }
-           
+            # print("=========data", data)
             return JsonResponse(data)
         else:
             return JsonResponse({'error': 'Invalid request method'}, status=400)
@@ -2221,9 +2201,66 @@ def GraphChartsPerformance(request):
                 'targets': all_targets,
                 'data': all_achievement
             }
+    
             return JsonResponse(data, status=200)
         except Exception as e:
             print("=============", e)
             JsonResponse({'error': e}, status=500)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=400)
+    
+
+
+
+
+def SetBookings(request):
+    try:    
+        if request.method == 'POST':
+            clientName = request.POST.get('client_Name')
+            ph_number = request.POST.get('phone_number')
+            enq_id = request.POST.get('enquiry_id')
+            edate_str = request.POST.get('edate')
+            handleby = request.POST.get('handledby')
+            project = request.POST.get('project')
+            unit = request.POST.get('unit')
+            stageDate_str = request.POST.get('stagechangedate')
+            bookingsDate_str = request.POST.get('bookingdate')
+
+            if edate_str and stageDate_str and bookingsDate_str: 
+                # edate_str = edate_str.lower()
+                # stageDate_str = stageDate_str.lower()
+
+                edate = datetime.strptime(edate_str, "%Y-%m-%d")
+                stageDate = datetime.strptime(stageDate_str, "%Y-%m-%d")
+                bookingsDate = datetime.strptime(bookingsDate_str, "%Y-%m-%d")
+            else:
+                messages.error(request, 'Date Required')
+                return redirect('/admin/Set-Booking')
+
+    
+            form = Booking.objects.create(ClientName =  clientName, ClientNumber = ph_number, EnquiryId = enq_id,
+                                          EDate = edate, HandledBY = handleby, Project = project, Unit = unit,
+                                          StageChangeDate = stageDate, BookingDate = bookingsDate
+                                          ) 
+            form.save()
+            messages.success(request, 'Entry Saved')
+            return redirect('/admin/Set-Booking')
+
+        else:
+            booked_enquiries = Booking.objects.values_list('ClientNumber', flat=True)
+            allData = HighRiseData.objects.filter(Enquiry_Status='Booked').exclude(Mobile__in=booked_enquiries).values(
+                'Enquiry_id', 'EDate', 'Name', 'Project', 'Unit', 'Mobile', 'HandledByEmployee', 'StageChangeDate')
+           
+            data = {
+                'allData':allData
+            }
+            return  render(request, 'Admin/SetBooking.html', data)
+    except ValueError as valueError:
+        messages.error(request, valueError)
+        return redirect('/admin/Set-Booking')
+    
+    except Exception as e:
+
+
+        print("==", e)
+

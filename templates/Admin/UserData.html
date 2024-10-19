@@ -61,7 +61,11 @@
                     {% elif view == 'IP' %}
                         <option selected>IP</option>
                     {% elif view == 'Admission' %}
-                        <option selected>Admission</option>
+                        <option selected>Admission</option>              
+                    {% elif view == 'Bookings' %}                        
+                        <option selected>Bookings</option>
+                    {% elif view == 'New-Leads' %}
+                        <option selected>New Leads</option>  
                     {% else %}
                         <option selected>{{ view }}</option>
                     {% endif %}
@@ -72,9 +76,9 @@
                         <option value="?view=Leads{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}">FW Leads {{ total_leads }}</option>
                     {% endif %}
     
-                    <!-- {%  if total_bookings != 0  %}
+                    {%  if total_bookings != 0  %}
                         <option value="?view=Bookings{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}">Bookings {{ total_bookings }}</option>
-                    {% endif %} -->
+                    {% endif %}
 
                     {% comment %} {%  if total_home_visits != 0  %}                    
                         <option value="?view=Home-Visit{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}">Home Visits {{ total_home_visits }}</option>
@@ -88,6 +92,10 @@
                        <option value="?view=2Site-Visits{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}">Re-site Visits  {{ total_2_site_visits }}</option>
                     {% endif %}
 
+                    {%  if total_new_leads != 0  %}   
+                        <option value="?view=New-Leads{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}">New Leads {{ total_new_leads }}</option>
+                    {% endif %} 
+
                     {%  if total_sm_leads != 0  %}   
                         <option value="?view=SM-Leads{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}">SM Leads {{ total_sm_leads }}</option>
                     {% endif %}       
@@ -98,6 +106,7 @@
 
                     {%  if missed_fw != 0  %}   
                         <option value="?view=Missed-FW{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}">Missed F/W {{ missed_fw }}</option>
+             
                     {% endif %}
 
                     {%  if SM_FW != 0  %}   
@@ -202,6 +211,7 @@
         </div>
     </div>
 </div>
+
 {% elif view == 'Home-Visit' %}
 <div class="row" >
     <div class="col-xl-12">
@@ -368,32 +378,21 @@
                             <thead>
                                 <tr>
                                     <th scope="col">S.No</th>                            
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Project</th>
-                                                        
-                                    {% comment %} <th scope="col">Last F/W</th>       
-                                    <th scope="col">Next F/W</th>                                                {% endcomment %}
-                                    {% comment %} <th scope="col" class='text-center'>Enquiry Type</th> {% endcomment %}
-                                    <th scope="col" class='text-center'>Result</th>                
-                                    
-                                    <th scope="col" >Remark</th>                
-                                    
-                                    
-
+                                    <th scope="col">Client Detail</th>
+                                    <th scope="col">Handled By</th>
+                                    <th scope="col" >Other Deatils</th>     
+                                    <th scope="col" >Booking Date</th> 
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for item in data %}
+                               
                                 <tr>
                                     <td>{{ forloop.counter }}</td>                               
-                                    <td>{{ item.Name }}<br> {{ item.Mobile }}<br>{% if item.Email is not None %} {{ item.Email }}{% endif %}</td>
-                                    <td class='remark-cell'>{% if item.Project is not None %} {{ item.Project }}{% else %} Not Selected{% endif %}</td>                                    
-                                    {% comment %} <td class='text-center'>{% if item.FollowUp_Date is not None %} {{ item.FollowUp_Date|date:'d-m-y' }} {% else %} - {% endif %} </td>   
-                                    <td class='text-center'>{% if item.Next_FollowUp1 is not None %} {{ item.Next_FollowUp1|date:'d-m-y' }} {% else %} - {% endif %}</td>                                                              {% endcomment %}
-                                    {% comment %} <td class='text-center'>{% if item.Enquirytype is not None %} {{ item.Enquirytype }} {% else %} - {% endif %}</td>                 {% endcomment %}
-                                    <td class='text-center'>{% if item.Result is not None %}{{ item.Result }} {% else %} - {% endif %}</td>                                                                        
-                                    <td class='remark-cell'>{% if item.Enquiry_Conclusion_Date is not None %} Booking Done On {{ item.Enquiry_Conclusion_Date }} By {{ item.HandledByEmployee }}{% else %} - {% endif %}</td>                                
-
+                                    <td>{{ item.ClientName }}<br> {{ item.ClientNumber }}<br>{{ item.EnquiryId }}</td>
+                                    <td class='remark-cell'>{{ item.HandledBY|default:"-"  }}</td> 
+                                    <td class='remark-cell'>{{ item.Project|default:"-"  }}<br>{{ item.Unit|default:"-" }}</td> 
+                                    <td>{{ item.BookingDate }}</td>      
                                 </tr>
                                 {% endfor %}  
                             </tbody>
@@ -404,6 +403,60 @@
         </div>
     </div>
 </div>
+
+
+{% elif view == 'New-Leads' %}
+
+
+<div class="row" >
+    <div class="col-xl-12">
+        <div class="card">          
+            <div class="card-body">
+                <div class="live-preview">
+                    <div class="table-responsive" id="table-fixed-header">
+                        <table class="table align-middle table-nowrap mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">S.No</th>                            
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Project</th>
+                                                        
+                                    <th scope="col">E-Date</th>       
+                                    <th scope="col">Last F/W</th>       
+                                    <th scope="col">Next F/W</th>                                               
+                                    <th scope="col" class='text-center'>Enquiry Type</th>
+                                    <th scope="col" class='text-center'>Result</th>                
+                                    {% if view == 'SM-Leads' %} <th scope="col" >Broker Name</th>   </td>{% endif %}
+                                    <th scope="col" >Remark</th>                
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in data %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>                               
+                                    <td>{{ item.Name }}<br> {{ item.Mobile }}<br>{{ item.Email|default:'' }}</td>
+                                    <td class='remark-cell'>{% if item.Project is not None %} {{ item.Project }}{% else %} Not Selected{% endif %}</td>          
+                                    <td class='text-center'>{{ item.EDate|date:'d-m-y'|default:'-' }} </td>                             
+                                    <td class='text-center'>{{ item.FollowUp_Date|date:'d-m-y'|default:'-' }}</td>   
+                                    <td class='text-center'>{{ item.Next_FollowUp1|date:'d-m-y'|default:'-' }}</td>                                                             
+                                    <td class='text-center'>{{ item.Enquirytype|default:'-' }}</td>                
+                                    <td class='text-center'>{{ item.Result|default:'-' }}</td>        
+                                    {% if view == 'SM-Leads' %} <td class='text-center'>{% if item.Broker_Name is not None %} {{ item.Broker_Name }} {% else %} - {% endif %}</td>      {% endif %}
+                                                                
+                                    <td class='remark-cell'>{{ item.Remark1|default:'-' }}</td>                                
+                                </tr>
+                                {% endfor %}  
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 {% elif view == 'IP' %}
 
@@ -701,6 +754,7 @@
         </div>
     </div>
 </div>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const clickableImages = document.querySelectorAll('.clickable-image');

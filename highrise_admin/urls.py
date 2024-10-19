@@ -31,6 +31,10 @@ urlpatterns = [
     path('admin/', views.SiteVisitData, name='SiteVisitData'),
     path('admin/Corporate-List', views.CorporateEdit, name='CorporateEdit'),
     path('admin/Team-List', views.TeamEdit, name='TeamEdit'),
+    path('admin/Set-Booking', views.SetBookings, name='SetBookings'),
+
+
+
     path('admin/Graph', views.GraphCharts, name='GraphCharts'), 
     path('admin/Graph-Values', views.GraphChartsVlues, name='GraphChartsVlues'), 
     path('admin/Performance-Graph', views.GraphChartsPerformance, name='GraphChartsPerformance'), 

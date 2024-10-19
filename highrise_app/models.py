@@ -581,3 +581,16 @@ class Source(models.Model):
 class Interested_localities(models.Model):
     localities = models.TextField(null=True, blank=True, max_length=255)
     
+
+
+class Booking(models.Model):
+    ClientName = models.TextField(null=False, max_length=250)
+    ClientNumber = models.TextField(null=False, max_length=250)
+    EnquiryId = models.BigIntegerField(null=False)
+    EDate = models.DateTimeField()
+    HandledBY = models.TextField(max_length=250, null=False)
+    Project = models.TextField(max_length=255, null=False)
+    Unit = models.TextField(max_length=255, null=False)
+    StageChangeDate = models.DateTimeField()
+    BookingDate = models.DateTimeField()
+

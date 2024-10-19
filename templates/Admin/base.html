@@ -284,14 +284,19 @@
                                             <i class="mdi mdi-account-edit"></i> <span> Employee Status</span>
                                         </a>                                            
                                     </li>
-                                    <li class="nav-item" data-bs-toggle="modal" data-bs-target="#upload">
+                                    <li class="nav-item" >
                                         <a class="nav-link menu-link" href="{% url 'CorporateEdit' %}">
                                             <i class="mdi mdi-list-status"></i> <span> Corporate List</span>
                                         </a>                                    
                                     </li>
-                                    <li class="nav-item" data-bs-toggle="modal" data-bs-target="#upload">
+                                    <li class="nav-item">
                                         <a class="nav-link menu-link" href="{% url 'TeamEdit' %}">
                                             <i class="mdi mdi-microsoft-teams"></i> <span> Team Status</span>
+                                        </a>                                    
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link menu-link" href="{% url 'SetBookings' %}">
+                                            <i class="mdi mdi-microsoft-teams"></i> <span>Set Bookings</span>
                                         </a>                                    
                                     </li>
                                     
@@ -532,6 +537,7 @@
 <!-- prismjs plugin -->
 <script src="{% static 'auth.js' %}"></script>
 <script src="{% static 'search.js' %}"></script>
+<script src="{% static 'Bookings.js' %}"></script>
 </body>
 
 

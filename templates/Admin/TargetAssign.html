@@ -138,6 +138,7 @@
                                     <th class='text-center'>Site Visit</th> 
                                     <th class='text-center'>Admission</th> 
                                     <th class='text-center'>IP</th> 
+                                    <th class='text-center'>New Lead</th> 
                                 </tr> 
                             </thead>
                         
@@ -157,6 +158,7 @@
                                 <td class='text-center'>{% for tar in i.target_data %}{% if tar.Target_id is 6 %}{{ tar.target }}{% endif %}{% endfor %}</td>
                                 <td class='text-center'>{% for tar in i.target_data %}{% if tar.Target_id is 7 %}{{ tar.target }}{% endif %}{% endfor %}</td>
                                 <td class='text-center'>{% for tar in i.target_data %}{% if tar.Target_id is 8 %}{{ tar.target }}{% endif %}{% endfor %}</td>
+                                <td class='text-center'>{% for tar in i.target_data %}{% if tar.Target_id is 9 %}{{ tar.target }}{% endif %}{% endfor %}</td>
                                 
                                 </tr>
                                 {% endfor %}
