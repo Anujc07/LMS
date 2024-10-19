@@ -98,8 +98,8 @@
                              
                                 <td class='text-center'>
                                     <span class='first'>{{ member_data.total_booking }}</span> /
-                                    <span class='split'>{% for target_value in member_data.target_values %}{% if target_value.Target_id == 1 %}{{ target_value.target|stringformat:"d" }}{% endif %}{% endfor %}</span>
-                                    <span class='end_date' hidden>{% for target_value in member_data.target_values_end %}{% if target_value.Target_id == 1 %}{{ target_value.target|stringformat:"d" }}{% endif %}{% endfor %}</span>
+                                    <span class='split'>{% for target_value in member_data.target_values %}{% if target_value.Target_id == 1 %}{{ target_value.target|stringformat:"d"|default:0 }}{% endif %}{% endfor %}</span>
+                                    <span class='end_date' hidden>{% for target_value in member_data.target_values_end %}{% if target_value.Target_id == 1 %}{{ target_value.target|stringformat:"d"|default:0 }}{% endif %}{% endfor %}</span>
                                     <span class='percentage' ></span>
                                 </td>
                                 <td class='text-center'>
@@ -528,7 +528,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (percentage === Infinity || isNaN(percentage)) {
                             percentage = 0; 
                         }
-                        console.log("=================1", percentage)
+                   
                         percentageSpan.innerHTML = `<span>${percentage.toFixed()}%</span>`
                         if (FWTargetSet == 0) {
                                 
