@@ -24,7 +24,7 @@ const PerformanceAPI = async (option) =>{
 
     EmpPerformance(data); 
     EmpAchievement(data); 
-    TeanAPI();
+   // TeanAPI();
     
   }catch(error){
 

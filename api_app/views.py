@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from highrise_app.models import CorpFormData, EmpSetTarget, Members, FollowUpData, Sagemitra, HighRiseData, Target, CorporatesList, CorporateType, Interested_localities
-from highrise_app.models import HomeVisit, IpData, AdmissionData, EventAcc, SageMitraList, EventType, SiteVisit, Source, States, City
+from highrise_app.models import HomeVisit, IpData, AdmissionData, EventAcc, SageMitraList, EventType, SiteVisit,Visit_Type_Source ,Source,Booking ,States, City
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -71,7 +71,7 @@ def Dashboard(request, username):
         panding_FW = count_data.filter(Next_FollowUp1__startswith=today_date).count()
         solo_home_visit = HomeVisit.objects.filter(Q(name=username) & Q(date__range=(first_date, today_date))).count()
         home_visits = HomeVisit.objects.filter(Q(visit_type='team') & Q(date__range=(first_date, today_date)))
-
+        
         team_home_visit_count = 0
         for visit in home_visits:
             if visit.co_fellow:
@@ -80,7 +80,9 @@ def Dashboard(request, username):
                     team_home_visit_count += 1
         total_home_visit = solo_home_visit + team_home_visit_count
         
-
+        total_booking =  Booking.objects.filter(Q(HandledBY = username) & Q(BookingDate__range=(first_date, today_date))).count()
+        # print("====", target_values)
+        total_new_leads = HighRiseData.objects.filter(Q(HandledByEmployee=username) & Q(EDate__range=(first_date, today_date))).count()
         data = {
             'targets': list(target_values),
             'total': {
@@ -93,6 +95,8 @@ def Dashboard(request, username):
                 'total_admission': total_admission,
                 'total_event': total_event,
                 'total_site_visit': total_site_visit,
+                'total_booking': total_booking,
+                'total_new_leads': total_new_leads
             }
         }
       
@@ -163,6 +167,7 @@ def Get_Target(request, username):
 def Set_Target(request, username):
     if request.method == 'POST':              
         try:            
+            # print("===========================")
             employee_name = username
             year = request.data.get('year')
             month = request.data.get('month')
@@ -173,6 +178,8 @@ def Set_Target(request, username):
             sm_mitra = request.data.get('sm_followup')
             sitevisit = request.data.get('site_visit')
             admission = request.data.get('admission')
+            newleads = request.data.get('new_leads')
+            # print("=========", newleads)
             ip = request.data.get('ip')
             
             employee = Members.objects.get(member_name=employee_name)
@@ -186,10 +193,12 @@ def Set_Target(request, username):
                 5: sm_mitra,
                 6: sitevisit,
                 7: admission,
-                8: ip
+                8: ip,
+                9: newleads
             }
             
-            if existing_entry and existing_entry.stage == 1:
+            # if existing_entry and existing_entry.stage == 1:
+            if existing_entry and (existing_entry.stage == 1 or existing_entry.stage is None):
                 try:
                     for target_id, target_value in target_values.items():
                         if target_value:
@@ -233,6 +242,7 @@ def Set_Target(request, username):
 
             return Response({'success': 'Targets set successfully.'}, status=status.HTTP_200_OK)
         except Exception as e:
+            print("=========", e)
             return Response({'error': str(e)}, status=status.HTTP_200_OK)
         
 
@@ -249,6 +259,7 @@ def Data(request):
     event_type_list = EventType.objects.values_list('event_type', flat=True).order_by('event_type')
     interested_localities = Interested_localities.objects.values_list('localities', flat=True).order_by('localities')
     source =  Source.objects.values_list('name', 'id', 'source_id').order_by('name')
+    sourceType = Visit_Type_Source.objects.filter(status=1).values_list('id', 'name')
     state_location = States.objects.filter(country_id = 101).values_list('name', 'id').order_by('name')
     data = {
         'corporate_list': list(corporate_list),
@@ -258,6 +269,7 @@ def Data(request):
         'event_type_list': list(event_type_list),
         'interested_localities': list(interested_localities),
         'source' : list(source),
+        'sourceType' : list(sourceType),
         'states_location' : list(state_location),
     }
     return Response(data)
@@ -647,36 +659,68 @@ def SiteVisitFrom(request):
                 return JsonResponse({'success':'Site Visit Form submited successfully'}, status = status.HTTP_200_OK)
         
         except Exception as e:
+            print("============", e)
             return JsonResponse({'error': e}, status = status.HTTP_500_INTERNAL_SERVER_ERROR)
     else:
         return JsonResponse(status = status.HTTP_400_BAD_REQUEST )
 
 
 
+# @permission_classes([IsAuthenticated])
+# @api_view(['POST'])
+# def GetClientData(request):
+#     if request.method == 'POST':
+#         # print("===")
+#         # CustomerId = request.data.get('customer_contact')
+#         CustomerId = request.data.get('customer_value') 
+#         home_contact = request.data.get('home_contact') 
+#         # print("===", home_contact)
+#         try:
+#             print("====1", )
+
+#             # FormData = SiteVisit.objects.filter(access_id = CustomerId).values()
+#             if CustomerId:
+#                 FormData = SiteVisit.objects.filter(Q(Customer_Contact_number = CustomerId) | Q(access_id = CustomerId)).order_by('-id').values()
+#                 data = list(FormData)
+#             elif home_contact:
+#                 data = HomeVisit.objects.filter(C_ph = home_contact).order_by('-id').values().first()
+#             # print("=============",data)
+#             print("====2", data)
+#             return JsonResponse({'data': data}, status=status.HTTP_200_OK)
+#         except Exception as e:
+#             print("======", e)
+#             return JsonResponse({'error': e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#     else :
+#         return JsonResponse({'error':'Id not Found'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+
 @permission_classes([IsAuthenticated])
 @api_view(['POST'])
 def GetClientData(request):
     if request.method == 'POST':
-        # CustomerId = request.data.get('customer_contact')
         CustomerId = request.data.get('customer_value') 
         home_contact = request.data.get('home_contact') 
-        # print("===", home_contact)
         try:
-
-            # FormData = SiteVisit.objects.filter(access_id = CustomerId).values()
+            data = None
             if CustomerId:
-                FormData = SiteVisit.objects.filter(Q(Customer_Contact_number = CustomerId) | Q(access_id = CustomerId)).order_by('-id').values()
-                data = list(FormData)
+                FormData = SiteVisit.objects.filter(Q(Customer_Contact_number=CustomerId) | Q(access_id=CustomerId)).order_by('-id').values()
+                data = list(FormData) if FormData else []
             elif home_contact:
-                data = HomeVisit.objects.filter(C_ph = home_contact).order_by('-id').values().first()
-            # print("=============",data)
-            return JsonResponse({'data': data}, status=status.HTTP_200_OK)
+                data = HomeVisit.objects.filter(C_ph=home_contact).order_by('-id').values().first()
+
+            # Return valid JSON structure even if data is empty
+            if data:
+                return JsonResponse({'data': data}, status=status.HTTP_200_OK)
+            else:
+                return JsonResponse({'error': 'No data found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return JsonResponse({'error': e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    else :
-        return JsonResponse({'error':'Id not Found'}, status=status.HTTP_400_BAD_REQUEST)
+            print("Error:", e)
+            return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    else:
+        return JsonResponse({'error': 'Invalid method'}, status=status.HTTP_400_BAD_REQUEST)
     
-    
+
 
 from django.core.files.base import ContentFile
 from PIL import Image
@@ -717,6 +761,9 @@ def CorporateForm(request):
                 team_members = team_members.split(',')
             elif not isinstance(team_members, list):
                 team_members = []
+            
+            if new_corporate:
+                corp_name = new_corporate
 
             # Validate and process dates
             nxt_date = None
@@ -753,7 +800,6 @@ def CorporateForm(request):
             username = CorpFormData.objects.filter(Q(key_person_contact=key_person_contact) & Q(name=name)).count()
             revisit = 1 + username if username > 0 else 1
 
-
             if new_corporate:
                 corporate_type = CorporateType.objects.filter(corpo_type = corp_type).values_list('id', flat = True)
                 # print(corporate_type)
@@ -764,6 +810,7 @@ def CorporateForm(request):
                     corp_name = new_corporate
                 else:
                     # print("====================")
+                    new_corporate = f'{new_corporate} {location}'
                     data = CorporatesList.objects.create(corpo_name = new_corporate, added_by = name, status = 1, corporate_type_id = corporate_type, added_at = current_time)
                     data.save()
 
@@ -888,6 +935,7 @@ def FormData(request, username, form_id):
     if request.method == 'GET': 
         try:
             dateFilter = request.GET.get('date')
+            # print('date====', dateFilter)
             # employee = Members.objects.get(member_name=username)
             currentMonth = None
             todayDate = None
@@ -899,7 +947,7 @@ def FormData(request, username, form_id):
                 todayDate = date.today()    
 
             if currentMonth is not None:
-             
+                # print("current month===", currentMonth)
                 if form_id == 'corporate':                     
                     # data = CorpFormData.objects.filter(Q(name = username) & Q(visit_date__month = currentMonth)).all().values()
                     # count = CorpFormData.objects.filter(Q(name = username) & Q(visit_date__month = currentMonth)).count()
@@ -952,7 +1000,7 @@ def FormData(request, username, form_id):
                                 'data_collect': entry.get('data_collect', None),
                             })
 
-               
+
                 elif form_id == 'home':
                     # data = HomeVisit.objects.filter(Q(name = username) & Q(date__month = currentMonth)).all().values()
                     data = []
@@ -1002,21 +1050,25 @@ def FormData(request, username, form_id):
                     
 
                     # print("=============", data)
-             
+
+
                 elif form_id == 'ip':
                     username = Members.objects.filter(member_name = username).values('id')
                     data = IpData.objects.filter(Q(name_id__in = username) & Q(date__month = currentMonth)).all().values()
                     count = IpData.objects.filter(Q(name_id__in = username) & Q(date__month = currentMonth)).count()
-             
+
+
                 elif form_id == 'admission':
                     username = Members.objects.filter(member_name = username).values('id')
                     data = AdmissionData.objects.filter(Q(name_id__in = username) & Q(date__month = currentMonth)).all().values()
                     count = AdmissionData.objects.filter(Q(name_id__in = username) & Q(date__month = currentMonth)).count()
-  
+
+
                 elif form_id == 'sagemitra':
                     data = Sagemitra.objects.filter(Q(uname = username) & Q(followUp_date__month = currentMonth)).all().values()
                     count = Sagemitra.objects.filter(Q(uname = username) & Q(followUp_date__month = currentMonth)).count()
-            
+
+
                 elif form_id == 'site':
 
                     data = []
@@ -1045,6 +1097,7 @@ def FormData(request, username, form_id):
                                     'accommodation': entry.get('accommodation', None),
                                     'Interest': entry.get('Interest', None),
                                     'Email_id': entry.get('Email_id', None),
+                                    'Visit_Date': entry.get('Visit_Date', None),
 
                                 })
 
@@ -1067,13 +1120,22 @@ def FormData(request, username, form_id):
                                     'accommodation': entry.get('accommodation', None),
                                     'Interest': entry.get('Interest', None),
                                     'Email_id': entry.get('Email_id', None),
+                                    'Visit_Date': entry.get('Visit_Date', None),
                             })
-            
+
+
                 elif form_id == 'event':
                     data = EventAcc.objects.filter(Q(name = username) & Q(Q(start_date__month = currentMonth) | Q(end_date__month = currentMonth))).all().values()
                     count = EventAcc.objects.filter(Q(name = username) & Q(Q(start_date__month = currentMonth) | Q(end_date__month = currentMonth))).count()
            
+
+                elif form_id == 'booking':
+                    # print("===month", currentMonth )
+                    data = Booking.objects.filter(Q(HandledBY = username) & Q(BookingDate__month=currentMonth)).all().values()
+                    count = Booking.objects.filter(Q(HandledBY = username) & Q(BookingDate__month=currentMonth)).count()
+
             elif todayDate is not None:
+                # print("===today", todayDate)
               
                 if form_id == 'corporate':                     
                     # data = CorpFormData.objects.filter(Q(name = username) & Q(visit_date = todayDate)).all().values()
@@ -1130,6 +1192,7 @@ def FormData(request, username, form_id):
                             })
                     # print("=================+++++++", data)
 
+
                 elif form_id == 'home':
                     # data = HomeVisit.objects.filter(Q(name = username) & Q(date = todayDate)).all().values()
                     data = []
@@ -1183,19 +1246,23 @@ def FormData(request, username, form_id):
                     print("=================+++++++", data)             
                     # count = HomeVisit.objects.filter(Q(name = username) & Q(date = todayDate)).count()
 
+
                 elif form_id == 'ip':
                     username = Members.objects.filter(member_name = username).values('id')                   
                     data = IpData.objects.filter(Q(name_id__in = username) & Q(date = todayDate)).all().values()
                     count = IpData.objects.filter(Q(name_id__in = username) & Q(date = todayDate)).count()
+
 
                 elif form_id == 'admission':
                     username = Members.objects.filter(member_name = username).values('id')
                     data = AdmissionData.objects.filter(Q(name_id__in = username) & Q(date = todayDate)).all().values()
                     count = AdmissionData.objects.filter(Q(name_id__in = username) & Q(date = todayDate)).count()
 
+
                 elif form_id == 'sagemitra':
                     data = Sagemitra.objects.filter(Q(uname = username) & Q(followUp_date = todayDate)).all().values()
                     count = Sagemitra.objects.filter(Q(uname = username) & Q(followUp_date = todayDate)).count()
+
 
                 elif form_id == 'site':
                     # data = SiteVisit.objects.filter(Q(sales_name = username) & Q(Visit_Date = todayDate)).all().values()
@@ -1225,6 +1292,7 @@ def FormData(request, username, form_id):
                                     'accommodation': entry.get('accommodation', None),
                                     'Interest': entry.get('Interest', None),
                                     'Email_id': entry.get('Email_id', None),
+                                    'Visit_Date': entry.get('Visit_Date', None),
 
                                 })
                                 
@@ -1234,6 +1302,7 @@ def FormData(request, username, form_id):
                         for entry in data_entry:
                             count += 1
                             data.append({
+
                                     'id': entry.get('id', None),
                                     'Customer_name': entry.get('Customer_name', None),
                                     'Customer_Contact_number': entry.get('Customer_Contact_number', None),
@@ -1248,12 +1317,26 @@ def FormData(request, username, form_id):
                                     'accommodation': entry.get('accommodation', None),
                                     'Interest': entry.get('Interest', None),
                                     'Email_id': entry.get('Email_id', None),
+                                    'Visit_Date': entry.get('Visit_Date', None),
+
                             })
+
 
                 elif form_id == 'event':
                     data = EventAcc.objects.filter(Q(name = username) & Q(Q(start_date = todayDate) | Q(end_date = todayDate))).all().values()
                     count = EventAcc.objects.filter(Q(name = username) & Q(Q(start_date = todayDate) | Q(end_date = todayDate))).count()
 
+
+                elif form_id == 'booking':
+                    # todayDate = timezone.now().date()
+                    # print('username=', username)
+                    # print(Booking.objects.all().values())
+                    data = Booking.objects.filter(Q(HandledBY = username) & Q(BookingDate=todayDate)).all().values()
+                    count = Booking.objects.filter(Q(HandledBY = username) & Q(BookingDate=todayDate)).count()
+                    print("======data:==", data)
+                    print("======count:==", count)
+
+                    
             return Response({'data': data, 'count': count}, status=status.HTTP_200_OK)
         except Exception as e:
             print("=============", e)

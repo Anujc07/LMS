@@ -259,7 +259,7 @@ def Dashboard(request):
         corporate_visit = CorpFormData.objects.all().count()
         # corporate_visit = CorpFormData.objects.filter(Q(visit_type='solo')).count()
    
-    # print("========", new_leads, current_date)
+    # print("========", new_leads, current_date) 
     return render(request, 'Admin/dashboard.html', {'bookings': bookings, 'new_leads': new_leads,
                                                      'total_leads': total_leads, 'site_visit': site_visit,
                                                      'home_visit': home_visit, 'corporate_visit': corporate_visit, 'start_date':start_date,
@@ -355,7 +355,7 @@ def UpdateData(request):
     else:
         error_message = 'No file uploaded or invalid request method.'
     # print('error_message', message)
-    return render(request, 'Admin/dashboard.html', {'error_message': error_message})
+    return render(request, 'Admin/Graph.html', {'error_message': error_message})
 
 import joblib
 
@@ -605,7 +605,7 @@ def FollowUploadData(request):
     else:
         error_message = 'No file uploaded or invalid request method.'
         
-    return render(request, 'Admin/dashboard.html', {'error_message': error_message})
+    return render(request, 'Admin/Graph.html', {'error_message': error_message})
 
 
 
@@ -684,7 +684,7 @@ def EmployeeData(request, employee):
         # print(total_leads)
         # new leads
         total_new_leads = HighRiseData.objects.filter(Q(HandledByEmployee=employee) & Q(EDate__range=(start_date, end_date))).count()
-        print("============", total_new_leads)
+        # print("============", total_new_leads)
         if view == 'Bookings':
             data = Booking.objects.filter(Q(HandledBY=employee) & Q(BookingDate__range=(start_date, end_date))).values()
             # print('==============',data)
@@ -723,7 +723,7 @@ def EmployeeData(request, employee):
         total_leads = FollowUpData.objects.filter(Employee_Name=employee).count()      
         total_bookings = Booking.objects.filter(Q(HandledBY=employee)).count()
         total_new_leads = HighRiseData.objects.filter(Q(HandledByEmployee=employee) & Q(EDate__date=(current_date))).count()
-        print("============", total_new_leads)
+        # print("============", total_new_leads)
         total_home_visits = HomeVisit.objects.filter(Q(Q(name=employee) | Q(co_fellow__contains=employee)) & Q(date__month=current_month_number)).count()
 
         hot_leads = HighRiseData.objects.filter(HandledByEmployee=employee, CustomerGrade='Hot', Enquiry_Status='Open').count()
@@ -862,7 +862,7 @@ def get_report_data(start_date=None, end_date=None, request=None):
                 total_event = EventAcc.objects.filter(Q(name = member['member_name']) & Q(start_date__range = (start_date, end_date))).count()       
 
                 member_data = high_rise_data.aggregate(
-                    bookings=Count('Enquiry_Status', filter=Q(Enquiry_Status='Booked') & Q(Enquiry_Conclusion_Date__range=(start_date, end_date))),                    
+                
                     new_leads=Count('EDate', filter=Q(EDate__range=(start_date, end_date))),
                 )
                 member_data['corp_visits'] = corp
@@ -949,7 +949,7 @@ def get_report_data(start_date=None, end_date=None, request=None):
                 total_booking = Booking.objects.filter(Q(HandledBY = member['member_name'])).count()
                 indirect_site_visit = SiteVisit.objects.filter(Q(Q(sales_name = member['member_name']) & Q(visit_type = 'indirect'))).count()       
                 member_data = high_rise_data.aggregate(
-                    bookings=Count('Enquiry_Status', filter=Q(Enquiry_Status='Booked')),                    
+                                     
                     new_leads=Count('EDate', filter=Q(EDate__date=current_date)),
                 )
                 member_data['total_event'] = total_event
@@ -2243,7 +2243,7 @@ def SetBookings(request):
                                           StageChangeDate = stageDate, BookingDate = bookingsDate
                                           ) 
             form.save()
-            messages.success(request, 'Entry Saved')
+            messages.success(request, f'{clientName} Booked {unit} at {project}')
             return redirect('/admin/Set-Booking')
 
         else:
@@ -2264,3 +2264,60 @@ def SetBookings(request):
 
         print("==", e)
 
+
+
+
+
+
+
+
+
+
+
+def HomeVisit_By_DGM(request):
+    currentTime  = datetime.now().strftime('%H-%M-%S')
+    member = Members.objects.filter(status=1).values_list('member_name', flat=True).order_by('member_name')
+    teamIDs = request.session.get('teamIDs', [])       
+    if teamIDs:
+        members = Members.objects.filter(status=1, team_id__in=teamIDs).values('member_name', 'id').order_by('member_name')
+    # else:
+    #     members = Members.objects.filter(status=1).values('member_name', 'id').order_by('member_name')
+       
+    if request.method == 'POST':
+        name = request.session.get('first_name')
+        customer_name = request.POST.get('customer_name')
+        customer_contact = request.POST.get('customer_contact')
+        date = request.POST.get('date')
+        visit_details = request.POST.get('visit_details')
+        Visit_location = request.POST.get('Visit_location')       
+        image = request.FILES.get('image')
+        visit_type = request.POST.get('visit_type')       
+        # print('=========', image)
+        if not image:
+            raise ValidationError('No image file provided.')
+        image_name ,image_ext = os.path.splitext(image.name)
+        new_filename = f"{slugify(name)}_{date}_{slugify(Visit_location)}_{slugify(currentTime)}{image_ext}"
+        image.name = new_filename 
+        co_names = [request.POST[key] for key in request.POST if key.startswith('co_name_') and request.POST[key]]
+        co_names_str = ','.join(co_names) if co_names else None
+        try:
+            user = HomeVisit.objects.create(
+                name = name,
+                C_name = customer_name,
+                C_ph = customer_contact,
+                date = date,
+                detail = visit_details,
+                Visit_location = Visit_location,
+                images = image,  
+                co_fellow = co_names_str,
+                visit_type = visit_type,
+                
+            )
+            user.save()
+            return redirect('/Admin/dashboard/')
+        except Exception as e:
+            print("===", e)
+            messages.error(request, "Failed to set targets.")
+    else:
+      return render(request, 'Admin/HomeVisit.html', {'member': members})
+    

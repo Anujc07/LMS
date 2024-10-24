@@ -98,8 +98,9 @@
                              
                                 <td class='text-center'>
                                     <span class='first'>{{ member_data.total_booking }}</span> /
-                                    <span class='split'>{% for target_value in member_data.target_values %}{% if target_value.Target_id == 1 %}{{ target_value.target|stringformat:"d"|default:0 }}{% endif %}{% endfor %}</span>
-                                    <span class='end_date' hidden>{% for target_value in member_data.target_values_end %}{% if target_value.Target_id == 1 %}{{ target_value.target|stringformat:"d"|default:0 }}{% endif %}{% endfor %}</span>
+                                    {% comment %} {{member_data}} {% endcomment %}
+                                    <span class='split'>{% for target_value in member_data.target_values %}{% if target_value.Target_id == 1 %}{{ target_value.target|stringformat:"d" }}{% endif %}{% endfor %}</span>
+                                    <span class='end_date' hidden>{% for target_value in member_data.target_values_end %}{% if target_value.Target_id == 1 %}{{ target_value.target|stringformat:"d" }}{% endif %}{% endfor %}</span>
                                     <span class='percentage' ></span>
                                 </td>
                                 <td class='text-center'>
@@ -512,7 +513,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     var t_FW = row.querySelector('.fourth');
                     var FW_text = t_FW.textContent.trim();
                     var percentageSpan = cells[5].querySelector('span.percentage');
-                    console.log("=========", percentageSpan)
+                    //console.log("=========", cells[5])
                     if (customerFWSpan) {
                         var FWTargetSet = customerFWSpan.textContent.trim();
                         
@@ -525,11 +526,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         current_FW_target = Math.round(customerFWValue);
                         customerFWSpan.innerHTML = `<span>${current_FW_target}</span>`;
                         percentage = (FW_text/customerFWValue)*100;
+                        
                         if (percentage === Infinity || isNaN(percentage)) {
                             percentage = 0; 
                         }
                    
-                        percentageSpan.innerHTML = `<span>${percentage.toFixed()}%</span>`
+                        percentageSpan.innerHTML = `<span>${percentage? percentage.toFixed():0}%</span>`
                         if (FWTargetSet == 0) {
                                 
                         }                            

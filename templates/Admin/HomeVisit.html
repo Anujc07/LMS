@@ -1,0 +1,49 @@
+{% extends 'Admin/base.html' %}
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header align-items-center d-flex">
+                <h4 class="card-title mb-0 flex-grow-1">Home Visit</h4>
+                <div class="flex-shrink-0">
+                    <div class="form-check form-switch form-switch-right form-switch-md">
+                        <label for="form-grid-showcode" class="form-label text-muted">Show
+                            Code
+                        </label>                       
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">               
+                <div class="row gy-4">
+                    <div class="col-xxl-3 col-md-6">
+                        <label class="form-label">Visitor Name</label>
+                        <select class="form-select  mb-3">
+                            <option value=''>Select Visitor</option>
+                        {% for item in member %}
+                            <option value="{{ item.member_name }}">{{ item.member_name }}</option>
+                        {% endfor %}
+                        </select>
+                    </div>                        
+                    <div class="col-xxl-3 col-md-6">
+                        <div>
+                            <label class="form-label">Visitor Name</label>
+                            <input type="date" class="form-control" id="visitDate">
+                        </div>
+                    </div>            
+                                                   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const visitDateInput = document.getElementById('visitDate');
+const today = new Date();
+const todayFormate = today.toISOString();
+const 
+console.log("========", todayFormate)
+</script>
+
+{% endblock %}

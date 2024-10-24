@@ -592,5 +592,9 @@ class Booking(models.Model):
     Project = models.TextField(max_length=255, null=False)
     Unit = models.TextField(max_length=255, null=False)
     StageChangeDate = models.DateTimeField()
-    BookingDate = models.DateTimeField()
+    BookingDate = models.DateField()
 
+
+class Visit_Type_Source(models.Model):
+    name = models.TextField(null=True, blank=True)
+    status = models.IntegerField(default=1)

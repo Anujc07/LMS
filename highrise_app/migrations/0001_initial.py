@@ -735,6 +735,36 @@ class Migration(migrations.Migration):
             model_name='corporateslist',
             name='added_by',
             field=models.TextField(max_length=255, null=True),
+        ),migrations.AlterField(
+            model_name='corporateslist',
+            name='added_at',
+            field=models.DateTimeField(auto_now_add=True),
         ),
-        
+        migrations.AlterField(
+            model_name='corporateslist',
+            name='added_by',
+            field=models.TextField(default='Admin', max_length=255),
+        ),migrations.AlterField(
+            model_name='corporateslist',
+            name='added_at',
+            field=models.DateTimeField(default=datetime.datetime(2024, 10, 10, 13, 0, 48, 428081, tzinfo=datetime.timezone.utc)),
+        ),migrations.CreateModel(
+            name='Booking',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('ClientName', models.TextField(max_length=250)),
+                ('ClientNumber', models.TextField(max_length=250)),
+                ('EnquiryId', models.IntegerField()),
+                ('EDate', models.DateTimeField()),
+                ('HandledBY', models.TextField(max_length=250)),
+                ('Project', models.TextField(max_length=255)),
+                ('Unit', models.TextField(max_length=255)),
+                ('StageChangeDate', models.DateTimeField()),
+                ('Booking', models.DateTimeField()),
+            ],
+        ),migrations.RenameField(
+            model_name='booking',
+            old_name='Booking',
+            new_name='BookingDate',
+        )
     ]

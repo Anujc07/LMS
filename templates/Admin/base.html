@@ -250,7 +250,21 @@
                         
                     </li> 
                     {% if request.session.teamIDs %}
-                                
+                        
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#masters" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarDashboards">
+                                <i class="mdi mdi-table-cog"></i> <span data-key="t-dashboards">Masters</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="masters">
+                                <ul class="nav nav-sm flex-column" >
+                                    <li class="nav-item">
+                                        <a class="nav-link menu-link" href="{% url 'HomeVisit_By_DGM' %}">
+                                            <i class="mdi mdi-home-account"></i> <span> Home Visit </span>
+                                        </a>                                            
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>   
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#dataupload" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarDashboards">
@@ -296,9 +310,16 @@
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link menu-link" href="{% url 'SetBookings' %}">
-                                            <i class="mdi mdi-microsoft-teams"></i> <span>Set Bookings</span>
+                                            <i class="mdi mdi-book"></i> <span>Set Bookings</span>
                                         </a>                                    
                                     </li>
+                                    {% if request.session.teamIDs %}                                
+                                        <li class="nav-item">
+                                            <a class="nav-link menu-link" href="{% url 'SetBookings' %}">
+                                                <i class="mdi mdi-microsoft-teams"></i> <span>Set Bookings</span>
+                                            </a>                                    
+                                        </li>
+                                    {% endif %}    
                                     
                                     
                                 
@@ -522,7 +543,7 @@
 <script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
 <script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
 <script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
-<script src="{% static 'assets/js/plugins.js' %}"></script>
+{% comment %} <script src="{% static 'assets/js/plugins.js' %}"></script> {% endcomment %}
 
 <!-- prismjs plugin -->
 <script src="{% static 'assets/libs/prismjs/prism.js' %}"></script>
