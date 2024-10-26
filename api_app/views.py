@@ -86,7 +86,7 @@ def Dashboard(request, username):
         data = {
             'targets': list(target_values),
             'total': {
-                'total_corp_visit': total_corp_visit,
+                'total_corp_visit': total_corp_visit,   
                 'total_followUP': total_followUP,
                 'total_SM_FW': total_SM_FW,
                 'total_panding_FW': panding_FW,

@@ -382,17 +382,34 @@
                                     <th scope="col">Handled By</th>
                                     <th scope="col" >Other Deatils</th>     
                                     <th scope="col" >Booking Date</th> 
+                                    {% if request.session.teamIDs %}
+                            
+                                    {% else %}
+                                        <th scope="col">Action</th>
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for item in data %}
                                
-                                <tr>
+                                <tr data-item-id="{{ item.id }}">
                                     <td>{{ forloop.counter }}</td>                               
                                     <td>{{ item.ClientName }}<br> {{ item.ClientNumber }}<br>{{ item.EnquiryId }}</td>
                                     <td class='remark-cell'>{{ item.HandledBY|default:"-"  }}</td> 
                                     <td class='remark-cell'>{{ item.Project|default:"-"  }}<br>{{ item.Unit|default:"-" }}</td> 
-                                    <td>{{ item.BookingDate }}</td>      
+                                    <td>{{ item.BookingDate }}</td> 
+                                    {% if request.session.teamIDs %}
+                            
+                                    {% else %}
+                                        <td>
+                                            <div class="d-flex gap-2">
+                                            
+                                                <div class="remove">
+                                                    <button class="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal">Remove</button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    {% endif %}       
                                 </tr>
                                 {% endfor %}  
                             </tbody>

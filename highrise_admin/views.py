@@ -1568,16 +1568,16 @@ def DPR(request):
 from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def Delete_Record(request):
-
+    # print("====1")
     if request.method == 'POST':
+        # print("=============2")
         try:
             data = json.loads(request.body)
             item_id = data.get('item_id')
             view = data.get('view')
-
+            # print("=============3", view, item_id)
             
             if item_id and view == 'Corp-visits':
-                
                 CorpFormData.objects.filter(id=item_id).delete()
                 return JsonResponse({'message': 'Record deleted successfully', 'view': view})
             
@@ -1585,7 +1585,7 @@ def Delete_Record(request):
                 HomeVisit.objects.filter(id=item_id).delete()
                 return JsonResponse({'message': 'Record deleted successfully', 'view': view})
             
-            elif item_id and view == 'SM-FW':                
+            elif item_id and view == 'SM-FW':           
                 Sagemitra.objects.filter(id=item_id).delete()
                 return JsonResponse({'message': 'Record deleted successfully', 'view': view})
             
@@ -1600,10 +1600,14 @@ def Delete_Record(request):
             elif item_id and view == '1Site-Visits':                
                 SiteVisit.objects.filter(id=item_id).delete()
                 return JsonResponse({'message': 'Record deleted successfully', 'view': view})
-            
+            elif item_id and view == 'Bookings':
+                Booking.objects.filter(id = item_id).delete()
+                return JsonResponse({'message': 'Record deleted successfully', 'view': view})
+
             else:
                 return JsonResponse({'message': 'Item ID not provided'}, status=400)
-        except json.JSONDecodeError:
+        except Exception as e:
+            print("====", e)
             return JsonResponse({'message': 'Invalid JSON'}, status=400)
     return JsonResponse({'message': 'Invalid request'}, status=400)
 
@@ -2267,34 +2271,72 @@ def SetBookings(request):
 
 
 
+# def SetBookings(request):
+#     try:
+#         if request.method == "POST":
+#             print("1")
+#         else:
+#             return render(request, "Admin/SetBooking.html")
+
+#     except Exception as e:
+#         print("===", e)
 
 
 
 
+from PIL import Image as PILImage
+from io import BytesIO
+from django.core.files.base import ContentFile
+from django.utils.text import slugify
+import os
+from django.core.exceptions import ValidationError
 
+def compress_image(image, max_size_kb=100):
+    """Compress the image to be less than max_size_kb."""
+    img = PILImage.open(image)
+    if img.mode == 'RGBA':
+        img = img.convert('RGB')
+    
+    # Calculate the compression quality
+    quality = 90  # Start with a high quality
+    while True:
+        buffer = BytesIO()
+        img.save(buffer, format='JPEG', quality=quality)
+        size_kb = buffer.tell() / 1024  # Get size in KB
+        if size_kb <= max_size_kb or quality <= 10:
+            break
+        quality -= 5  # Decrease quality
 
+    return ContentFile(buffer.getvalue(), name=image.name)
 
 def HomeVisit_By_DGM(request):
     currentTime  = datetime.now().strftime('%H-%M-%S')
-    member = Members.objects.filter(status=1).values_list('member_name', flat=True).order_by('member_name')
+    # member = Members.objects.filter(status=1).values_list('member_name', flat=True).order_by('member_name')
     teamIDs = request.session.get('teamIDs', [])       
+    allmembers = Members.objects.filter(status=1).values('member_name', 'id').order_by('member_name')
     if teamIDs:
         members = Members.objects.filter(status=1, team_id__in=teamIDs).values('member_name', 'id').order_by('member_name')
     # else:
     #     members = Members.objects.filter(status=1).values('member_name', 'id').order_by('member_name')
        
     if request.method == 'POST':
-        name = request.session.get('first_name')
+        name = request.POST.get('name')
         customer_name = request.POST.get('customer_name')
         customer_contact = request.POST.get('customer_contact')
         date = request.POST.get('date')
-        visit_details = request.POST.get('visit_details')
+        visit_details = request.POST.get('remark')
         Visit_location = request.POST.get('Visit_location')       
         image = request.FILES.get('image')
         visit_type = request.POST.get('visit_type')       
         # print('=========', image)
+        # print('=====>',image)
+        username = HomeVisit.objects.filter(Q(C_ph=customer_contact) & Q(name=name)).count()
+        revisit = 1 + username if username > 0 else 1
         if not image:
             raise ValidationError('No image file provided.')
+        
+
+        image = compress_image(image)
         image_name ,image_ext = os.path.splitext(image.name)
         new_filename = f"{slugify(name)}_{date}_{slugify(Visit_location)}_{slugify(currentTime)}{image_ext}"
         image.name = new_filename 
@@ -2311,13 +2353,128 @@ def HomeVisit_By_DGM(request):
                 images = image,  
                 co_fellow = co_names_str,
                 visit_type = visit_type,
+                revisit=revisit
                 
             )
+            # print("==", user)
             user.save()
-            return redirect('/Admin/dashboard/')
+            return redirect('/admin/dashboard/')
         except Exception as e:
             print("===", e)
-            messages.error(request, "Failed to set targets.")
+            messages.error(request, "Failed to fill home visit form.")
     else:
-      return render(request, 'Admin/HomeVisit.html', {'member': members})
+      return render(request, 'Admin/HomeVisit.html', {'member': members, 'allmembers':allmembers})
     
+
+
+
+def CorpoVisit_By_DGM(request):
+    currentTime  = datetime.now().strftime('%H-%M-%S')
+    corporate_type = CorporateType.objects.values('corpo_type', 'id').order_by('corpo_type')
+    teamIDs = request.session.get('teamIDs', [])       
+    allmembers = Members.objects.filter(status=1).values('member_name', 'id').order_by('member_name')
+    if teamIDs:
+        members = Members.objects.filter(status=1, team_id__in=teamIDs).values('member_name', 'id').order_by('member_name')
+    if request.method == 'POST':
+        try:
+            # name = request.session['first_name']
+            name = request.POST.get('name')
+            corp_type = request.POST.get('corp_type')
+            corp_name = request.POST.get('corp_name')
+            meet_person = request.POST.get('meet_person')
+            presentation = request.POST.get('presentation')
+            date_str = request.POST.get('date')
+            nxt_pre_date = request.POST.get('nxt_date')
+            reason = request.POST.get('reason')
+            key_person = request.POST.get('key_person')
+            key_person_contact = request.POST.get('key_person_contact')
+            key_person2 = request.POST.get('key_person2')
+            key_person_contact2 = request.POST.get('key_person_contact2')
+            data_collect = request.POST.get('data_collect')
+            visit_type = request.POST.get('visit_type')
+            location = request.POST.get('location')
+            num_attend = request.POST.get('num_attend')
+       
+            image = request.FILES.get('image')
+            if not image:
+                messages.error = (request, 'Image not found please try again')
+                return redirect('/admin/Corporate-Visit')
+            image = compress_image(image)
+            image_name ,image_ext = os.path.splitext(image.name)
+            username = CorpFormData.objects.filter(Q(key_person_contact=key_person_contact) & Q(name=name)).count()
+            revisit = 1 + username if username > 0 else 1
+            
+            # new_filename = f"{slugify(name)}_{date_str}_{slugify(corp_name)}_{slugify(currentTime)}{image_ext}"
+            new_filename = f"{slugify(name)}_{date_str}_{slugify(corp_name)}_{slugify(currentTime)}{image_ext}"
+            image.name = new_filename 
+            try:
+                date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            except (ValueError, TypeError):           
+                messages.error = (request, 'Invalid date format. Please enter the date in YYYY-MM-DD format.')
+                return redirect('/admin/Corporate-Visit')
+
+            if nxt_pre_date:
+                try:
+                    nxt_date = datetime.strptime(nxt_pre_date, '%Y-%m-%d').date()
+                except (ValueError, TypeError):           
+                    messages.error = (request, 'Invalid next date format. Please enter the date in YYYY-MM-DD format.')
+                    return redirect('/admin/Corporate-Visit')
+            else:
+                nxt_date = None
+            
+            # co_names = [request.POST[key] for key in request.POST if key.startswith('co_name_')]
+            # co_names_str = ','.join(co_names)
+            co_names = [request.POST[key] for key in request.POST if key.startswith('co_name_') and request.POST[key]]
+            co_names_str = ','.join(co_names) if co_names else None
+           
+            user = CorpFormData.objects.create(
+                key_person2=key_person2,
+                key_person_contact2=key_person_contact2, 
+                name=name,                
+                corp_name=corp_name,
+                corp_type=corp_type,
+                meet_person=meet_person,
+                presentation=presentation,
+                cofel_name=co_names_str,
+                visit_date=date,
+                reason=reason,
+                nxt_pre_date=nxt_date,
+                key_person=key_person,
+                images=image,  
+                data_collect=data_collect,
+                key_person_contact=key_person_contact,
+                visit_type=visit_type,
+                location=location,
+                num_attend=num_attend,
+                revisit=revisit
+            )
+            user.save()
+            messages.success = (request, "Corporate Visit Form Saved")
+            return redirect('/admin/Corporate-Visit')
+        except Exception as e:
+            error_message = str(e)
+            print("=========", e)
+            return redirect('/admin/Corporate-Visit')
+    else:
+        return render(request, 'Admin/CorporateForm.html',  {
+            'member': members,
+            'corporate_type': corporate_type,
+            'allmembers': allmembers
+        })
+
+
+
+def get_corporate_names(request, selectedTypeId):
+    
+    try:
+        if request.method == 'GET':
+            # Assuming you have a CorporateName model that links to CorporateType
+            corporate_names = CorporatesList.objects.filter(Q(corporate_type_id=selectedTypeId) & Q(status=1)).values('id', 'corpo_name')
+            
+            # Convert queryset to a list of dictionaries
+            corporate_names_list = list(corporate_names)
+
+            return JsonResponse(corporate_names_list, safe=False)
+        
+    except Exception as e:
+        print("====", e)

@@ -36,7 +36,29 @@
         </div>       
     </div>
 </div>
-<div class="row" >
+
+
+<div class='row'>
+    <div class='col-lg-12'>
+        <div class='card'>
+            <div class='card-body'>
+                <div  class="col-xxl-3 col-md-6">
+                    <div>
+                        <label  class="form-label">Enter Phone Number</label>
+                        <input class="form-control" list="NumberList" id="exampleDataList" placeholder="Search your country...">
+                        <datalist id="NumberList">
+                            {% for data in allData %}     
+                                <option value='{{data.Mobile}}'>
+                            {% endfor %}                  
+                        </datalist>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} <div class="row" >
     <div class="col-xl-12">
         <div class="card">          
             <div class="card-body">
@@ -76,8 +98,8 @@
             </div>
         </div>
     </div>
-</div>
-
+</div> {% endcomment %}
+{% comment %} 
 <!-- Add Employee Modals -->
 <div id="booking" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-dialog-centered">
@@ -140,7 +162,7 @@
                 </div><!-- /.modal-content -->
        
     </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+</div><!-- /.modal --> {% endcomment %}
 
 
 <script>

@@ -58,6 +58,8 @@ urlpatterns = [
 
     # this routes for home visit on dashboard
     path('admin/Home-Visit', views.HomeVisit_By_DGM, name='HomeVisit_By_DGM'),
+    path('admin/Corporate-Visit', views.CorpoVisit_By_DGM, name='CorpoVisit_By_DGM'),
+    path('admin/corporate-names/<int:selectedTypeId>/', views.get_corporate_names, name='get_corporate_names'),
     
     # this routes for booking form and target assign section
     path('admin/Set-Booking', views.SetBookings, name='SetBookings'),

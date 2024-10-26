@@ -244,14 +244,18 @@ const colorFun = (index, cells, percentage) => {
 }
 
 function Table(mainData) {
-   // console.log('==1==', mainData)
+    //console.log("===1", tableBody)
+    //console.log('==1==', mainData)
+    var tableBody = document.getElementById("DPR-table-body");
     mainData.forEach(function (lead, index) {
         var rowIndex = index;
-        var tableBody = document.getElementById("DPR-table-body");
+        //console.log("===1", rowIndex)
         var row = tableBody.rows[rowIndex];
+        //console.log("====2", tableBody.rows[rowIndex])
 
         if (!row) {
             row = tableBody.insertRow(rowIndex);
+           // console.log("====3", row)
             for (var i = 0; i < 12; i++) {
                 row.insertCell(i);
             }
@@ -348,7 +352,7 @@ function Table(mainData) {
                     }
                     booked_target =  Math.round(booking_target);
                   //  console.log("====booked_target====:", booked_target)
-                    percentage = (lead.new_leads / booking_target) * 100;
+                    percentage = (lead.total_bookings / booking_target) * 100;
                     colorFun(2, cells, percentage);
                 } 
                 else if (target_id == 9) {

@@ -1,0 +1,415 @@
+{% extends 'Admin/base.html' %}
+{% block content %}
+
+
+<div class="row mt-3">
+
+    <div class="col-12">
+        {% if messages %}
+            <ul class="danger-message">
+                {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                        <div class="alert alert-danger shadow alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success shadow alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header align-items-center d-flex">
+                <h4 class="card-title mb-0 flex-grow-1">Corporate Visit Form</h4>
+                
+            </div><!-- end card header -->
+            <div class="card-body">           
+                <form method="POST" action="{% url 'CorpoVisit_By_DGM' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row gy-4">
+                        <div class="col-xxl-3 col-md-6">
+                            <label class="form-label">Visitor Name</label>
+                            <select class="form-select  mb-3" name='name' required>
+                                <option value=''>Select Visitor</option>
+                                {% for item in member %}
+                                    <option value="{{ item.member_name }}">{{ item.member_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>                        
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label class="form-label">Visit Date</label>
+                                <input type="date" class="form-control" name="date" required>
+                            </div>
+                        </div>            
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label class="form-label">Corporate Type</label>
+                                <select class="form-select  mb-3" name='corp_type' id="corporateType" required>
+                                    <option value=''>Select Corporate Type</option>
+                               
+                                    {% for item in corporate_type %}
+                                        <option value="{{ item.id }}">{{ item.corpo_type }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>            
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label class="form-label">Corporate Name</label>
+                                <select class="form-select  mb-3" name="corp_name" id='corporateName' required>
+                                    <option value=''>Select Corporate Name</option>
+                               
+                                    
+                                </select>
+                            </div>
+                        </div>            
+                                                    
+                    </div>
+
+                    <div class="row gy-4">
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label class="form-label">Remark</label>
+                                <input type="text" class="form-control" name="remark" placeholder='Enter Remark' id='remark' required>
+                                <div id="error-message" style="color: red; display: none;">Please enter at least 50 Characters.</div>
+
+                            </div>
+                        </div>    
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label class="form-label">Location/Branch</label>
+                                <input type="text" class="form-control" name="location" placeholder='Explame:-Kolar Road' required>
+                            </div>
+                        </div>    
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label class="form-label">Upload Image</label>
+                                <input type="file" class="form-control" name="image" pattern="imgae/*" required>
+                            </div>
+                        </div> 
+                           
+                    
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label class="form-label">Number of people Met</label>
+                                <input type="number" class="form-control"  placeholder="Enter number of people met"  name='meet_person' required>
+                            </div>
+                        </div> 
+                        
+                    </div>
+                    <div class="row mt-1 gy-4">
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label class="form-label">Data Collected</label>
+                                <input type="number" class="form-control"  placeholder="Enter data collect number" name='data_collect' required>
+                            </div>
+                        </div>
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label class="form-label">Key Person Name</label>
+                                <input type="text" class="form-control"  name = 'key_person' placeholder="Enter Key Person " required>
+                            </div>
+                        </div>
+                        <div class="col-xxl-3 col-md-6">
+                            <div>
+                                <label class="form-label">Key Person Contact Number</label>
+                                <input type="text" class="form-control" id="coordinates"  name='key_person_contact' placeholder="Enter Contact of Key Person" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xxl-3 col-md-6 second-key-person-name" style="display:none;">
+                            <div>
+                                <label class="form-label">Second Key Person Name</label>
+                                <input type="text" class="form-control" id="secondKeyPersonName" placeholder="Enter name" name='key_person2'>
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-3 col-md-6 second-key-person-contact" style="display:none;">
+                            <div>
+                                <label class="form-label">Contact of Second Key Person</label>
+                                <input type="text" class="form-control" id="secondKeyPersonContact" placeholder="Enter contact" name='key_person_contact2'>
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-3 mt-5">
+                            <a class="btn btn-danger remove-button" id="hide-key-person" style="display:none;">x</a>
+                            <a class="btn btn-primary" id="add-key-person">+</a>
+                        </div>
+
+                       
+                    </div>
+                    <div class="row mt-1 gy-4">
+                        <div class="col-xxl-3 col-md-6">
+                            <label class="form-label">Presentation</label>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="presentation" value="done" onclick="showFields()"/>
+                                <label class="form-check-label">Done</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="presentation" value="planned" onclick="showFields()"/>
+                                <label class="form-check-label">Planned</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="presentation" value="not_done" onclick="showFields()"/>
+                                <label class="form-check-label">Not Planned</label>
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-3 col-md-6" id="reason" style="display: none;">
+                            <div>
+                                <label class="form-label">Reason</label>
+                                <input type="text" class="form-control" placeholder="Enter reason" name='reason' checked>
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-3 col-md-6" id="nxtDate" style="display: none;">
+                            <div>
+                                <label class="form-label">Next Presentation Date</label>
+                                <input type="date" class="form-control" name="nxt_date">
+                            </div>
+                        </div>
+
+                        <div class="col-xxl-3 col-md-6" id="attend" style="display: none;">
+                            <div>
+                                <label class="form-label">Number of Attendees</label>
+                                <input type="number" class="form-control" placeholder="Enter number of attendees" name='num_attend'>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-1 gy-4">
+                        <div class="col-xxl-3 col-md-6">
+                            <label class="form-label">Visit Type</label>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="visit_type" value="solo" id="soloVisit" checked>
+                                <label class="form-check-label" for="soloVisit">Solo Visit</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="visit_type" value="team" id="teamVisit">
+                                <label class="form-check-label" for="teamVisit">Team Visit</label>
+                            </div>
+                        </div>
+
+                        <!-- Co-Fellow dropdown container -->
+                        <div id="dropdown-container" class="col-xxl-3 col-md-6" style="display:none;">
+                            <label class="form-label">Co-Fellow</label>
+                            <select class="form-select mb-3" name="co_name_0">
+                                {% comment %} <option value=''>Select Co-Fellow</option> {% endcomment %}
+                                {% for item in allmembers %}
+                                    <option value="{{ item.member_name }}">{{ item.member_name }}</option>
+                                {% endfor %}
+                            </select>
+                            
+                        </div>
+
+                        <!-- Button to add more Co-Fellows -->
+                        <div class="row mb-3 mt-2">
+                            <div class="col-xxl-3">
+                                <a class='btn btn-primary' id="add-button">+</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class='row'>
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-primary btn-border">Submit</button>                        
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const corporateTypeSelect = document.getElementById('corporateType');
+    const corporateNameSelect = document.getElementById('corporateName');
+
+    corporateTypeSelect.addEventListener('change', function() {
+        const selectedTypeId = this.value;
+
+        // Clear previous corporate names
+        corporateNameSelect.innerHTML = '<option value="">Select Corporate Name</option>';
+
+        if (selectedTypeId) {
+            fetch(`/admin/corporate-names/${selectedTypeId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Data from API:", data);
+                    data.forEach(corporate => {
+
+                        const option = document.createElement('option');
+                        option.value = corporate.corpo_name; 
+                        option.textContent = corporate.corpo_name;
+                        corporateNameSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching corporate names:', error));
+        }
+    });
+});
+
+
+const showFields = () => {
+    const presentation = document.querySelector('input[name="presentation"]:checked').value;
+    
+    const reasonField = document.getElementById('reason');
+    const nxtDateField = document.getElementById('nxtDate');
+    const attendField = document.getElementById('attend');
+
+    reasonField.style.display = 'none';
+    nxtDateField.style.display = 'none';
+    attendField.style.display = 'none';
+
+
+    if (presentation === 'done') {
+        attendField.style.display = 'block';
+    } else if (presentation === 'planned') {
+        nxtDateField.style.display = 'block';
+    } else if (presentation === 'not_done') {
+        reasonField.style.display = 'block';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const teamVisitRadio = document.getElementById('teamVisit');
+    const soloVisitRadio = document.getElementById('soloVisit');
+    const dropdownContainer = document.getElementById('dropdown-container');
+    const addButton = document.getElementById('add-button');
+    
+    let dropdownCount = 0; // Count for dynamic dropdowns
+
+    // Function to toggle visibility of dropdown based on the visit type
+    function toggleDropdowns() {
+        if (teamVisitRadio.checked) {
+            dropdownContainer.style.display = 'block'; // Show dropdown
+        } else {
+            dropdownContainer.style.display = 'none'; // Hide dropdown
+            clearDropdowns(); // Clear dynamically added dropdowns when switching to solo
+        }
+    }
+
+    // Function to clear dynamically added dropdowns
+    function clearDropdowns() {
+        const dropdowns = document.querySelectorAll('[id^=co-fellow-container-]');
+        dropdowns.forEach(dropdown => dropdown.remove());
+        dropdownCount = 0;
+    }
+
+    // Initial toggle on page load
+    toggleDropdowns();
+
+    // Event listener for radio button change
+    teamVisitRadio.addEventListener('change', toggleDropdowns);
+    soloVisitRadio.addEventListener('change', toggleDropdowns);
+
+    // Event listener for adding new dropdown
+    addButton.addEventListener('click', function () {
+        dropdownCount++; // Increment dropdown count
+
+        const newDropdown = document.createElement('div');
+        newDropdown.id = `co-fellow-container-${dropdownCount}`;
+        newDropdown.classList.add('col-xxl-3', 'col-md-6');
+
+        newDropdown.innerHTML = `
+            <label class="form-label">Co-Fellow ${dropdownCount + 1}</label>
+            <select class="form-select mb-3" name="co_name_${dropdownCount}">
+                <option value=''>Select Co-Fellow</option>
+                {% for item in allmembers %}
+                    <option value="{{ item.member_name }}">{{ item.member_name }}</option>
+                {% endfor %}
+            </select>
+            <a class="btn btn-danger remove-button">x</a>
+        `;
+
+        // Append new dropdown
+        dropdownContainer.parentNode.appendChild(newDropdown);
+
+        // Add event listener for remove button
+        newDropdown.querySelector('.remove-button').addEventListener('click', function () {
+            newDropdown.remove();
+        });
+    });
+});
+
+
+
+
+const remarkInput = document.getElementById('remark');
+const errorMessage = document.getElementById('error-message');
+
+remarkInput.addEventListener('input', function () {
+
+    const charCount = remarkInput.value.length;
+
+    if (charCount < 50) {
+        errorMessage.style.display = 'block';
+    } else {
+        errorMessage.style.display = 'none';
+    }
+});
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const addKeyPersonBtn = document.getElementById('add-key-person');
+    const hideKeyPersonBtn = document.getElementById('hide-key-person');
+    const secondKeyPersonNameDiv = document.querySelector('.second-key-person-name');
+    const secondKeyPersonContactDiv = document.querySelector('.second-key-person-contact');
+
+    // Function to show the fields for the second key person
+    function showSecondKeyPersonFields() {
+        secondKeyPersonNameDiv.style.display = 'block';
+        secondKeyPersonContactDiv.style.display = 'block';
+        addKeyPersonBtn.style.display = 'none';  // Hide the + button
+        hideKeyPersonBtn.style.display = 'inline-block';  // Show the x button
+    }
+
+    // Function to hide the fields for the second key person
+    function hideSecondKeyPersonFields() {
+        secondKeyPersonNameDiv.style.display = 'none';
+        secondKeyPersonContactDiv.style.display = 'none';
+        addKeyPersonBtn.style.display = 'inline-block';  // Show the + button
+        hideKeyPersonBtn.style.display = 'none';  // Hide the x button
+    }
+
+    // Event listener for the + button to show the fields
+    addKeyPersonBtn.addEventListener('click', function () {
+        showSecondKeyPersonFields();
+    });
+
+    // Event listener for the x button to hide the fields
+    hideKeyPersonBtn.addEventListener('click', function () {
+        hideSecondKeyPersonFields();
+    });
+});
+
+
+setTimeout(function() {
+    var alerts = document.querySelectorAll('.alert');
+    alerts.forEach(function(alert) {
+        var alertInstance = new bootstrap.Alert(alert);
+        alertInstance.close();
+    });
+}, 5000);
+</script>
+
+
+{% endblock %}
