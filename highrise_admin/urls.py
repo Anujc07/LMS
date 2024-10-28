@@ -54,6 +54,8 @@ urlpatterns = [
     path('admin/Employee-Status/', views.Employee_status, name='Employee_status'),
     path('admin/Corporate-List', views.CorporateEdit, name='CorporateEdit'),
     path('admin/Team-List', views.TeamEdit, name='TeamEdit'),
+    path('admin/Source', views.SourceEdit, name='SourceEdit'),
+    path('admin/Source-Type', views.SourceTypeEdit, name='SourceTypeEdit'),
 
 
     # this routes for home visit on dashboard

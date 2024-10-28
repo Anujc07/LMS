@@ -314,8 +314,18 @@
                                         </a>                                    
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link menu-link" href="{% url 'SetBookings' %}">
+                                        <a class="nav-link menu-link" href="{% url 'SourceEdit' %}">
                                             <i class="mdi mdi-book"></i> <span>Set Bookings</span>
+                                        </a>                                    
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link menu-link" href="{% url 'SourceEdit' %}">
+                                            <i class="mdi mdi-source-branch"></i> <span>Source</span>
+                                        </a>                                    
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link menu-link" href="{% url 'SourceTypeEdit' %}">
+                                            <i class="mdi mdi-source-branch"></i> <span>Source Type</span>
                                         </a>                                    
                                     </li>
                                     {% if request.session.teamIDs %}                                

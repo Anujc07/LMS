@@ -1,0 +1,158 @@
+{% extends 'Admin/base.html' %}
+{% block content %}
+
+
+<div class="row mt-3">
+    <div class="col-12">
+        {% if messages %}
+            <ul class="danger-message">
+                {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                        <div class="alert alert-danger shadow alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success shadow alert-dismissible fade show" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-6">       
+        
+        <button type="button" class="btn btn-info"  data-bs-toggle="modal" data-bs-target="#source_modal">
+            Add Source
+        </button>
+    </div>
+    <div class="col-6">     
+        <div class="col-sm">
+            <div class="d-flex justify-content-sm-end">
+                <div class="search-box ms-2">
+                    <input type="text" id="search" class="form-control search" placeholder="Search..." oninput="itemSearch(value)">
+                    <i class="ri-search-line search-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">               
+                <div class="live-preview">
+                    <div class="table-responsive table-card">
+                        <table class="table align-middle table-nowrap mb-0" id='corptable'>
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col" class="text-center">S.No.</th>
+                                    <th scope="col" class="text-center">Source</th>
+                                    <th scope="col" class="text-center">Source Type</th>
+                                    <th scope="col" class="text-center">Status</th>
+                                 
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in source %}
+                                
+                                <tr>
+                                    <td class="text-center">{{ forloop.counter }}</td>
+                                    <td class="text-center">{{ i.name }}</td>
+                                    <td class="text-center">  
+                                        {% for item in sourceType %}
+                                            {% if item.id ==  i.source_id %}
+                                                {{ item.name }}
+                                            {% endif %}
+                            
+                                        {% endfor %}</td>
+                                    <td class="text-center">                                        
+                                        {% if i.status == 0 %} Not Active {% else %} Active {% endif %}
+                                    </td>
+{% comment %}                                     
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Change status"
+                                                data-bs-toggle="modal" data-bs-target="#source_modal"
+                                                data-user-id="{{ i.id }}" data-status="{{ i.status }}">
+                                            <i class=" ri-checkbox-circle-line"></i>
+                                        </button>                                          
+                                    </td>
+                                     {% endcomment %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>                
+            </div><!-- end card-body -->
+        </div><!-- end card -->
+    </div><!-- end col -->
+</div>
+
+<!-- Status Modals -->
+<div id="source_modal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <form method='POST' action="{% url 'SourceEdit' %}">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Create Course </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
+                </div>
+                <div class="modal-body">
+                  
+                    <div class="col-md-10">                  
+                        <label  class="form-label">Status</label>
+                        <select class="form-control" name="status" >
+                            <option value='1'>Active</option>
+                            <option value='0'>Not Active</option>
+                        </select>
+                    </div>
+                    <div class="col-md-10">                  
+                        <label  class="form-label">Source</label>
+                        <input class="form-control"  name='source' placeholder="Enter Source Name...">
+                    </div>
+                    <div class="col-md-10">                  
+                        <label  class="form-label">Source Type</label>
+                        <select class="form-control" name="sourceType" >
+                            <option value=''>Select Source Type</option>
+                        {% for item in sourceType %}
+                            <option value='{{ item.id }}'>{{ item.name }}</option>
+                        {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </form>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
+

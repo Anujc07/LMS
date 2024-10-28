@@ -176,7 +176,7 @@ def Set_Target(request, username):
             followup = request.data.get('followup')
             homevisit = request.data.get('home_visit')
             sm_mitra = request.data.get('sm_followup')
-            sitevisit = request.data.get('site_visit')
+            sitevisit = request.data.get('site_visit')  
             admission = request.data.get('admission')
             newleads = request.data.get('new_leads')
             # print("=========", newleads)
@@ -185,6 +185,7 @@ def Set_Target(request, username):
             employee = Members.objects.get(member_name=employee_name)
             
             existing_entry = EmpSetTarget.objects.filter(Employee=employee, month=month).first()
+            existing_entry_list = EmpSetTarget.objects.filter(Employee=employee, month=month)
             target_values = {
                 1: booking,
                 2: corporate,
@@ -196,8 +197,21 @@ def Set_Target(request, username):
                 8: ip,
                 9: newleads
             }
-            
+            # print("====1", existing_entry_list)
             # if existing_entry and existing_entry.stage == 1:
+
+            # for i in existing_entry_list:
+                # print("===22", i.Target_id)
+            # for target_id, target_value in target_values.items():   
+            #     print("====1", target_id, target_value)
+            #     for i in existing_entry_list:                
+            #         if i and (target_id==i.Target_id and i.stage == 1 or i.stage == None):
+                                
+            #             print("======2======2=====2", target_id, i.Target_id, target_value) 
+            #         else:
+            #             print("===3")
+                    
+                    
             if existing_entry and (existing_entry.stage == 1 or existing_entry.stage is None):
                 try:
                     for target_id, target_value in target_values.items():
@@ -209,6 +223,7 @@ def Set_Target(request, username):
                                 month=month,
                                 Target=target_instance
                             ).first()
+                            # print("===", set_target )
                             if set_target:
                                 set_target.target = target_value
                                 set_target.stage = 2
@@ -722,16 +737,140 @@ def GetClientData(request):
     
 
 
+
+
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def CorporateForm(request):
+  
+#     if request.method == 'POST':
+        
+#         try:
+#             # Collecting the form data
+#             new_corporate = request.data.get('new_corporate', None)
+#             name = request.data.get('name')
+#             corp_type = request.data.get('corp_type')
+#             corp_name = request.data.get('corp_name')
+#             meet_person = request.data.get('meet_person')
+#             presentation = request.data.get('presentation')
+#             today_date = datetime.now()
+#             nxt_pre_date = request.data.get('nxt_date')
+#             reason = request.data.get('reason')
+#             key_person = request.data.get('key_person')
+#             key_person_contact = request.data.get('key_person_contact')
+#             key_person2 = request.data.get('key_person2')
+#             key_person_contact2 = request.data.get('key_person_contact2')
+#             data_collect = request.data.get('data_collect')
+#             visit_type = request.data.get('visit_type')
+#             location = request.data.get('location')
+#             lat_long = request.data.get('lat_long')
+#             image = request.data.get('image') 
+#             num_attend = request.data.get('num_attend')
+
+#             imgstr = image['base64']
+
+#             team_members = request.data.get('co_name')
+#             if isinstance(team_members, str):
+#                 team_members = team_members.split(',')
+#             elif not isinstance(team_members, list):
+#                 team_members = []
+            
+#             if new_corporate:
+#                 corp_name = new_corporate
+
+#             # Validate and process dates
+#             nxt_date = None
+#             if nxt_pre_date and  (presentation == 'Planned'):
+                
+#                 try:
+#                     nxt_date = datetime.strptime(nxt_pre_date, '%Y-%m-%d').date()
+#                 except (ValueError, TypeError):
+#                     return Response({'error': 'Invalid next date format. Please enter the date in YYYY-MM-DD format.'}, status=status.HTTP_200_OK)
+
+#             # Validate image
+#             if not image:
+#                 return Response({'error': 'No image file provided.'}, status=status.HTTP_200_OK)
+
+#             current_time = datetime.now().strftime('%Y%m%d%H%M%S')
+#             ext = 'webp'  # Set the file extension to WebP
+#             new_filename = f"{slugify(name)}{today_date}{slugify(corp_name)}_{slugify(current_time)}.{ext}"
+
+#             # Decode the base64 image and convert it to WebP using Pillow
+#             image_data = base64.b64decode(imgstr)
+#             image_content = BytesIO(image_data)
+            
+#             # Convert image to WebP using Pillow
+#             with Image.open(image_content) as img:
+#                 webp_image_io = BytesIO()
+#                 img.save(webp_image_io, format='WEBP', quality=30)
+#                 webp_image_io.seek(0)
+
+#                 # Create a ContentFile for the WebP image
+#                 image_content_webp = ContentFile(webp_image_io.read(), name=new_filename)
+
+#             # Handle team members
+#             co_names_str = ','.join(team_members) if team_members else None
+#             username = CorpFormData.objects.filter(Q(key_person_contact=key_person_contact) & Q(name=name)).count()
+#             revisit = 1 + username if username > 0 else 1
+
+#             if new_corporate:
+#                 corporate_type = CorporateType.objects.filter(corpo_type = corp_type).values_list('id', flat = True)
+#                 # print(corporate_type)
+#                 check_corporate = CorporatesList.objects.filter(corpo_name__icontains = new_corporate).first()
+#                 current_time = timezone.localtime(timezone.now())
+#                 # print(current_time)
+#                 if check_corporate:
+#                     corp_name = new_corporate
+#                 else:
+#                     # print("====================")
+#                     new_corporate = f'{new_corporate} {location}'
+#                     data = CorporatesList.objects.create(corpo_name = new_corporate, added_by = name, status = 1, corporate_type_id = corporate_type, added_at = current_time)
+#                     data.save()
+
+#             # Save to model
+#             corp_form_data = CorpFormData.objects.create(
+#                 lat_long=lat_long,
+#                 key_person2=key_person2,
+#                 key_person_contact2=key_person_contact2,
+#                 name=name,
+#                 corp_name=corp_name,
+#                 corp_type=corp_type,
+#                 meet_person=meet_person,
+#                 presentation=presentation,
+#                 cofel_name=co_names_str,
+#                 visit_date=today_date,
+#                 reason=reason,
+#                 nxt_pre_date=nxt_date,
+#                 key_person=key_person,
+#                 images=image_content_webp,
+#                 data_collect=data_collect,
+#                 key_person_contact=key_person_contact,
+#                 visit_type=visit_type,
+#                 location=location,
+#                 num_attend=num_attend,
+#                 revisit=revisit
+#             )
+#             corp_form_data.save()
+
+#             return Response({'success': 'Your entry has been saved'}, status=status.HTTP_200_OK)
+
+#         except Exception as e:
+#             print("============", e)
+#             return Response({'error': str(e)}, status=status.HTTP_200_OK)
+
+#     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 from django.core.files.base import ContentFile
 from PIL import Image
 from io import BytesIO
+import base64
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def CorporateForm(request):
-  
     if request.method == 'POST':
-        
         try:
             # Collecting the form data
             new_corporate = request.data.get('new_corporate', None)
@@ -751,24 +890,22 @@ def CorporateForm(request):
             visit_type = request.data.get('visit_type')
             location = request.data.get('location')
             lat_long = request.data.get('lat_long')
-            image = request.data.get('image') 
+            image = request.data.get('image')
             num_attend = request.data.get('num_attend')
-
+            
             imgstr = image['base64']
-
             team_members = request.data.get('co_name')
             if isinstance(team_members, str):
                 team_members = team_members.split(',')
             elif not isinstance(team_members, list):
                 team_members = []
-            
+
             if new_corporate:
                 corp_name = new_corporate
 
             # Validate and process dates
             nxt_date = None
-            if nxt_pre_date and  (presentation == 'Planned'):
-                
+            if nxt_pre_date and (presentation == 'Planned'):
                 try:
                     nxt_date = datetime.strptime(nxt_pre_date, '%Y-%m-%d').date()
                 except (ValueError, TypeError):
@@ -778,21 +915,26 @@ def CorporateForm(request):
             if not image:
                 return Response({'error': 'No image file provided.'}, status=status.HTTP_200_OK)
 
-            current_time = datetime.now().strftime('%Y%m%d%H%M%S')
-            ext = 'webp'  # Set the file extension to WebP
-            new_filename = f"{slugify(name)}{today_date}{slugify(corp_name)}_{slugify(current_time)}.{ext}"
-
-            # Decode the base64 image and convert it to WebP using Pillow
+            # Decode the base64 image and convert to WebP with size check
             image_data = base64.b64decode(imgstr)
             image_content = BytesIO(image_data)
-            
-            # Convert image to WebP using Pillow
             with Image.open(image_content) as img:
-                webp_image_io = BytesIO()
-                img.save(webp_image_io, format='WEBP', quality=30)
-                webp_image_io.seek(0)
+                img = img.convert('RGB')
+                
+                # Compress image until under 200KB
+                quality = 85
+                while True:
+                    webp_image_io = BytesIO()
+                    img.save(webp_image_io, format='WEBP', quality=quality)
+                    size_kb = webp_image_io.tell() / 1024
+                    if size_kb <= 200 or quality <= 20:
+                        break
+                    quality -= 10  # reduce quality in steps
 
-                # Create a ContentFile for the WebP image
+                webp_image_io.seek(0)
+                current_time = datetime.now().strftime('%Y%m%d%H%M%S')
+                ext = 'webp'
+                new_filename = f"{slugify(name)}{today_date}{slugify(corp_name)}_{slugify(current_time)}.{ext}"
                 image_content_webp = ContentFile(webp_image_io.read(), name=new_filename)
 
             # Handle team members
@@ -800,19 +942,20 @@ def CorporateForm(request):
             username = CorpFormData.objects.filter(Q(key_person_contact=key_person_contact) & Q(name=name)).count()
             revisit = 1 + username if username > 0 else 1
 
+            # Handle new corporate entry
             if new_corporate:
-                corporate_type = CorporateType.objects.filter(corpo_type = corp_type).values_list('id', flat = True)
-                # print(corporate_type)
-                check_corporate = CorporatesList.objects.filter(corpo_name__icontains = new_corporate).first()
+                corporate_type = CorporateType.objects.filter(corpo_type=corp_type).values_list('id', flat=True).first()
+                check_corporate = CorporatesList.objects.filter(corpo_name__icontains=new_corporate).first()
                 current_time = timezone.localtime(timezone.now())
-                # print(current_time)
-                if check_corporate:
-                    corp_name = new_corporate
-                else:
-                    # print("====================")
+                if not check_corporate:
                     new_corporate = f'{new_corporate} {location}'
-                    data = CorporatesList.objects.create(corpo_name = new_corporate, added_by = name, status = 1, corporate_type_id = corporate_type, added_at = current_time)
-                    data.save()
+                    CorporatesList.objects.create(
+                        corpo_name=new_corporate,
+                        added_by=name,
+                        status=1,
+                        corporate_type_id=corporate_type,
+                        added_at=current_time
+                    )
 
             # Save to model
             corp_form_data = CorpFormData.objects.create(

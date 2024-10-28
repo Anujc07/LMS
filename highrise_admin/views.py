@@ -2478,3 +2478,41 @@ def get_corporate_names(request, selectedTypeId):
         
     except Exception as e:
         print("====", e)
+
+
+def SourceEdit(request):
+    try:
+        sourceType = Visit_Type_Source.objects.filter(status=1).values()
+        source = Source.objects.all().values()
+        if request.method == 'POST':
+            # status = request.POST.get('status')
+            sourceName = request.POST.get('source')
+            source_type = request.POST.get('sourceType')
+            data = Source.objects.create(name=sourceName, source_id= source_type)
+            data.save()
+            messages.success(request, 'Source Added')
+            return redirect('/admin/Source')
+
+
+
+        return render(request, 'Admin/SourceMaster.html', {'sourceType': sourceType, 'source': source})
+    except Exception as e:
+        print("====",e)
+
+
+def SourceTypeEdit(request):
+    try:
+        sourceType = Visit_Type_Source.objects.filter(status=1).values()
+       
+        if request.method == 'POST':
+            status = request.POST.get('status')
+            source_type = request.POST.get('sourceType')
+            print(status, source_type)
+            data = Visit_Type_Source.objects.create(name=source_type, status= status)
+            data.save()
+            messages.success(request, 'Source Added')
+            return redirect('/admin/Source-Type')
+
+        return render(request, 'Admin/SourceTypeMaster.html', {'sourceType': sourceType})
+    except Exception as e:
+        print("====",e)
